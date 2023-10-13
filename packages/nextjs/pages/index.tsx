@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import Head from "next/head";
 import type { NextPage } from "next";
 import * as chains from "wagmi/chains";
-import { AddressCard, ButtonsCard, NetworkCard, QRCodeCard } from "~~/components/address-vision/";
-import { Navbar } from "~~/components/address-vision/Navbar";
+import { AddressCard, ButtonsCard, Navbar, NetworkCard, QRCodeCard } from "~~/components/address-vision/";
 
 const Home: NextPage = () => {
   const [searchedAddress, setSearchedAddress] = useState("");
