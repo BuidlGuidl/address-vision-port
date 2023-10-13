@@ -13,6 +13,7 @@ const Home: NextPage = () => {
       <Head>
         <title>address.vision</title>
         <meta name="description" content="address vision" />
+        <script defer data-domain="address.vision" src="https://plausible.io/js/script.js"></script>
       </Head>
       <div className="navbar sticky top-0 z-20 grid min-h-0 flex-shrink-0 grid-cols-12 justify-between bg-base-100 px-0 shadow-md shadow-secondary sm:px-2 lg:static">
         <div className="col-start-4 flex flex-row items-center md:col-start-1 md:col-end-3">
