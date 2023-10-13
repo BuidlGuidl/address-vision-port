@@ -1,8 +1,8 @@
 import { QRCodeSVG } from "qrcode.react";
 import { Address, isAddress } from "viem";
 
-export const QRCodeCard = ({ someAddress }: { someAddress: Address }) => {
-  if (!isAddress(someAddress))
+export const QRCodeCard = ({ address }: { address: Address }) => {
+  if (!isAddress(address))
     return (
       <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl">
         <div className="card-body flex items-center justify-center">
@@ -19,13 +19,13 @@ export const QRCodeCard = ({ someAddress }: { someAddress: Address }) => {
   return (
     <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl">
       <div className="card-body flex items-center justify-center">
-        {someAddress ? (
+        {address ? (
           <>
             <div className="hidden md:block">
-              <QRCodeSVG value={someAddress} size={350} />
+              <QRCodeSVG value={address} size={350} />
             </div>
             <div className="block md:hidden">
-              <QRCodeSVG value={someAddress} size={250} />
+              <QRCodeSVG value={address} size={250} />
             </div>
           </>
         ) : (
