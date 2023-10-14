@@ -33,7 +33,7 @@ export const Footer = () => {
           <div className="flex justify-center items-center gap-2 text-sm w-full">
             <div className="text-center">
               <a
-                href="https://github.com/portdeveloper/address-vision"
+                href="https://github.com/BuidlGuidl/address-vision-port"
                 target="_blank"
                 rel="noreferrer"
                 className="underline underline-offset-2"

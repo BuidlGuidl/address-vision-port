@@ -42,7 +42,7 @@ export const NftsCarousel = ({ nfts, chain, address }: { nfts: any[]; chain: Cha
     <>
       {nfts.length > 0 ? (
         <div className="relative flex flex-col">
-          <div className="absolute flex justify-between transform -translate-y-1/2 left-3 right-3 top-1/2">
+          <div className="absolute flex justify-between transform -translate-y-1/2 left-3 right-3 top-1/2 z-20">
             <button onClick={scrollLeft} className="btn btn-sm btn-circle opacity-60" disabled={isAtStart}>
               ❮
             </button>
