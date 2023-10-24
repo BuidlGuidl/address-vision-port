@@ -16,6 +16,7 @@ const Home: NextPage = () => {
           rel="icon"
           href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>👀</text></svg>"
         />
+        <script defer data-domain="address.vision" src="https://plausible.io/js/script.js"></script>
       </Head>
       <Navbar searchedAddress={searchedAddress} setSearchedAddress={setSearchedAddress} />
 
