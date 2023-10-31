@@ -1,11 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import type { NextPage } from "next";
+import { isAddress } from "viem";
 import * as chains from "wagmi/chains";
 import { AddressCard, ButtonsCard, Navbar, NetworkCard, QRCodeCard } from "~~/components/address-vision/";
 
 const Home: NextPage = () => {
   const [searchedAddress, setSearchedAddress] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    console.log("router.query: ", router.query);
+    if (router.query.address && Array.isArray(router.query.address)) {
+      const [address] = router.query.address;
+      if (address) {
+        setSearchedAddress(address);
+      }
+    }
+  }, [router.query]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (searchedAddress && isAddress(searchedAddress)) {
+        router.push(`/${searchedAddress}`, undefined, { shallow: true });
+      } else if (!searchedAddress) {
+        router.push("/", undefined, { shallow: true });
+      }
+    }, 200); // @remind not the best solution
+  }, [searchedAddress]);
 
   return (
     <>
