@@ -126,7 +126,7 @@ export const Address = ({
         </span>
       ) : (
         <a
-          className={`ml-1.5 font-normal ${isAddressCard ? "text-2xl" : `text-${size}`}`}
+          className={`ml-1.5 font-normal ${isAddressCard && ens && ens.length > 20 ? "text-2xl" : `text-${size}`}`}
           target="_blank"
           href={blockExplorerAddressLink}
           rel="noopener noreferrer"
