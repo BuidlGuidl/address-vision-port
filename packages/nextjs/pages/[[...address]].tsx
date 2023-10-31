@@ -27,7 +27,7 @@ const Home: NextPage = () => {
       } else if (!searchedAddress) {
         router.push("/", undefined, { shallow: true });
       }
-    }, 100); // @remind not the best solution
+    }, 200); // @remind not the best solution
   }, [searchedAddress]);
 
   return (
