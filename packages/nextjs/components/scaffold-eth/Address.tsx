@@ -16,6 +16,7 @@ type TAddressProps = {
   format?: "short" | "long";
   size?: "xs" | "sm" | "base" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
   chain?: Chain;
+  isAddressCard?: boolean;
 };
 
 const blockieSizeMap = {
@@ -38,6 +39,7 @@ export const Address = ({
   format,
   size = "base",
   chain = chains.mainnet,
+  isAddressCard,
 }: TAddressProps) => {
   const [ens, setEns] = useState<string | null>();
   const [ensAvatar, setEnsAvatar] = useState<string | null>();
@@ -124,7 +126,7 @@ export const Address = ({
         </span>
       ) : (
         <a
-          className={`ml-1.5 text-${size} font-normal`}
+          className={`ml-1.5 font-normal ${isAddressCard && ens && ens.length > 20 ? "text-2xl" : `text-${size}`}`}
           target="_blank"
           href={blockExplorerAddressLink}
           rel="noopener noreferrer"

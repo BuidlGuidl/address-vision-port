@@ -25,10 +25,10 @@ export const AddressCard = ({ address }: { address: Address }) => {
           {address && (
             <>
               <div className="hidden md:block">
-                <AddressComp address={address} size="4xl" />
+                <AddressComp address={address} size="4xl" isAddressCard={true} />
               </div>
               <div className="block md:hidden">
-                <AddressComp address={address} size="3xl" />
+                <AddressComp address={address} size="3xl" isAddressCard={true} />
               </div>
             </>
           )}
