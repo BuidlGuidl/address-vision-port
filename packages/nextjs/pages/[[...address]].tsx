@@ -5,13 +5,15 @@ import type { NextPage } from "next";
 import { isAddress } from "viem";
 import * as chains from "wagmi/chains";
 import { AddressCard, ButtonsCard, Navbar, NetworkCard, QRCodeCard } from "~~/components/address-vision/";
+import { useAccountBalance } from "~~/hooks/scaffold-eth";
 
 const Home: NextPage = () => {
   const [searchedAddress, setSearchedAddress] = useState("");
   const router = useRouter();
 
+  const { balance, isLoading } = useAccountBalance(chains.mainnet, searchedAddress);
+
   useEffect(() => {
-    console.log("router.query: ", router.query);
     if (router.query.address && Array.isArray(router.query.address)) {
       const [address] = router.query.address;
       if (address) {
@@ -30,6 +32,11 @@ const Home: NextPage = () => {
     }, 200); // @remind not the best solution
   }, [searchedAddress]);
 
+  let cardWidthClass = "lg:w-1/3";
+  if (!isLoading && !balance && isAddress(searchedAddress)) {
+    cardWidthClass = "lg:w-1/2";
+  }
+
   return (
     <>
       <Head>
@@ -46,7 +53,7 @@ const Home: NextPage = () => {
       {searchedAddress ? (
         <div className="flex w-full flex-grow flex-col items-center justify-center gap-4 p-4 md:mt-4">
           <div className="flex flex-wrap">
-            <div className="w-full flex-wrap space-y-4 p-4 sm:w-1/2 lg:w-1/3">
+            <div className={`w-full flex-wrap space-y-4 p-4 sm:w-1/2 ${cardWidthClass}`}>
               <AddressCard address={searchedAddress} />
               <div className="w-[370px] md:hidden lg:hidden">
                 <QRCodeCard address={searchedAddress} />
