@@ -2,26 +2,34 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Address as AddressComp } from "../scaffold-eth";
+import { useDarkMode } from "usehooks-ts";
 import { Address, isAddress } from "viem";
 import { usePublicClient } from "wagmi";
 
+const GNOSIS_SAFE_BYTECODE_PATTERN = "0x608060405273ffffffffffffffffffffffffffffffffffffffff600054167fa619486e";
+
 export const ButtonsCard = ({ address }: { address: Address }) => {
   const [isContractAddress, setIsContractAddress] = useState<boolean | undefined>(undefined);
+  const [isGnosisSafe, setIsGnosisSafe] = useState<boolean | undefined>(undefined);
+  const { isDarkMode } = useDarkMode();
   const client = usePublicClient();
 
   useEffect(() => {
-    setIsContractAddress(undefined);
-    const fetchIsContract = async () => {
+    const fetchIsContractAndGnosis = async () => {
       if (isAddress(address)) {
         const bytecode = await client.getBytecode({ address });
-        setIsContractAddress(bytecode ? bytecode.length > 2 : false);
+
+        setIsContractAddress(bytecode && bytecode.length > 2);
+
+        const isGnosisSafeContract = bytecode && bytecode.startsWith(GNOSIS_SAFE_BYTECODE_PATTERN);
+        setIsGnosisSafe(isGnosisSafeContract);
       }
     };
 
-    fetchIsContract();
-  }, [address]);
+    fetchIsContractAndGnosis();
+  }, [address, client]);
 
-  if (isContractAddress) {
+  if (isContractAddress && !isGnosisSafe) {
     return (
       <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl">
         <div className="card-body">
@@ -35,6 +43,29 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
             </Link>
           </h2>
           <div className="text-xl">This is a contract!</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isGnosisSafe) {
+    return (
+      <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl">
+        <div className="card-body">
+          <h2 className="card-title">
+            See
+            <AddressComp address={address} />
+            on
+            <Link href={`https://app.safe.global/home?safe=eth:${address}`} className="flex underline items-center">
+              <Image
+                src={isDarkMode ? "/safe-logo-light.svg" : "/safe-logo-dark.svg"}
+                width={80}
+                height={80}
+                alt="Safe logo"
+              />
+            </Link>
+          </h2>
+          <div className="text-xl">This is a Safe account!</div>
         </div>
       </div>
     );
