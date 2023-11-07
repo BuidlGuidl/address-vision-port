@@ -10,7 +10,7 @@ const GNOSIS_SAFE_BYTECODE_PATTERN = "0x608060405273ffffffffffffffffffffffffffff
 
 export const ButtonsCard = ({ address }: { address: Address }) => {
   const [isContractAddress, setIsContractAddress] = useState<boolean | undefined>(undefined);
-  const [isGnosisSafe, setIsGnosisSafe] = useState<boolean | undefined>(undefined);
+  const [isGnosisSafe, setIsGnosisSafe] = useState<boolean | undefined>(false);
   const { isDarkMode } = useDarkMode();
   const client = usePublicClient();
 
