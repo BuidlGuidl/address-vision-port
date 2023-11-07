@@ -8,9 +8,20 @@ import { usePublicClient } from "wagmi";
 
 const GNOSIS_SAFE_BYTECODE_PATTERN = "0x608060405273ffffffffffffffffffffffffffffffffffffffff600054167fa619486e";
 
+const SAFE_ABI = [
+  {
+    inputs: [],
+    name: "getOwners",
+    outputs: [{ internalType: "address[]", name: "", type: "address[]" }],
+    stateMutability: "view",
+    type: "function",
+  },
+];
+
 export const ButtonsCard = ({ address }: { address: Address }) => {
   const [isContractAddress, setIsContractAddress] = useState<boolean | undefined>(undefined);
   const [isGnosisSafe, setIsGnosisSafe] = useState<boolean | undefined>(false);
+  const [safeOwners, setSafeOwners] = useState<Address[]>([]);
   const { isDarkMode } = useDarkMode();
   const client = usePublicClient();
 
@@ -28,6 +39,21 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
 
     fetchIsContractAndGnosis();
   }, [address, client]);
+
+  useEffect(() => {
+    const fetchOwners = async () => {
+      const data = await client.readContract({
+        address,
+        abi: SAFE_ABI,
+        functionName: "getOwners",
+      });
+      setSafeOwners(data as Address[]);
+    };
+
+    if (isAddress(address) && isGnosisSafe) {
+      fetchOwners();
+    }
+  }, [address, isGnosisSafe]);
 
   if (isContractAddress && !isGnosisSafe) {
     return (
@@ -48,7 +74,7 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
     );
   }
 
-  if (isGnosisSafe) {
+  if (isContractAddress && isGnosisSafe) {
     return (
       <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl">
         <div className="card-body">
@@ -65,7 +91,14 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
               />
             </Link>
           </h2>
-          <div className="text-xl">This is a Safe account!</div>
+          <div className="font-bold">Owners:</div>
+          <div>
+            {safeOwners.map(owner => (
+              <div key={owner} className="mb-1">
+                <AddressComp address={owner} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
