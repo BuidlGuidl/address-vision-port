@@ -16,12 +16,20 @@ const SAFE_ABI = [
     stateMutability: "view",
     type: "function",
   },
+  {
+    inputs: [],
+    name: "getThreshold",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
 ];
 
 export const ButtonsCard = ({ address }: { address: Address }) => {
   const [isContractAddress, setIsContractAddress] = useState<boolean | undefined>(undefined);
   const [isGnosisSafe, setIsGnosisSafe] = useState<boolean | undefined>(false);
   const [safeOwners, setSafeOwners] = useState<Address[]>([]);
+  const [safeThreshold, setSafeThreshold] = useState<number>(0);
   const { isDarkMode } = useDarkMode();
   const client = usePublicClient();
 
@@ -50,8 +58,19 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
       setSafeOwners(data as Address[]);
     };
 
+    const fetchThreshold = async () => {
+      const data = await client.readContract({
+        address,
+        abi: SAFE_ABI,
+        functionName: "getThreshold",
+      });
+      setSafeThreshold(Number(data));
+      console.log(data);
+    };
+
     if (isAddress(address) && isGnosisSafe) {
       fetchOwners();
+      fetchThreshold();
     }
   }, [address, isGnosisSafe]);
 
@@ -91,7 +110,14 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
               />
             </Link>
           </h2>
-          <div className="font-bold">Owners:</div>
+          <div className="font-semibold flex justify-between items-center">
+            <p className="m-0">Owners:</p>
+            <div className="text-right w-full">
+              <p className="m-0">
+                Threshold: {safeThreshold}/{safeOwners.length}
+              </p>
+            </div>
+          </div>
           <div>
             {safeOwners.map(owner => (
               <div key={owner} className="mb-1">
