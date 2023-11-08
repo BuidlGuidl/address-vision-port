@@ -42,6 +42,7 @@ const Home: NextPage = () => {
       <Head>
         <title>address.vision</title>
         <meta name="description" content="Peek into any address or ENS" />
+        <meta property="og:description" content="Peek into any address or ENS" />
         <meta property="og:title" content="address.vision" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="og:image" content="https://address.vision/thumbnail.png" />
