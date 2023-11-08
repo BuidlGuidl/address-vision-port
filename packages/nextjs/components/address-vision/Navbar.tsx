@@ -15,6 +15,10 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
     router.push("/", undefined, { shallow: true });
   };
 
+  const handleAddressChange = (address: string) => {
+    setSearchedAddress(address.trim());
+  };
+
   return (
     <div className="navbar sticky top-0 z-20 grid min-h-0 flex-shrink-0 grid-cols-12 justify-between bg-base-100 px-0 shadow-md shadow-secondary sm:px-2 lg:static">
       <div className="col-start-4 flex flex-row items-center md:col-start-1 md:col-end-3">
@@ -30,7 +34,7 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
           <AddressInput
             placeholder="Enter an Ethereum address or ENS name to get started"
             value={searchedAddress}
-            onChange={setSearchedAddress}
+            onChange={handleAddressChange}
           />
         </div>
       </div>
