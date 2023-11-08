@@ -26,58 +26,64 @@ const SAFE_ABI = [
 ];
 
 export const ButtonsCard = ({ address }: { address: Address }) => {
-  const [isContractAddress, setIsContractAddress] = useState<boolean | undefined>(undefined);
-  const [isGnosisSafe, setIsGnosisSafe] = useState<boolean | undefined>(false);
+  const [isContractAddress, setIsContractAddress] = useState<boolean>(false);
+  const [isGnosisSafe, setIsGnosisSafe] = useState<boolean>(false);
   const [safeOwners, setSafeOwners] = useState<Address[]>([]);
   const [safeThreshold, setSafeThreshold] = useState<number>(0);
   const { isDarkMode } = useDarkMode();
   const client = usePublicClient();
 
   useEffect(() => {
-    if (!isContractAddress) return;
-    const fetchIsContractAndGnosis = async () => {
-      if (isAddress(address)) {
+    setIsContractAddress(false);
+    setIsGnosisSafe(false);
+    setSafeOwners([]);
+    setSafeThreshold(0);
+  }, [address]);
+
+  useEffect(() => {
+    let canceled = false;
+
+    const checkGnosisSafe = async () => {
+      try {
         const bytecode = await client.getBytecode({ address });
+        const isContract = bytecode && bytecode.length > 2;
+        if (canceled) return;
 
-        setIsContractAddress(bytecode && bytecode.length > 2);
+        setIsContractAddress(isContract || false);
 
-        const isGnosisSafeContract = bytecode && bytecode.startsWith(GNOSIS_SAFE_BYTECODE_PATTERN);
-        setIsGnosisSafe(isGnosisSafeContract);
+        if (isContract && bytecode.startsWith(GNOSIS_SAFE_BYTECODE_PATTERN)) {
+          setIsGnosisSafe(true);
+          const [ownersData, thresholdData] = await Promise.all([
+            client.readContract({
+              address,
+              abi: SAFE_ABI,
+              functionName: "getOwners",
+            }),
+            client.readContract({
+              address,
+              abi: SAFE_ABI,
+              functionName: "getThreshold",
+            }),
+          ]);
+          if (canceled) return;
+          setSafeOwners(ownersData as Address[]);
+          setSafeThreshold(Number(thresholdData));
+        } else {
+          setIsGnosisSafe(false);
+        }
+      } catch (error) {
+        if (!canceled) {
+          console.error("Contract read failed:", error);
+        }
       }
     };
 
-    fetchIsContractAndGnosis();
+    checkGnosisSafe();
+
+    return () => {
+      canceled = true;
+    };
   }, [address, client]);
-
-  useEffect(() => {
-    const fetchOwners = async () => {
-      const data = await client.readContract({
-        address,
-        abi: SAFE_ABI,
-        functionName: "getOwners",
-      });
-      setSafeOwners(data as Address[]);
-    };
-
-    const fetchThreshold = async () => {
-      const data = await client.readContract({
-        address,
-        abi: SAFE_ABI,
-        functionName: "getThreshold",
-      });
-      setSafeThreshold(Number(data));
-      console.log(data);
-    };
-
-    if (isAddress(address) && isGnosisSafe) {
-      fetchOwners();
-      fetchThreshold();
-    }
-
-    if (!isAddress(address)) {
-      setIsContractAddress(false);
-    }
-  }, [address, isGnosisSafe]);
 
   if (isContractAddress && !isGnosisSafe) {
     return (
