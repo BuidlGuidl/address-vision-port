@@ -11,7 +11,6 @@ const Home: NextPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    console.log("router.query: ", router.query);
     if (router.query.address && Array.isArray(router.query.address)) {
       const [address] = router.query.address;
       if (address) {
