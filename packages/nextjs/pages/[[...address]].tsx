@@ -45,7 +45,7 @@ const Home: NextPage = () => {
         <meta property="og:description" content="Peek into any address or ENS" />
         <meta property="og:title" content="address.vision" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta property="og:image" content="%PUBLIC_URL%/logo.png" />
+        <meta property="og:image" content="%PUBLIC_URL%/thumbnail.png" />
         <link
           rel="icon"
           href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>👀</text></svg>"
