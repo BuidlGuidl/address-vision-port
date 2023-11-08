@@ -72,6 +72,10 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
       fetchOwners();
       fetchThreshold();
     }
+
+    if (!isAddress(address)) {
+      setIsContractAddress(false);
+    }
   }, [address, isGnosisSafe]);
 
   if (isContractAddress && !isGnosisSafe) {
