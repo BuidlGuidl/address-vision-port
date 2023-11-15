@@ -89,16 +89,13 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
     return (
       <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl">
         <div className="card-body">
-          <h2 className="card-title">
-            See
-            <AddressComp address={address} />
-            on
+          <div className="text-xl flex">
+            <p>This is a contract, see it on</p>
             <Link href={`https://abi.ninja/${address}/mainnet`} className="flex underline items-center">
               <Image src="/abininja-logo.svg" width={50} height={50} alt="abi.ninja logo" />
               abi.ninja
             </Link>
-          </h2>
-          <div className="text-xl">This is a contract!</div>
+          </div>
         </div>
       </div>
     );
@@ -109,9 +106,6 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
       <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl">
         <div className="card-body">
           <h2 className="card-title">
-            See
-            <AddressComp address={address} />
-            on
             <Link href={`https://app.safe.global/home?safe=eth:${address}`} className="flex underline items-center">
               <Image
                 src={isDarkMode ? "/safe-logo-light.svg" : "/safe-logo-dark.svg"}
@@ -145,14 +139,6 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
     return (
       <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl">
         <div className="card-body">
-          <h2 className="card-title">
-            See
-            <div className="flex items-center space-x-4">
-              <div className="rounded-md bg-slate-300 h-6 w-6"></div>
-              <div className="h-2 w-28 bg-slate-300 rounded"></div>
-            </div>
-            on
-          </h2>
           <div className="animate-pulse">
             <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-3">
               {[1, 2, 3, 4, 5, 6].map(i => (
@@ -168,11 +154,6 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
   return (
     <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl">
       <div className="card-body">
-        <h2 className="card-title">
-          See
-          <AddressComp address={address} />
-          on
-        </h2>
         <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-3">
           <button
             className="btn btn-primary btn-xs rounded-full"

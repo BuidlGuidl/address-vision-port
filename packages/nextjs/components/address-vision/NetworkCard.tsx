@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Address as AddressComp } from "../scaffold-eth";
 import { NftsCarousel } from "./NftsCarousel";
 import { TokensTable } from "./TokensTable";
 import { CovalentClient } from "@covalenthq/client-sdk";
@@ -141,7 +140,6 @@ export const NetworkCard = ({ address, chain }: { address: Address; chain: Chain
       <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl flex-grow">
         <div className="card-body">
           <h2 className="card-title whitespace-nowrap">
-            <AddressComp address={address} chain={chain} /> on{" "}
             <Link
               href={getBlockExplorerAddressLink(chain, address)}
               rel="noopener noreferrer"
