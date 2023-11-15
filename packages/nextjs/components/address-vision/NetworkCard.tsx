@@ -83,7 +83,6 @@ export const NetworkCard = ({ address, chain }: { address: Address; chain: Chain
       <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl flex-grow animate-pulse">
         <div className="card-body">
           <div className="flex items-center space-x-4">
-            <div className="rounded-md bg-slate-300 h-6 w-6"></div>
             <div className="h-2 w-28 bg-slate-300 rounded"></div>
           </div>
 
