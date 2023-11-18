@@ -53,6 +53,7 @@ export const AddressInput = ({ value, name, placeholder, onChange, disabled }: C
 
   return (
     <InputBase<Address>
+      autoFocus={true}
       name={name}
       placeholder={placeholder}
       error={ensAddress === null}
