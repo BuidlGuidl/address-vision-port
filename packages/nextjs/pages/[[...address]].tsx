@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import type { NextPage } from "next";
 import { isAddress } from "viem";
 import * as chains from "wagmi/chains";
+import { MetaHeader } from "~~/components/MetaHeader";
 import { AddressCard, ButtonsCard, Navbar, NetworkCard, QRCodeCard } from "~~/components/address-vision/";
 import { useAccountBalance } from "~~/hooks/scaffold-eth";
 
@@ -39,22 +39,7 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <Head>
-        <title>address.vision</title>
-        <meta name="description" content="Peek into any address or ENS" />
-        <meta property="og:description" content="Peek into any address or ENS" />
-        <meta property="og:title" content="address.vision" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          property="og:image"
-          content="https://address-vision-port-jw4vfdm5v-buidlguidldao.vercel.app/thumbnail.png"
-        />
-        <link
-          rel="icon"
-          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>👀</text></svg>"
-        />
-        <script defer data-domain="address.vision" src="https://plausible.io/js/script.js"></script>
-      </Head>
+      <MetaHeader />
       <Navbar searchedAddress={searchedAddress} setSearchedAddress={setSearchedAddress} />
 
       {searchedAddress ? (
