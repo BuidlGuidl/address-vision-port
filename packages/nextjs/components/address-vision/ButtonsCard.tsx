@@ -41,13 +41,10 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
   }, [address]);
 
   useEffect(() => {
-    let canceled = false;
-
     const checkGnosisSafe = async () => {
       try {
         const bytecode = await client.getBytecode({ address });
         const isContract = bytecode && bytecode.length > 2;
-        if (canceled) return;
 
         setIsContractAddress(isContract || false);
 
@@ -65,24 +62,17 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
               functionName: "getThreshold",
             }),
           ]);
-          if (canceled) return;
           setSafeOwners(ownersData as Address[]);
           setSafeThreshold(Number(thresholdData));
         } else {
           setIsGnosisSafe(false);
         }
       } catch (error) {
-        if (!canceled) {
-          console.error("Contract read failed:", error);
-        }
+        console.error("Contract read failed:", error);
       }
     };
 
     checkGnosisSafe();
-
-    return () => {
-      canceled = true;
-    };
   }, [address, client]);
 
   if (isContractAddress && !isGnosisSafe) {
