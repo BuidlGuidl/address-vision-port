@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import Head from "next/head";
 import { useRouter } from "next/router";
 import type { NextPage } from "next";
 import { isAddress } from "viem";
 import * as chains from "wagmi/chains";
+import { MetaHeader } from "~~/components/MetaHeader";
 import { AddressCard, ButtonsCard, Navbar, NetworkCard, QRCodeCard } from "~~/components/address-vision/";
+import { useAccountBalance } from "~~/hooks/scaffold-eth";
 
 const Home: NextPage = () => {
   const [searchedAddress, setSearchedAddress] = useState("");
   const router = useRouter();
+
+  const { balance, isLoading } = useAccountBalance(chains.mainnet, searchedAddress);
 
   useEffect(() => {
     if (router.query.address && Array.isArray(router.query.address)) {
@@ -29,23 +32,20 @@ const Home: NextPage = () => {
     }, 200); // @remind not the best solution
   }, [searchedAddress]);
 
+  let cardWidthClass = "lg:w-1/3";
+  if (!isLoading && !balance && isAddress(searchedAddress)) {
+    cardWidthClass = "lg:w-1/2";
+  }
+
   return (
     <>
-      <Head>
-        <title>address.vision</title>
-        <meta name="description" content="Peek into any address or ENS" />
-        <link
-          rel="icon"
-          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>👀</text></svg>"
-        />
-        <script defer data-domain="address.vision" src="https://plausible.io/js/script.js"></script>
-      </Head>
+      <MetaHeader />
       <Navbar searchedAddress={searchedAddress} setSearchedAddress={setSearchedAddress} />
 
       {searchedAddress ? (
         <div className="flex w-full flex-grow flex-col items-center justify-center gap-4 p-4 md:mt-4">
           <div className="flex flex-wrap">
-            <div className="w-full flex-wrap space-y-4 p-4 sm:w-1/2 lg:w-1/3">
+            <div className={`w-full flex-wrap space-y-4 p-4 sm:w-1/2 ${cardWidthClass}`}>
               <AddressCard address={searchedAddress} />
               <div className="w-[370px] md:hidden lg:hidden">
                 <QRCodeCard address={searchedAddress} />

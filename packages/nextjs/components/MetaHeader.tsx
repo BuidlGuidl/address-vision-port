@@ -9,14 +9,12 @@ type MetaHeaderProps = {
   children?: React.ReactNode;
 };
 
-// Images must have an absolute path to work properly on Twitter.
-// We try to get it dynamically from Vercel, but we default to relative path.
-const baseUrl = process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/` : "/";
+const baseUrl = "https://address.vision/";
 
 export const MetaHeader = ({
-  title = "Scaffold-ETH 2 App",
-  description = "Built with 🏗 Scaffold-ETH 2",
-  image = "thumbnail.jpg",
+  title = "address.vision",
+  description = "Peek into any address or ENS",
+  image = "thumbnail.png",
   twitterCard = "summary_large_image",
   children,
 }: MetaHeaderProps) => {
@@ -45,8 +43,11 @@ export const MetaHeader = ({
         </>
       )}
       {twitterCard && <meta name="twitter:card" content={twitterCard} />}
-      <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
-      {children}
+      <link
+        rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>👀</text></svg>"
+      />
+      <script defer data-domain="address.vision" src="https://plausible.io/js/script.js"></script> {children}
     </Head>
   );
 };
