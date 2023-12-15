@@ -87,10 +87,10 @@ export const Address = ({
   // Skeleton UI
   if (!address) {
     return (
-      <div className="animate-pulse flex space-x-4">
-        <div className="rounded-md bg-slate-300 h-6 w-6"></div>
+      <div className="flex animate-pulse space-x-4">
+        <div className="h-6 w-6 rounded-md bg-slate-300"></div>
         <div className="flex items-center space-y-6">
-          <div className="h-2 w-28 bg-slate-300 rounded"></div>
+          <div className="h-2 w-28 rounded bg-slate-300"></div>
         </div>
       </div>
     );
@@ -135,7 +135,10 @@ export const Address = ({
         </a>
       )}
       {addressCopied ? (
-        <CheckCircleIcon className="ml-1  font-normal text-neutral h-4 w-4 cursor-pointer" aria-hidden="true" />
+        <CheckCircleIcon
+          className="ml-1 mt-3 h-4 w-4 cursor-pointer self-start font-normal text-neutral"
+          aria-hidden="true"
+        />
       ) : (
         <CopyToClipboard
           text={address}
@@ -146,7 +149,10 @@ export const Address = ({
             }, 800);
           }}
         >
-          <DocumentDuplicateIcon className="ml-1 font-normal text-neutral h-4 w-4 cursor-pointer" aria-hidden="true" />
+          <DocumentDuplicateIcon
+            className="ml-1 mt-3 h-4 w-4 cursor-pointer self-start font-normal text-neutral"
+            aria-hidden="true"
+          />
         </CopyToClipboard>
       )}
     </div>

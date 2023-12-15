@@ -46,7 +46,7 @@ export const InputBase = <T extends { toString: () => string } | undefined = str
       {prefix}
       <input
         ref={inputRef} // Attach ref to the input element
-        className="input input-ghost focus:outline-none focus:bg-transparent focus:text-gray-400 h-[2.2rem] min-h-[2.2rem] px-4 border w-full font-medium placeholder:text-accent/50 text-gray-400"
+        className="input input-ghost h-[2.2rem] min-h-[2.2rem] w-full border px-4 pb-0.5 font-medium text-gray-400 placeholder:text-accent/50 focus:bg-transparent focus:text-gray-400 focus:outline-none"
         placeholder={placeholder}
         name={name}
         value={value?.toString()}
