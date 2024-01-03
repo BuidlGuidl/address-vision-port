@@ -120,6 +120,7 @@ module.exports = {
       "sm": "400px",
       "md": "1000px",
       "lg": "1400px",
+      "xl": "1800px",
     },
   },
 };
