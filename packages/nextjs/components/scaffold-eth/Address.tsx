@@ -17,6 +17,7 @@ type TAddressProps = {
   size?: "xs" | "sm" | "base" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
   chain?: Chain;
   isAddressCard?: boolean;
+  isSmallCard?: boolean;
 };
 
 const blockieSizeMap = {
@@ -40,6 +41,7 @@ export const Address = ({
   size = "base",
   chain = chains.mainnet,
   isAddressCard,
+  isSmallCard = false,
 }: TAddressProps) => {
   const [ens, setEns] = useState<string | null>();
   const [ensAvatar, setEnsAvatar] = useState<string | null>();
@@ -136,7 +138,9 @@ export const Address = ({
       )}
       {addressCopied ? (
         <CheckCircleIcon
-          className="ml-1 mt-3 h-4 w-4 cursor-pointer self-start font-normal text-neutral"
+          className={`ml-1 ${
+            isSmallCard ? "h-5 w-5" : "mt-3 h-4 w-4"
+          } cursor-pointer self-start font-normal text-neutral`}
           aria-hidden="true"
         />
       ) : (
@@ -150,7 +154,9 @@ export const Address = ({
           }}
         >
           <DocumentDuplicateIcon
-            className="ml-1 mt-3 h-4 w-4 cursor-pointer self-start font-normal text-neutral"
+            className={`ml-1 ${
+              isSmallCard ? "h-5 w-5" : "mt-3 h-4 w-4"
+            } cursor-pointer self-start font-normal text-neutral`}
             aria-hidden="true"
           />
         </CopyToClipboard>
