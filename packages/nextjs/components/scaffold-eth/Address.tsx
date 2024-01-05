@@ -101,8 +101,8 @@ export const Address = ({
   if (!isAddress(address)) {
     return <span className="text-error">Wrong address</span>;
   }
+  const addressLink = isSmallCard ? `/${address}` : getBlockExplorerAddressLink(chain, address);
 
-  const blockExplorerAddressLink = getBlockExplorerAddressLink(chain, address);
   let displayAddress = address?.slice(0, 5) + "..." + address?.slice(-4);
 
   if (ens) {
@@ -124,13 +124,13 @@ export const Address = ({
         <span className={`ml-1.5 text-${size} font-normal`}>{displayAddress}</span>
       ) : getTargetNetwork().id === hardhat.id ? (
         <span className={`ml-1.5 text-${size} font-normal`}>
-          <Link href={blockExplorerAddressLink}>{displayAddress}</Link>
+          <Link href={addressLink}>{displayAddress}</Link>
         </span>
       ) : (
         <a
           className={`ml-1.5 font-normal ${isAddressCard && ens && ens.length > 20 ? "text-2xl" : `text-${size}`}`}
-          target="_blank"
-          href={blockExplorerAddressLink}
+          target={isSmallCard ? "_self" : "_blank"}
+          href={addressLink}
           rel="noopener noreferrer"
         >
           {displayAddress}
