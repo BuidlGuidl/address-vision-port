@@ -113,27 +113,39 @@ export const Address = ({
 
   return (
     <div className="flex items-center">
-      <div className="flex-shrink-0">
-        <BlockieAvatar
-          address={address}
-          ensImage={ensAvatar}
-          size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
-        />
-      </div>
       {disableAddressLink ? (
-        <span className={`ml-1.5 text-${size} font-normal`}>{displayAddress}</span>
+        <div className="flex items-center">
+          <BlockieAvatar
+            address={address}
+            ensImage={ensAvatar}
+            size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
+          />
+          <span className={`ml-1.5 text-${size} font-normal`}>{displayAddress}</span>
+        </div>
       ) : getTargetNetwork().id === hardhat.id ? (
-        <span className={`ml-1.5 text-${size} font-normal`}>
-          <Link href={addressLink}>{displayAddress}</Link>
-        </span>
+        <Link href={addressLink}>
+          <a className={`flex items-center ${isAddressCard && ens && ens.length > 20 ? "text-2xl" : `text-${size}`}`}>
+            <BlockieAvatar
+              address={address}
+              ensImage={ensAvatar}
+              size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
+            />
+            <span className={`ml-1.5 font-normal`}>{displayAddress}</span>
+          </a>
+        </Link>
       ) : (
         <a
-          className={`ml-1.5 font-normal ${isAddressCard && ens && ens.length > 20 ? "text-2xl" : `text-${size}`}`}
+          className={`flex items-center ${isAddressCard && ens && ens.length > 20 ? "text-2xl" : `text-${size}`}`}
           target={isSmallCard ? "_self" : "_blank"}
           href={addressLink}
           rel="noopener noreferrer"
         >
-          {displayAddress}
+          <BlockieAvatar
+            address={address}
+            ensImage={ensAvatar}
+            size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
+          />
+          <span className={`ml-1.5 font-normal`}>{displayAddress}</span>
         </a>
       )}
       {addressCopied ? (
