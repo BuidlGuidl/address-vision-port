@@ -82,7 +82,7 @@ const Home: NextPage = () => {
                 />
               ))}{" "}
             </div>
-            <div className="absolute -bottom-1 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-base-200"></div>
+            <div className="absolute -bottom-1 left-0 right-0 h-20 bg-gradient-to-b from-transparent to-base-200"></div>
           </div>
         </div>
       )}
