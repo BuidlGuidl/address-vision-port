@@ -111,6 +111,20 @@ export const Address = ({
     displayAddress = address;
   }
 
+  const getTextSizeClass = (ensLength: number) => {
+    if (isSmallCard) {
+      if (ensLength <= 17) return "text-xl";
+      if (ensLength <= 22) return "text-md";
+      if (ensLength <= 26) return "text-sm";
+      return "text-base";
+    } else {
+      if (ensLength <= 17) return "text-4xl";
+      if (ensLength <= 22) return "text-3xl";
+      if (ensLength <= 26) return "text-2xl";
+      return "text-xl";
+    }
+  };
+
   return (
     <div className="flex items-center">
       {disableAddressLink ? (
@@ -124,7 +138,7 @@ export const Address = ({
         </div>
       ) : getTargetNetwork().id === hardhat.id ? (
         <Link href={`/${address}`}>
-          <a className={`flex items-center ${isAddressCard && ens && ens.length > 20 ? "text-2xl" : `text-${size}`}`}>
+          <a className={`flex items-center ${isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`}`}>
             <BlockieAvatar
               address={address}
               ensImage={ensAvatar}
@@ -135,7 +149,7 @@ export const Address = ({
         </Link>
       ) : (
         <a
-          className={`flex items-center ${isAddressCard && ens && ens.length > 20 ? "text-2xl" : `text-${size}`}`}
+          className={`flex items-center ${isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`}`}
           target={"_self"}
           href={`/${address}`}
           rel="noopener noreferrer"
