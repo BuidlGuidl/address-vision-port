@@ -6,7 +6,7 @@ import { useEnsName } from "wagmi";
 import { Chain } from "wagmi";
 import { hardhat } from "wagmi/chains";
 import * as chains from "wagmi/chains";
-import { CheckCircleIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
+import { ArrowTopRightOnSquareIcon, CheckCircleIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { getBlockExplorerAddressLink, getTargetNetwork } from "~~/utils/scaffold-eth";
 
@@ -101,7 +101,7 @@ export const Address = ({
   if (!isAddress(address)) {
     return <span className="text-error">Wrong address</span>;
   }
-  const addressLink = isSmallCard ? `/${address}` : getBlockExplorerAddressLink(chain, address);
+  const blockExplorerLink = getBlockExplorerAddressLink(chain, address);
 
   let displayAddress = address?.slice(0, 5) + "..." + address?.slice(-4);
 
@@ -123,7 +123,7 @@ export const Address = ({
           <span className={`ml-1.5 text-${size} font-normal`}>{displayAddress}</span>
         </div>
       ) : getTargetNetwork().id === hardhat.id ? (
-        <Link href={addressLink}>
+        <Link href={`/${address}`}>
           <a className={`flex items-center ${isAddressCard && ens && ens.length > 20 ? "text-2xl" : `text-${size}`}`}>
             <BlockieAvatar
               address={address}
@@ -136,8 +136,8 @@ export const Address = ({
       ) : (
         <a
           className={`flex items-center ${isAddressCard && ens && ens.length > 20 ? "text-2xl" : `text-${size}`}`}
-          target={isSmallCard ? "_self" : "_blank"}
-          href={addressLink}
+          target={"_self"}
+          href={`/${address}`}
           rel="noopener noreferrer"
         >
           <BlockieAvatar
@@ -173,6 +173,16 @@ export const Address = ({
           />
         </CopyToClipboard>
       )}
+      <a
+        href={blockExplorerLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`ml-1 ${
+          isSmallCard ? "h-5 w-5" : "mt-3 h-4 w-4"
+        } cursor-pointer self-start font-normal text-neutral`}
+      >
+        <ArrowTopRightOnSquareIcon aria-hidden="true" />
+      </a>
     </div>
   );
 };
