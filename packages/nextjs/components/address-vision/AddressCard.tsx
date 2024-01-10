@@ -43,7 +43,7 @@ export const AddressCard = ({
               <div className="hidden md:block">
                 <AddressComp
                   address={address}
-                  size={isSmallCard ? "xl" : "4xl"}
+                  size={isSmallCard ? "lg" : "4xl"}
                   isAddressCard={true}
                   isSmallCard={isSmallCard}
                 />
