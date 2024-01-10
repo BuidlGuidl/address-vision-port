@@ -45,7 +45,7 @@ export const AddressCard = ({
                   address={address}
                   size={isSmallCard ? "xl" : "4xl"}
                   isAddressCard={true}
-                  isSmallCard={true}
+                  isSmallCard={isSmallCard}
                 />
               </div>
               <div className="block md:hidden">
@@ -53,7 +53,7 @@ export const AddressCard = ({
                   address={address}
                   size={isSmallCard ? "lg" : "3xl"}
                   isAddressCard={true}
-                  isSmallCard={true}
+                  isSmallCard={isSmallCard}
                 />
               </div>
             </>
