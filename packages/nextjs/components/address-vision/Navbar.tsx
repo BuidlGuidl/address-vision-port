@@ -1,23 +1,34 @@
+import { useState } from "react";
 import { useRouter } from "next/router";
-import { Address } from "viem";
+import { isAddress } from "viem";
 import { AddressInput } from "~~/components/scaffold-eth";
 
 interface NavbarProps {
-  searchedAddress: Address;
   setSearchedAddress: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => {
+export const Navbar = ({ setSearchedAddress }: NavbarProps) => {
   const router = useRouter();
+
+  const [inputValue, setInputValue] = useState("");
 
   const handleLogoClick = () => {
     setSearchedAddress("");
+    setInputValue("");
     router.push("/", undefined, { shallow: true });
   };
 
   const handleAddressChange = (address: string) => {
-    const trimmedAddress = address.startsWith("eth:") ? address.slice(4) : address;
-    setSearchedAddress(trimmedAddress.trim());
+    setInputValue(address);
+
+    let trimmedAddress = address.startsWith("eth:") ? address.slice(4) : address;
+    trimmedAddress = trimmedAddress.trim();
+
+    if (!trimmedAddress) {
+      setSearchedAddress("");
+    } else if (isAddress(trimmedAddress)) {
+      setSearchedAddress(trimmedAddress);
+    }
   };
 
   return (
@@ -34,12 +45,12 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
         <div className="flex-grow">
           <AddressInput
             placeholder="Enter an Ethereum address or ENS name to get started"
-            value={searchedAddress}
+            value={inputValue}
             onChange={handleAddressChange}
           />
         </div>
       </div>
-      <div className="col-start-11 col-end-13">{/* Additional content, perhaps history?*/}</div>
+      <div className="col-start-11 col-end-13">{/* Additional content, perhaps history? */}</div>
     </div>
   );
 };
