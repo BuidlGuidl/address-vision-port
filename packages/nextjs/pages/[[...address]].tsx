@@ -64,7 +64,7 @@ const Home: NextPage = () => {
   return (
     <>
       <MetaHeader />
-      <Navbar searchedAddress={searchedAddress} setSearchedAddress={setSearchedAddress} />
+      <Navbar setSearchedAddress={setSearchedAddress} />
 
       {previousAddresses.length > 0 && !searchedAddress && (
         <div className="relative flex flex-grow flex-col items-center top-10">
