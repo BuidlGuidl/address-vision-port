@@ -1963,6 +1963,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.39.0
     "@uniswap/sdk-core": ^4.0.1
     "@uniswap/v2-sdk": ^3.0.1
+    "@yudiel/react-qr-scanner": ^1.2.6
     autoprefixer: ^10.4.12
     blo: ^1.0.1
     daisyui: ^3.5.1
@@ -3860,6 +3861,38 @@ __metadata:
     "@walletconnect/window-getters": ^1.0.1
     tslib: 1.14.1
   checksum: e82aea7195c6fe95c00e87bb38051c5549838c2e8302da94f1afa48206f79f0b620166c9820f847494505d282d1568e2086a1561b0493d2d0a1fa115f9106aef
+  languageName: node
+  linkType: hard
+
+"@yudiel/react-qr-scanner@npm:^1.2.6":
+  version: 1.2.6
+  resolution: "@yudiel/react-qr-scanner@npm:1.2.6"
+  dependencies:
+    "@zxing/library": ^0.20.0
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  checksum: 85a621c6eae0ae052f8f9dfe1bf11726fa17b7192be15bd13ee9c7c70ae6388511f2ae309f852a075c487c5cf4e7b258040b83d4b3e4e485fbbdbfa4163d1827
+  languageName: node
+  linkType: hard
+
+"@zxing/library@npm:^0.20.0":
+  version: 0.20.0
+  resolution: "@zxing/library@npm:0.20.0"
+  dependencies:
+    "@zxing/text-encoding": ~0.9.0
+    ts-custom-error: ^3.2.1
+  dependenciesMeta:
+    "@zxing/text-encoding":
+      optional: true
+  checksum: ba2d0e4d6213e74426fdaf096cd8af14f1c28c6d5d872e42d363ee67507d2b1d1c3a777395522df116670e5fdf59d799b48533465c7311ee09bb8ba3fbbd0e69
+  languageName: node
+  linkType: hard
+
+"@zxing/text-encoding@npm:~0.9.0":
+  version: 0.9.0
+  resolution: "@zxing/text-encoding@npm:0.9.0"
+  checksum: c23b12aee7639382e4949961304a1294776afaffa40f579e09ffecd0e5e68cf26ef3edd75009de46da8a536e571448755ca68b3e2ea707d53793c0edb2e2c34a
   languageName: node
   linkType: hard
 
@@ -13343,6 +13376,13 @@ __metadata:
   bin:
     write-markdown: dist/write-markdown.js
   checksum: f74a3461891c2a52cc3fd850ad53e983972ba8208410c441a4491f66d15e5d5ea6bed696cbdb54427d6b798b902f841f0c9d3ed13468c2e179285b7507df7a0d
+  languageName: node
+  linkType: hard
+
+"ts-custom-error@npm:^3.2.1":
+  version: 3.3.1
+  resolution: "ts-custom-error@npm:3.3.1"
+  checksum: 50a1e825fced68d70049bd8d282379a635e43aa023a370fa8e736b12a6edba7f18a2d731fa194ac35303a8b625be56e121bdb31d8a0318250d1a8b277059fce3
   languageName: node
   linkType: hard
 
