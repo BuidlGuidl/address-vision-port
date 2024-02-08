@@ -36,10 +36,17 @@ export const AddressInput = ({ value, name, placeholder, onChange, disabled }: C
 
   // ens => address
   useEffect(() => {
+    if (!isENS(value)) {
+      setEnteredEnsName(undefined);
+    }
+  }, [value]);
+
+  // ens => address
+  useEffect(() => {
     if (!ensAddress) return;
 
     // ENS resolved successfully
-    setEnteredEnsName(value);
+    setEnteredEnsName(value); // Consider if this needs to be updated based on new logic
     onChange(ensAddress);
   }, [ensAddress, onChange, value]);
 
