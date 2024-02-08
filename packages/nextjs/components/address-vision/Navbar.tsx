@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { QrScanner } from "@yudiel/react-qr-scanner";
 import { isAddress } from "viem";
@@ -47,6 +47,18 @@ export const Navbar = ({ setSearchedAddress }: NavbarProps) => {
   const closeScanner = () => {
     setIsScannerVisible(false);
   };
+
+  useEffect(() => {
+    if (!router.isReady || !router.query.address) return;
+
+    const addressArr = router.query.address;
+    const addressFromURL = addressArr[0];
+
+    if (isAddress(addressFromURL)) {
+      setInputValue(addressFromURL);
+      handleAddressChange(addressFromURL);
+    }
+  }, [router.query]);
 
   return (
     <div className="navbar sticky top-0 z-20 grid min-h-0 flex-shrink-0 grid-cols-12 justify-between bg-base-100 px-0 shadow-md shadow-secondary sm:px-2 lg:static">
