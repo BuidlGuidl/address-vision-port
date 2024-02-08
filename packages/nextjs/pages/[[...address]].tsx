@@ -22,8 +22,9 @@ const Home: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    if (isAddress(searchedAddress) && !previousAddresses.includes(searchedAddress)) {
-      const updatedAddresses = [searchedAddress, ...previousAddresses];
+    if (isAddress(searchedAddress)) {
+      const filteredAddresses = previousAddresses.filter(address => address !== searchedAddress);
+      const updatedAddresses = [searchedAddress, ...filteredAddresses];
       localStorage.setItem("searchedAddresses", JSON.stringify(updatedAddresses));
       setPreviousAddresses(updatedAddresses);
     }
