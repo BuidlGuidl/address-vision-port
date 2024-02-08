@@ -114,7 +114,7 @@ export const Address = ({
   const getTextSizeClass = (ensLength: number) => {
     if (isSmallCard) {
       if (ensLength <= 17) return "text-xl";
-      if (ensLength <= 22) return "text-md";
+      if (ensLength <= 21) return "text-md";
       if (ensLength <= 26) return "text-sm";
       return "text-base";
     } else {
