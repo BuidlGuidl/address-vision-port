@@ -119,7 +119,7 @@ export const Address = ({
       return "text-base";
     } else {
       if (ensLength <= 17) return "text-4xl";
-      if (ensLength <= 22) return "text-3xl";
+      if (ensLength <= 21) return "text-3xl";
       if (ensLength <= 26) return "text-2xl";
       return "text-xl";
     }
