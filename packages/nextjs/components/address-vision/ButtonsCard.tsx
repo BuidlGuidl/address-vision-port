@@ -81,7 +81,7 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
         <div className="card-body">
           <div className="text-xl flex">
             <p>This is a contract, see it on</p>
-            <Link href={`https://abi.ninja/${address}/mainnet`} className="flex underline items-center">
+            <Link href={`https://abi.ninja/${address}/1`} className="flex underline items-center">
               <Image src="/abininja-logo.svg" width={50} height={50} alt="abi.ninja logo" />
               abi.ninja
             </Link>
