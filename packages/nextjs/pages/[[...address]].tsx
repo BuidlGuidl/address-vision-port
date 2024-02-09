@@ -23,12 +23,14 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (isAddress(searchedAddress)) {
-      const filteredAddresses = previousAddresses.filter(address => address !== searchedAddress);
-      const updatedAddresses = [searchedAddress, ...filteredAddresses];
-      localStorage.setItem("searchedAddresses", JSON.stringify(updatedAddresses));
-      setPreviousAddresses(updatedAddresses);
+      setPreviousAddresses(prevAddresses => {
+        const filteredAddresses = prevAddresses.filter(address => address !== searchedAddress);
+        const updatedAddresses = [searchedAddress, ...filteredAddresses];
+        localStorage.setItem("searchedAddresses", JSON.stringify(updatedAddresses));
+        return updatedAddresses;
+      });
     }
-  }, [searchedAddress, previousAddresses]);
+  }, [searchedAddress]);
 
   useEffect(() => {
     if (router.query.address && Array.isArray(router.query.address)) {
