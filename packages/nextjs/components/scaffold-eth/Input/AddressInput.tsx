@@ -34,6 +34,12 @@ export const AddressInput = ({ value, name, placeholder, onChange, disabled }: C
     cacheTime: 30_000,
   });
 
+  useEffect(() => {
+    if (!isENS(value)) {
+      setEnteredEnsName(undefined);
+    }
+  }, [value]);
+
   // ens => address
   useEffect(() => {
     if (!ensAddress) return;
