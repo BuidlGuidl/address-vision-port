@@ -1,41 +1,31 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { QrScanner } from "@yudiel/react-qr-scanner";
-import { isAddress } from "viem";
+import { Address } from "viem";
 import { QrCodeIcon } from "@heroicons/react/24/outline";
 import { AddressInput } from "~~/components/scaffold-eth";
 
 interface NavbarProps {
+  searchedAddress: Address;
   setSearchedAddress: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const Navbar = ({ setSearchedAddress }: NavbarProps) => {
+export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => {
   const router = useRouter();
 
-  const [inputValue, setInputValue] = useState("");
   const [isScannerVisible, setIsScannerVisible] = useState(false);
 
   const handleLogoClick = () => {
     setSearchedAddress("");
-    setInputValue("");
     router.push("/", undefined, { shallow: true });
   };
 
   const handleAddressChange = (address: string) => {
-    setInputValue(address);
-
-    let trimmedAddress = address.startsWith("eth:") ? address.slice(4) : address;
-    trimmedAddress = trimmedAddress.trim();
-
-    if (!trimmedAddress) {
-      setSearchedAddress("");
-    } else if (isAddress(trimmedAddress)) {
-      setSearchedAddress(trimmedAddress);
-    }
+    const trimmedAddress = address.startsWith("eth:") ? address.slice(4) : address;
+    setSearchedAddress(trimmedAddress.trim());
   };
 
   const handleDecode = (result: string) => {
-    setInputValue(result);
     handleAddressChange(result);
     setIsScannerVisible(false);
   };
@@ -62,13 +52,13 @@ export const Navbar = ({ setSearchedAddress }: NavbarProps) => {
         <div className="flex-grow relative">
           <AddressInput
             placeholder="Enter an Ethereum address or ENS name to get started"
-            value={inputValue}
+            value={searchedAddress}
             onChange={handleAddressChange}
           />
           <button
             onClick={openScanner}
             className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-2 py-1 ${
-              inputValue !== "" ? "mr-8" : ""
+              searchedAddress !== "" ? "mr-8" : ""
             }`}
           >
             <QrCodeIcon className="h-6 w-6" />

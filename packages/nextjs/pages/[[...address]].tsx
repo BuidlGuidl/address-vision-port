@@ -67,7 +67,7 @@ const Home: NextPage = () => {
   return (
     <>
       <MetaHeader />
-      <Navbar setSearchedAddress={setSearchedAddress} />
+      <Navbar searchedAddress={searchedAddress} setSearchedAddress={setSearchedAddress} />
 
       {previousAddresses.length > 0 && !searchedAddress && (
         <div className="relative flex flex-grow flex-col items-center top-10">
@@ -83,7 +83,7 @@ const Home: NextPage = () => {
                   isSmallCard={true}
                   removeAddress={() => removeAddress(address)}
                 />
-              ))}{" "}
+              ))}
             </div>
             <div className="absolute -bottom-1 left-0 right-0 h-20 bg-gradient-to-b from-transparent to-base-200"></div>
           </div>
