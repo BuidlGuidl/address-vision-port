@@ -66,11 +66,6 @@ const Home: NextPage = () => {
     }
   }, [router.query.address, router.asPath]);
 
-  useEffect(() => {
-    console.log("searchedAddress", searchedAddress);
-    console.log("searchedEns", searchedEns);
-  }, [searchedAddress, searchedEns]);
-
   let cardWidthClass = "lg:w-1/3";
   if (!isLoading && !balance && isAddress(searchedAddress)) {
     cardWidthClass = "lg:w-1/2";
