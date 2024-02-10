@@ -151,7 +151,7 @@ export const Address = ({
         <a
           className={`flex items-center ${isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`}`}
           target={"_self"}
-          href={`/${address}`}
+          href={ens ? `/${ens}` : `/${address}`}
           rel="noopener noreferrer"
         >
           <BlockieAvatar

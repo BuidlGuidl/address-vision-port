@@ -2,13 +2,22 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import type { NextPage } from "next";
 import { Address, isAddress } from "viem";
+import { createPublicClient, http } from "viem";
+import { mainnet } from "viem/chains";
+import { normalize } from "viem/ens";
 import * as chains from "wagmi/chains";
 import { MetaHeader } from "~~/components/MetaHeader";
 import { AddressCard, ButtonsCard, Navbar, NetworkCard, QRCodeCard } from "~~/components/address-vision/";
 import { useAccountBalance } from "~~/hooks/scaffold-eth";
 
+export const publicClient = createPublicClient({
+  chain: mainnet,
+  transport: http(),
+});
+
 const Home: NextPage = () => {
   const [searchedAddress, setSearchedAddress] = useState("");
+  const [searchedEns, setSearchedEns] = useState("");
   const [previousAddresses, setPreviousAddresses] = useState<Address[]>([]);
   const router = useRouter();
 
@@ -29,27 +38,38 @@ const Home: NextPage = () => {
         localStorage.setItem("searchedAddresses", JSON.stringify(updatedAddresses));
         return updatedAddresses;
       });
-    }
-  }, [searchedAddress]);
-
-  useEffect(() => {
-    if (router.query.address && Array.isArray(router.query.address)) {
-      const [address] = router.query.address;
-      if (address) {
-        setSearchedAddress(address);
-      }
-    }
-  }, [router.query]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      if (searchedAddress && isAddress(searchedAddress)) {
+      if (!searchedEns) {
         router.push(`/${searchedAddress}`, undefined, { shallow: true });
-      } else if (!searchedAddress) {
-        router.push("/", undefined, { shallow: true });
       }
-    }, 200); // @remind not the best solution
+    }
   }, [searchedAddress]);
+
+  useEffect(() => {
+    if (router.query.address) {
+      const [address] = router.query.address as string;
+      if (isAddress(address)) {
+        setSearchedAddress(address);
+      } else if (/\.eth$/.test(address)) {
+        setSearchedEns(address);
+        const intendedPath = `/${address}`;
+        if (router.asPath !== intendedPath) {
+          router.push(intendedPath, undefined, { shallow: true });
+        }
+        const resolveEns = async () => {
+          const ensAddress = await publicClient.getEnsAddress({
+            name: normalize(address),
+          });
+          setSearchedAddress(ensAddress as Address);
+        };
+        resolveEns();
+      }
+    }
+  }, [router.query.address, router.asPath]);
+
+  useEffect(() => {
+    console.log("searchedAddress", searchedAddress);
+    console.log("searchedEns", searchedEns);
+  }, [searchedAddress, searchedEns]);
 
   let cardWidthClass = "lg:w-1/3";
   if (!isLoading && !balance && isAddress(searchedAddress)) {
