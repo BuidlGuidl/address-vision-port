@@ -1,18 +1,31 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import type { NextPage } from "next";
-import { Address, isAddress } from "viem";
+import { isAddress } from "viem";
+import { createPublicClient, http } from "viem";
+import { mainnet } from "viem/chains";
+import { normalize } from "viem/ens";
 import * as chains from "wagmi/chains";
 import { MetaHeader } from "~~/components/MetaHeader";
-import { AddressCard, ButtonsCard, Navbar, NetworkCard, QRCodeCard } from "~~/components/address-vision/";
+import {
+  AddressDetailsComponent,
+  Navbar,
+  PreviousSearchesComponent,
+  WelcomeMessage,
+} from "~~/components/address-vision/";
 import { useAccountBalance } from "~~/hooks/scaffold-eth";
 
-const Home: NextPage = () => {
-  const [searchedAddress, setSearchedAddress] = useState("");
-  const [previousAddresses, setPreviousAddresses] = useState<Address[]>([]);
-  const router = useRouter();
+export const publicClient = createPublicClient({
+  chain: mainnet,
+  transport: http(),
+});
 
-  const { balance, isLoading } = useAccountBalance(chains.mainnet, searchedAddress);
+const Home: NextPage = () => {
+  const [currentAddress, setCurrentAddress] = useState("");
+  const [displayAddress, setDisplayAddress] = useState("");
+  const [previousAddresses, setPreviousAddresses] = useState<string[]>([]);
+  const router = useRouter();
+  const { balance, isLoading } = useAccountBalance(chains.mainnet, currentAddress);
 
   useEffect(() => {
     const savedAddresses = localStorage.getItem("searchedAddresses");
@@ -22,123 +35,77 @@ const Home: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    if (isAddress(searchedAddress)) {
-      setPreviousAddresses(prevAddresses => {
-        const filteredAddresses = prevAddresses.filter(address => address !== searchedAddress);
-        const updatedAddresses = [searchedAddress, ...filteredAddresses];
-        localStorage.setItem("searchedAddresses", JSON.stringify(updatedAddresses));
-        return updatedAddresses;
-      });
+    if (currentAddress && isAddress(currentAddress)) {
+      updateURLAndPreviousAddresses(displayAddress, currentAddress);
     }
-  }, [searchedAddress]);
+  }, [currentAddress, displayAddress]);
 
   useEffect(() => {
-    if (router.query.address && Array.isArray(router.query.address)) {
-      const [address] = router.query.address;
-      if (address) {
-        setSearchedAddress(address);
+    const processQueryAddress = async () => {
+      const addressFromQuery = Array.isArray(router.query.address) ? router.query.address[0] : router.query.address;
+      if (!addressFromQuery) return;
+
+      setDisplayAddress(addressFromQuery);
+
+      if (addressFromQuery.endsWith(".eth") || addressFromQuery.endsWith(".xyz")) {
+        try {
+          const resolvedAddress = await publicClient.getEnsAddress({ name: normalize(addressFromQuery) });
+          setCurrentAddress(resolvedAddress ?? "");
+        } catch (error) {
+          console.error("Error resolving ENS name:", error);
+          setCurrentAddress("");
+        }
+      } else {
+        try {
+          const ensName = await publicClient.getEnsName({ address: addressFromQuery });
+          setDisplayAddress(ensName ?? addressFromQuery);
+          setCurrentAddress(addressFromQuery);
+        } catch (error) {
+          console.error("Error reverse resolving Ethereum address:", error);
+          setCurrentAddress(addressFromQuery);
+        }
       }
-    }
+    };
+
+    processQueryAddress();
   }, [router.query]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (searchedAddress && isAddress(searchedAddress)) {
-        router.push(`/${searchedAddress}`, undefined, { shallow: true });
-      } else if (!searchedAddress) {
-        router.push("/", undefined, { shallow: true });
-      }
-    }, 200); // @remind not the best solution
-  }, [searchedAddress]);
+  const updateURLAndPreviousAddresses = (displayAddress: string, resolvedAddress: string) => {
+    router.replace(`/${displayAddress}`, undefined, { shallow: true });
 
-  let cardWidthClass = "lg:w-1/3";
-  if (!isLoading && !balance && isAddress(searchedAddress)) {
-    cardWidthClass = "lg:w-1/2";
-  }
+    if (!previousAddresses.includes(resolvedAddress)) {
+      const updatedAddresses = [resolvedAddress, ...previousAddresses];
+      setPreviousAddresses(updatedAddresses);
+      localStorage.setItem("searchedAddresses", JSON.stringify(updatedAddresses));
+    }
+  };
 
-  const removeAddress = (addressToRemove: Address) => {
+  const removeAddressFromPrevious = (addressToRemove: string) => {
     const updatedAddresses = previousAddresses.filter(address => address !== addressToRemove);
     setPreviousAddresses(updatedAddresses);
     localStorage.setItem("searchedAddresses", JSON.stringify(updatedAddresses));
   };
 
-  const gridHeightClass = previousAddresses.length > 8 ? "md:h-[330px]" : "md:h-[220px]";
+  const cardWidthClass = isLoading || balance ? "lg:w-1/3" : "lg:w-1/2";
+
+  const handleLogoClick = () => {
+    setDisplayAddress("");
+    setCurrentAddress("");
+    router.push("/", undefined, { shallow: true });
+  };
 
   return (
     <>
       <MetaHeader />
-      <Navbar searchedAddress={searchedAddress} setSearchedAddress={setSearchedAddress} />
+      <Navbar currentAddress={currentAddress} setCurrentAddress={setCurrentAddress} handleLogoClick={handleLogoClick} />
 
-      {previousAddresses.length > 0 && !searchedAddress && (
-        <div className="relative flex flex-grow flex-col items-center top-10">
-          <h2 className="text-3xl mb-4">Previous Searches</h2>
-          <div className="relative">
-            <div
-              className={`pb-12 px-8 grid grid-cols-1 h-[500px] md:grid-cols-3 lg:grid-cols-4 gap-4 ${gridHeightClass} overflow-y-scroll`}
-            >
-              {previousAddresses.map(address => (
-                <AddressCard
-                  key={address}
-                  address={address}
-                  isSmallCard={true}
-                  removeAddress={() => removeAddress(address)}
-                />
-              ))}
-            </div>
-            <div className="absolute -bottom-1 left-0 right-0 h-20 bg-gradient-to-b from-transparent to-base-200"></div>
-          </div>
-        </div>
+      {previousAddresses.length > 0 && !currentAddress && (
+        <PreviousSearchesComponent previousAddresses={previousAddresses} removeAddress={removeAddressFromPrevious} />
       )}
 
-      {searchedAddress ? (
-        <div className="flex w-full flex-grow flex-col items-center justify-center gap-4 p-4 md:mt-4">
-          <div className="flex flex-wrap">
-            <div className={`w-full flex-wrap space-y-4 p-4 sm:w-1/2 ${cardWidthClass}`}>
-              <AddressCard address={searchedAddress} />
-              <div className="w-[370px] md:hidden lg:hidden">
-                <QRCodeCard address={searchedAddress} />
-              </div>
-              <ButtonsCard address={searchedAddress} />
+      {currentAddress && <AddressDetailsComponent currentAddress={currentAddress} cardWidthClass={cardWidthClass} />}
 
-              <NetworkCard address={searchedAddress} chain={chains.arbitrum} />
-              <div className="lg:hidden">
-                <NetworkCard address={searchedAddress} chain={chains.polygon} />
-              </div>
-              <NetworkCard address={searchedAddress} chain={chains.base} />
-              <div className="space-y-4 md:hidden lg:hidden">
-                <NetworkCard address={searchedAddress} chain={chains.mainnet} />
-                <NetworkCard address={searchedAddress} chain={chains.optimism} />
-              </div>
-            </div>
-
-            <div className="w-full space-y-4 p-4 hidden sm:w-1/2 md:block lg:block lg:w-1/3">
-              <QRCodeCard address={searchedAddress} />
-              <div className="lg:hidden">
-                <NetworkCard address={searchedAddress} chain={chains.mainnet} />
-              </div>
-              <NetworkCard address={searchedAddress} chain={chains.optimism} />
-            </div>
-
-            <div className="w-full space-y-4 p-4 hidden sm:w-1/2 md:hidden lg:block lg:w-1/3">
-              <NetworkCard address={searchedAddress} chain={chains.mainnet} />
-
-              <NetworkCard address={searchedAddress} chain={chains.polygon} />
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div
-          className={`relative flex flex-grow flex-col items-center ${
-            previousAddresses.length > 0 ? "xl:justify-start" : "justify-center"
-          }`}
-        >
-          <div className="mb-4 text-9xl">👀</div>
-          <h1 className="mb-4 text-center text-4xl font-bold">Welcome to address.vision!</h1>
-          <p className="mb-4 text-center text-xl">
-            To get started, enter an Ethereum address or ENS name in the search bar above.
-          </p>
-        </div>
-      )}
+      {!currentAddress && <WelcomeMessage previousAddresses={previousAddresses} />}
     </>
   );
 };
