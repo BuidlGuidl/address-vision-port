@@ -11,7 +11,6 @@ interface NavbarProps {
 }
 
 export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => {
-  console.log("Navbar searchedAddress:", searchedAddress);
   const router = useRouter();
 
   const [isScannerVisible, setIsScannerVisible] = useState(false);
@@ -19,7 +18,7 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
 
   useEffect(() => {
     setInputValue(searchedAddress);
-  }, []);
+  }, [searchedAddress]);
 
   useEffect(() => {
     const trimmedAddress = inputValue.startsWith("eth:") ? inputValue.slice(4) : inputValue;
