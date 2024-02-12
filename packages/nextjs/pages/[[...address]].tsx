@@ -9,6 +9,7 @@ import * as chains from "wagmi/chains";
 import { MetaHeader } from "~~/components/MetaHeader";
 import { AddressCard, ButtonsCard, Navbar, NetworkCard, QRCodeCard } from "~~/components/address-vision/";
 import { useAccountBalance } from "~~/hooks/scaffold-eth";
+import { notification } from "~~/utils/scaffold-eth";
 
 export const publicClient = createPublicClient({
   chain: mainnet,
@@ -46,7 +47,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (router.query.address) {
-      const [address] = router.query.address as string;
+      const address = Array.isArray(router.query.address) ? router.query.address[0] : router.query.address;
       if (isAddress(address)) {
         setSearchedAddress(address);
       } else if (/\.eth$/.test(address)) {
@@ -56,10 +57,27 @@ const Home: NextPage = () => {
           router.push(intendedPath, undefined, { shallow: true });
         }
         const resolveEns = async () => {
-          const ensAddress = await publicClient.getEnsAddress({
-            name: normalize(address),
-          });
-          setSearchedAddress(ensAddress as Address);
+          try {
+            const ensAddress = await publicClient.getEnsAddress({
+              name: normalize(address),
+            });
+            if (ensAddress && isAddress(ensAddress)) {
+              setSearchedAddress(ensAddress as Address);
+            } else {
+              notification.error("ENS name not found or does not resolve to a valid address.", {
+                position: "bottom-center",
+              });
+              setSearchedAddress("");
+              setSearchedEns("");
+            }
+          } catch (error) {
+            console.error("Error resolving ENS:", error);
+            notification.error("Failed to resolve ENS name. Please try again.", {
+              position: "bottom-center",
+            });
+            setSearchedAddress("");
+            setSearchedEns("");
+          }
         };
         resolveEns();
       }
