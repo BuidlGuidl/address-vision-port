@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { QrScanner } from "@yudiel/react-qr-scanner";
-import { Address } from "viem";
+import { Address, isAddress } from "viem";
 import { QrCodeIcon } from "@heroicons/react/24/outline";
 import { AddressInput } from "~~/components/scaffold-eth";
 
@@ -14,19 +14,31 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
   const router = useRouter();
 
   const [isScannerVisible, setIsScannerVisible] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+
+  useEffect(() => {
+    setInputValue(searchedAddress);
+  }, [searchedAddress]);
+
+  useEffect(() => {
+    const trimmedAddress = inputValue.startsWith("eth:") ? inputValue.slice(4) : inputValue;
+
+    if (isAddress(trimmedAddress)) {
+      setSearchedAddress(trimmedAddress);
+    }
+    if (inputValue.endsWith(".eth")) {
+      router.push(`/${inputValue}`, undefined, { shallow: true });
+    }
+  }, [inputValue]);
 
   const handleLogoClick = () => {
     setSearchedAddress("");
+    setInputValue("");
     router.push("/", undefined, { shallow: true });
   };
 
-  const handleAddressChange = (address: string) => {
-    const trimmedAddress = address.startsWith("eth:") ? address.slice(4) : address;
-    setSearchedAddress(trimmedAddress.trim());
-  };
-
   const handleDecode = (result: string) => {
-    handleAddressChange(result);
+    setInputValue(result);
     setIsScannerVisible(false);
   };
 
@@ -52,8 +64,8 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
         <div className="flex-grow relative">
           <AddressInput
             placeholder="Enter an Ethereum address or ENS name to get started"
-            value={searchedAddress}
-            onChange={handleAddressChange}
+            value={inputValue}
+            onChange={setInputValue}
           />
           <button
             onClick={openScanner}
