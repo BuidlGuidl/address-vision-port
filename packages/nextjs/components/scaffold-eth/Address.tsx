@@ -127,7 +127,7 @@ export const Address = ({
 
   return (
     <div className="flex items-center">
-      {disableAddressLink ? (
+      {disableAddressLink || !isSmallCard ? (
         <div className="flex items-center">
           <BlockieAvatar
             address={address}
