@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { NftsCarousel } from "./NftsCarousel";
 import { TokensTable } from "./TokensTable";
 import { CovalentClient } from "@covalenthq/client-sdk";
 import { Address, isAddress } from "viem";
 import { Chain } from "wagmi";
+import { useNetworkBalancesStore } from "~~/services/store/store";
 import {
+  NETWORKS_EXTRA_DATA,
   getBlockExplorerAddressLink,
   getChainNameForCovalent,
   getChainNameForOpensea,
@@ -18,6 +21,8 @@ export const NetworkCard = ({ address, chain }: { address: Address; chain: Chain
   const [nfts, setNfts] = useState<any[]>([]);
   const [tokenBalances, setTokenBalances] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { setBalance } = useNetworkBalancesStore();
+  const currentNetworkData = NETWORKS_EXTRA_DATA[chain.id];
 
   const getNfts = async () => {
     const options = {
@@ -52,19 +57,25 @@ export const NetworkCard = ({ address, chain }: { address: Address; chain: Chain
   };
 
   const getTokens = async () => {
-    const res = await client.BalanceService.getTokenBalancesForWalletAddress(
-      getChainNameForCovalent(chain.id),
-      address,
-      {
-        nft: false,
-        noSpam: true,
-      },
-    );
-    if (res.data && res.data.items) {
-      const filteredTokens = res.data.items ? res.data.items.filter(token => token.quote !== 0) : [];
-      setTokenBalances(filteredTokens);
+    try {
+      const res = await client.BalanceService.getTokenBalancesForWalletAddress(
+        getChainNameForCovalent(chain.id),
+        address,
+        { nft: false, noSpam: true },
+      );
+
+      if (res.data && res.data.items) {
+        const filteredTokens = res.data.items.filter(token => token.quote !== 0);
+        setTokenBalances(filteredTokens);
+
+        const totalBalance = filteredTokens.reduce((acc, { quote }) => acc + quote, 0);
+        setBalance(chain.name, totalBalance, chain.id);
+      }
+    } catch (error) {
+      console.error(`Failed to fetch token balances for ${chain.name}:`, error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -138,14 +149,20 @@ export const NetworkCard = ({ address, chain }: { address: Address; chain: Chain
     return (
       <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl flex-grow">
         <div className="card-body">
-          <h2 className="card-title whitespace-nowrap">
+          <h2 className="card-title whitespace-nowrap flex items-center gap-2">
             <Link
               href={getBlockExplorerAddressLink(chain, address)}
               rel="noopener noreferrer"
               target="_blank"
-              className="flex"
+              className="flex items-center gap-2"
             >
-              {chain.name}
+              {currentNetworkData?.icon && (
+                <div className="relative w-6 h-6">
+                  {" "}
+                  <Image src={currentNetworkData.icon} alt={`${chain.name} icon`} width={24} height={24} />
+                </div>
+              )}
+              <span className="text-sm md:text-base">{chain.name}</span>
             </Link>
           </h2>
           <h3 className="font-bold">NFTs</h3>
