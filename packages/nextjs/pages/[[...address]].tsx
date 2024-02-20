@@ -8,6 +8,7 @@ import { normalize } from "viem/ens";
 import * as chains from "wagmi/chains";
 import { MetaHeader } from "~~/components/MetaHeader";
 import { AddressCard, ButtonsCard, Navbar, NetworkCard, QRCodeCard } from "~~/components/address-vision/";
+import { TotalBalanceCard } from "~~/components/address-vision/TotalBalanceCard";
 import { useAccountBalance } from "~~/hooks/scaffold-eth";
 import { notification } from "~~/utils/scaffold-eth";
 
@@ -128,17 +129,21 @@ const Home: NextPage = () => {
           <div className="flex flex-wrap">
             <div className={`w-full flex-wrap space-y-4 p-4 sm:w-1/2 ${cardWidthClass}`}>
               <AddressCard address={searchedAddress} />
+
               <div className="w-[370px] md:hidden lg:hidden">
                 <QRCodeCard address={searchedAddress} />
               </div>
+              <div className="lg:hidden">
+                <TotalBalanceCard />
+              </div>
               <ButtonsCard address={searchedAddress} />
-
               <NetworkCard address={searchedAddress} chain={chains.arbitrum} />
               <div className="lg:hidden">
                 <NetworkCard address={searchedAddress} chain={chains.polygon} />
               </div>
               <NetworkCard address={searchedAddress} chain={chains.base} />
               <div className="space-y-4 md:hidden lg:hidden">
+                <TotalBalanceCard />
                 <NetworkCard address={searchedAddress} chain={chains.mainnet} />
                 <NetworkCard address={searchedAddress} chain={chains.optimism} />
               </div>
@@ -153,6 +158,7 @@ const Home: NextPage = () => {
             </div>
 
             <div className="w-full space-y-4 p-4 hidden sm:w-1/2 md:hidden lg:block lg:w-1/3">
+              <TotalBalanceCard />
               <NetworkCard address={searchedAddress} chain={chains.mainnet} />
 
               <NetworkCard address={searchedAddress} chain={chains.polygon} />
