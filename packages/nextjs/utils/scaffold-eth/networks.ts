@@ -7,49 +7,67 @@ export type TChainAttributes = {
   // Used to fetch price by providing mainnet token address
   // for networks having native currency other than ETH
   nativeCurrencyTokenAddress?: string;
+  icon?: string;
 };
 
 export const NETWORKS_EXTRA_DATA: Record<string, TChainAttributes> = {
   [chains.hardhat.id]: {
     color: "#b8af0c",
+    icon: "/hardhat.png",
   },
   [chains.mainnet.id]: {
     color: "#ff8b9e",
+    icon: "/mainnet.svg",
   },
   [chains.sepolia.id]: {
     color: ["#5f4bb6", "#87ff65"],
+    icon: "/mainnet.svg",
   },
   [chains.goerli.id]: {
     color: "#0975F6",
+    icon: "/mainnet.svg",
   },
   [chains.gnosis.id]: {
     color: "#48a9a6",
+    icon: "/gnosis.svg",
   },
   [chains.polygon.id]: {
     color: "#2bbdf7",
     nativeCurrencyTokenAddress: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
+    icon: "/polygon.svg",
   },
   [chains.polygonMumbai.id]: {
     color: "#92D9FA",
     nativeCurrencyTokenAddress: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
+    icon: "/polygon.svg",
   },
   [chains.optimismGoerli.id]: {
     color: "#f01a37",
+    icon: "/optimism.svg",
   },
   [chains.optimism.id]: {
     color: "#f01a37",
+    icon: "/optimism.svg",
   },
   [chains.arbitrumGoerli.id]: {
     color: "#28a0f0",
+    icon: "/arbitrum.jpg",
   },
   [chains.arbitrum.id]: {
     color: "#28a0f0",
+    icon: "/arbitrum.jpg",
   },
   [chains.fantom.id]: {
     color: "#1969ff",
+    icon: "/fantom.svg",
   },
   [chains.fantomTestnet.id]: {
     color: "#1969ff",
+    icon: "/fantom.svg",
+  },
+  [chains.base.id]: {
+    color: "#1450EE",
+    icon: "/base.png",
   },
 };
 
