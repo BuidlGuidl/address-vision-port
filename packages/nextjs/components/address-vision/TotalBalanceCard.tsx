@@ -18,9 +18,9 @@ export const TotalBalanceCard = () => {
   };
 
   return (
-    <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl flex-grow">
+    <div className="card w-[370px] md:w-[425px] shadow-xl flex-grow bg-base-100">
       <div className="card-body">
-        <div className="p-6 mb-4 border rounded shadow-lg text-center">
+        <div className="p-6 mb-4 border rounded-box text-center bg-secondary">
           <h2 className="text-md lg:text-xl font-normal mb-2">Total Balance (all Networks)</h2>
           <p className="text-lg font-medium m-0">{isLoading ? "Loading..." : `$${formatNumber(getTotalBalance())}`}</p>
         </div>
@@ -28,7 +28,7 @@ export const TotalBalanceCard = () => {
           {Object.entries(balances)
             .filter(([, balance]) => balance.balance > 0)
             .map(([network, balance]) => (
-              <div key={network} className="py-3 px-2 border rounded shadow text-left">
+              <div key={network} className="py-3 pl-2 border rounded-box text-left bg-base-100">
                 <div className="flex items-center">
                   <Image
                     src={NETWORKS_EXTRA_DATA[balance.networkId]?.icon || "/unknown-network.svg"}
