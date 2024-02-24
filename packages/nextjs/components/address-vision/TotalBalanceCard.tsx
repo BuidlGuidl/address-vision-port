@@ -18,30 +18,34 @@ export const TotalBalanceCard = () => {
   };
 
   return (
-    <div className="card w-[370px] md:w-[425px] shadow-xl flex-grow bg-base-100">
-      <div className="card-body">
-        <div className="p-6 mb-4 border rounded-box text-center bg-secondary">
-          <h2 className="text-md lg:text-xl font-normal mb-2">Total Balance (all Networks)</h2>
-          <p className="text-lg font-medium m-0">{isLoading ? "Loading..." : `$${formatNumber(getTotalBalance())}`}</p>
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          {Object.entries(balances)
-            .filter(([, balance]) => balance.balance > 0)
-            .map(([network, balance]) => (
-              <div key={network} className="py-3 pl-2 border rounded-box text-left bg-base-100">
-                <div className="flex items-center">
-                  <Image
-                    src={NETWORKS_EXTRA_DATA[balance.networkId]?.icon || "/unknown-network.svg"}
-                    alt={`${network} icon`}
-                    width={16}
-                    height={16}
-                  />{" "}
-                  <span className="font-light text-xs ml-2">{network}</span>
-                </div>
-                <span className="block mt-2 text-sm">${formatNumber(balance.balance)}</span>
+    <div className="w-[370px] md:w-[425px] shadow-xl flex-grow bg-base-100 p-8 card">
+      <div className="mb-6 flex justify-center items-baseline">
+        <h2 className="text-md lg:text-xl font-normal mb-2">Total Balance:</h2>
+        <p className="text-lg font-medium m-0 ml-2">
+          {isLoading ? "Loading..." : `$${formatNumber(getTotalBalance())}`}
+        </p>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        {Object.entries(balances)
+          .filter(([, balance]) => balance.balance > 0)
+          .sort(([, balanceA], [, balanceB]) => balanceB.balance - balanceA.balance)
+          .map(([network, balance]) => (
+            <div
+              key={network}
+              className="py-3 border rounded-box text-left bg-base-100 flex flex-col justify-center items-center"
+            >
+              <div className="flex items-center justify-center">
+                <Image
+                  src={NETWORKS_EXTRA_DATA[balance.networkId]?.icon || "/unknown-network.svg"}
+                  alt={`${network} icon`}
+                  width={16}
+                  height={16}
+                />{" "}
+                <span className="font-light text-xs ml-2">{network}</span>
               </div>
-            ))}
-        </div>
+              <span className="block mt-2 text-sm text-center">${formatNumber(balance.balance)}</span>
+            </div>
+          ))}
       </div>
     </div>
   );
