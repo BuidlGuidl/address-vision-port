@@ -143,7 +143,6 @@ const Home: NextPage = () => {
               </div>
               <NetworkCard address={searchedAddress} chain={chains.base} />
               <div className="space-y-4 md:hidden lg:hidden">
-                <TotalBalanceCard />
                 <NetworkCard address={searchedAddress} chain={chains.mainnet} />
                 <NetworkCard address={searchedAddress} chain={chains.optimism} />
               </div>
