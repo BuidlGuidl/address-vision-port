@@ -18,3 +18,22 @@ export const useGlobalState = create<TGlobalState>(set => ({
   nativeCurrencyPrice: 0,
   setNativeCurrencyPrice: (newValue: number): void => set(() => ({ nativeCurrencyPrice: newValue })),
 }));
+
+type NetworkBalancesState = {
+  balances: Record<string, { balance: number; networkId: number }>;
+  setBalance: (networkName: string, balance: number, networkId: number) => void;
+  getTotalBalance: () => number;
+};
+
+export const useNetworkBalancesStore: () => NetworkBalancesState = create<NetworkBalancesState>((set, get) => ({
+  balances: {},
+  setBalance: (networkName: string, balance: number, networkId: number) =>
+    set(state => ({
+      balances: { ...state.balances, [networkName]: { balance, networkId } },
+    })),
+  getTotalBalance: () =>
+    Object.values(get().balances).reduce(
+      (acc: number, val: { balance: number; networkId: number }) => acc + val.balance,
+      0,
+    ),
+}));
