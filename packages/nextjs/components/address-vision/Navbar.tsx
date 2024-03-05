@@ -21,7 +21,12 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
   }, [searchedAddress]);
 
   useEffect(() => {
-    const trimmedAddress = inputValue.startsWith("eth:") ? inputValue.slice(4) : inputValue;
+    let trimmedAddress = inputValue;
+    if (trimmedAddress.startsWith("eth:")) {
+      trimmedAddress = trimmedAddress.slice(4);
+    } else if (trimmedAddress.startsWith("oeth:")) {
+      trimmedAddress = trimmedAddress.slice(5);
+    }
 
     if (isAddress(trimmedAddress)) {
       setSearchedAddress(trimmedAddress);
