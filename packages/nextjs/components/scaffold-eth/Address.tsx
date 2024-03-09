@@ -126,19 +126,19 @@ export const Address = ({
   };
 
   return (
-    <div className="flex items-center">
+    <div className="flex">
       {disableAddressLink || !isSmallCard ? (
-        <div className="flex items-center">
+        <div className="flex">
           <BlockieAvatar
             address={address}
             ensImage={ensAvatar}
             size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
           />
-          <span className={`ml-1.5 text-${size} font-normal`}>{displayAddress}</span>
+          <span className={`ml-1.5 mt-0.5 text-${size} font-normal`}>{displayAddress}</span>
         </div>
       ) : getTargetNetwork().id === hardhat.id ? (
         <Link href={`/${address}`}>
-          <a className={`flex items-center ${isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`}`}>
+          <a className={`flex ${isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`}`}>
             <BlockieAvatar
               address={address}
               ensImage={ensAvatar}
@@ -149,7 +149,7 @@ export const Address = ({
         </Link>
       ) : (
         <Link
-          className={`flex items-center ${isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`}`}
+          className={`flex ${isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`}`}
           target={"_self"}
           href={ens ? `/${ens}` : `/${address}`}
           rel="noopener noreferrer"
@@ -159,7 +159,7 @@ export const Address = ({
             ensImage={ensAvatar}
             size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
           />
-          <span className={`ml-1.5 font-normal`}>{displayAddress}</span>
+          <span className={`ml-1.5 -m-0.5 font-normal`}>{displayAddress}</span>
         </Link>
       )}
       {addressCopied ? (
