@@ -37,7 +37,7 @@ export const AddressCard = ({
   return (
     <div className={`card ${cardSizeClass} bg-base-100 shadow-xl flex flex-col p-6`}>
       <div className={`card-body p-0`}>
-        <h2 className={`card-title ${titleSizeClass}`}>
+        <h2 className={`card-title -mb-1 ${titleSizeClass}`}>
           {address && (
             <>
               <div className="hidden md:block">
