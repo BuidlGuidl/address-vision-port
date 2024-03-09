@@ -148,7 +148,7 @@ export const Address = ({
           </a>
         </Link>
       ) : (
-        <a
+        <Link
           className={`flex items-center ${isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`}`}
           target={"_self"}
           href={ens ? `/${ens}` : `/${address}`}
@@ -160,7 +160,7 @@ export const Address = ({
             size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
           />
           <span className={`ml-1.5 font-normal`}>{displayAddress}</span>
-        </a>
+        </Link>
       )}
       {addressCopied ? (
         <CheckCircleIcon
