@@ -21,7 +21,7 @@ export const NetworkCard = ({ address, chain }: { address: Address; chain: Chain
   const [nfts, setNfts] = useState<any[]>([]);
   const [tokenBalances, setTokenBalances] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const { setBalance } = useNetworkBalancesStore();
+  const { setBalance, resetBalances } = useNetworkBalancesStore();
   const currentNetworkData = NETWORKS_EXTRA_DATA[chain.id];
 
   const getNfts = async () => {
@@ -83,6 +83,7 @@ export const NetworkCard = ({ address, chain }: { address: Address; chain: Chain
     setNfts([]);
     setTokenBalances([]);
     if (address && isAddress(address)) {
+      resetBalances();
       getNfts();
       getTokens();
     }

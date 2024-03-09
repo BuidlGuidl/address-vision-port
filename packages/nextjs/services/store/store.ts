@@ -22,6 +22,7 @@ export const useGlobalState = create<TGlobalState>(set => ({
 type NetworkBalancesState = {
   balances: Record<string, { balance: number; networkId: number }>;
   setBalance: (networkName: string, balance: number, networkId: number) => void;
+  resetBalances: () => void;
   getTotalBalance: () => number;
 };
 
@@ -30,6 +31,10 @@ export const useNetworkBalancesStore: () => NetworkBalancesState = create<Networ
   setBalance: (networkName: string, balance: number, networkId: number) =>
     set(state => ({
       balances: { ...state.balances, [networkName]: { balance, networkId } },
+    })),
+  resetBalances: () =>
+    set(() => ({
+      balances: {},
     })),
   getTotalBalance: () =>
     Object.values(get().balances).reduce(
