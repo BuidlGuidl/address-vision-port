@@ -20,16 +20,16 @@ type TAddressProps = {
   isSmallCard?: boolean;
 };
 
-const blockieSizeMap = {
-  xs: 6,
-  sm: 7,
-  base: 8,
-  lg: 9,
-  xl: 10,
-  "2xl": 12,
-  "3xl": 15,
-  "4xl": 20,
-};
+// const blockieSizeMap = {
+//   xs: 6,
+//   sm: 7,
+//   base: 8,
+//   lg: 9,
+//   xl: 10,
+//   "2xl": 12,
+//   "3xl": 15,
+//   "4xl": 20,
+// };
 
 /**
  * Displays an address (or ENS) with a Blockie image and option to copy address.
@@ -126,41 +126,29 @@ export const Address = ({
   };
 
   return (
-    <div className="flex items-center">
+    <div className="flex">
       {disableAddressLink || !isSmallCard ? (
-        <div className="flex items-center">
-          <BlockieAvatar
-            address={address}
-            ensImage={ensAvatar}
-            size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
-          />
-          <span className={`ml-1.5 text-${size} font-normal`}>{displayAddress}</span>
+        <div className=" flex items-center justify-center ">
+          <BlockieAvatar address={address} ensImage={ensAvatar} size={16} />
+          <span className={`ml-1.5 -mt-2  text-${size} font-normal`}>{displayAddress}</span>
         </div>
       ) : getTargetNetwork().id === hardhat.id ? (
         <Link href={`/${address}`}>
-          <a className={`flex items-center ${isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`}`}>
-            <BlockieAvatar
-              address={address}
-              ensImage={ensAvatar}
-              size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
-            />
+          <a className={`flex ${isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`}`}>
+            <BlockieAvatar address={address} ensImage={ensAvatar} size={16} />
             <span className={`ml-1.5 font-normal`}>{displayAddress}</span>
           </a>
         </Link>
       ) : (
-        <a
-          className={`flex items-center ${isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`}`}
+        <Link
+          className={`flex ${isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`}`}
           target={"_self"}
           href={ens ? `/${ens}` : `/${address}`}
           rel="noopener noreferrer"
         >
-          <BlockieAvatar
-            address={address}
-            ensImage={ensAvatar}
-            size={(blockieSizeMap[size] * 24) / blockieSizeMap["base"]}
-          />
-          <span className={`ml-1.5 font-normal`}>{displayAddress}</span>
-        </a>
+          <BlockieAvatar address={address} ensImage={ensAvatar} size={10} />
+          <span className={`ml-1.5 mt-0.5 font-normal`}>{displayAddress}</span>
+        </Link>
       )}
       {addressCopied ? (
         <CheckCircleIcon

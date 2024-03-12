@@ -2,8 +2,15 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { QrScanner } from "@yudiel/react-qr-scanner";
 import { Address, isAddress } from "viem";
+import { createPublicClient, http } from "viem";
+import { mainnet } from "viem/chains";
 import { QrCodeIcon } from "@heroicons/react/24/outline";
 import { AddressInput } from "~~/components/scaffold-eth";
+
+const client = createPublicClient({
+  chain: mainnet,
+  transport: http(),
+});
 
 interface NavbarProps {
   searchedAddress: Address;
@@ -33,6 +40,12 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
     }
     if (inputValue.endsWith(".eth")) {
       router.push(`/${inputValue}`, undefined, { shallow: true });
+    } else if (isAddress(trimmedAddress)) {
+      async function getEnsName(address: string) {
+        const ensName = await client.getEnsName({ address });
+        router.push(`/${ensName || address}`, undefined, { shallow: true });
+      }
+      getEnsName(trimmedAddress);
     }
   }, [inputValue]);
 
