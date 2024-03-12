@@ -91,7 +91,7 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
               searchedAddress !== "" ? "mr-8" : ""
             }`}
           >
-            <QrCodeIcon className="h-6 w-6" />
+            <QrCodeIcon className="h-6 w-6 bg-base-200" />
           </button>
 
           {isScannerVisible && (
