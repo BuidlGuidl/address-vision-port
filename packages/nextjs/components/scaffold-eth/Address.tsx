@@ -129,7 +129,7 @@ export const Address = ({
     <div className="flex">
       {disableAddressLink || !isSmallCard ? (
         <div className=" flex items-center justify-center ">
-          <BlockieAvatar address={address} ensImage={ensAvatar} size={16} />
+          <BlockieAvatar address={address} ensImage={ensAvatar} size={20} />
           <span className={`ml-1.5 -mt-2  text-${size} font-normal`}>{displayAddress}</span>
         </div>
       ) : getTargetNetwork().id === hardhat.id ? (
