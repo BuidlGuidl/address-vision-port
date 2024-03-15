@@ -69,8 +69,8 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
   };
 
   return (
-    <div className="navbar sticky top-0 z-20 grid min-h-0 flex-shrink-0 grid-cols-12 justify-between bg-base-100 px-0 shadow-md shadow-secondary sm:px-2 lg:static">
-      <div className="col-start-4 flex flex-row items-center md:col-start-1 md:col-end-3">
+    <div className="navbar flex-col md:flex-row justify-center">
+      <div className="md:absolute left-6">
         <div onClick={handleLogoClick} className="mb-4 cursor-pointer text-4xl">
           👀
         </div>
@@ -78,7 +78,7 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
           address.vision
         </h1>
       </div>
-      <div className="col-start-2 col-end-12 row-start-2 flex justify-center md:col-start-4 md:col-end-10 md:row-auto">
+      <div className=" w-4/5 md:w-1/2">
         <div className="flex-grow relative">
           <AddressInput
             placeholder="Enter an Ethereum address or ENS name to get started"
@@ -115,7 +115,6 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
           )}
         </div>
       </div>
-      <div className="col-start-11 col-end-13">{/* Additional content, perhaps history? */}</div>
     </div>
   );
 };
