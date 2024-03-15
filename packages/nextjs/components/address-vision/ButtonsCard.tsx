@@ -116,7 +116,7 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
           <div>
             {safeOwners.map(owner => (
               <div key={owner} className="mb-1">
-                <AddressComp address={owner} />
+                <AddressComp address={owner} isSmallCard={true} />
               </div>
             ))}
           </div>
