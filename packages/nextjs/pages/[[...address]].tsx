@@ -108,7 +108,7 @@ const Home: NextPage = () => {
           <h2 className="text-2xl mb-4">Previous Searches</h2>
           <div className="relative">
             <div
-              className={`pb-12 px-8 grid grid-cols-1 h-[500px] md:grid-cols-3 lg:grid-cols-4 gap-4 ${gridHeightClass} overflow-y-scroll`}
+              className={`pb-12 px-8 grid grid-cols-1 h-36 md:grid-cols-3 lg:grid-cols-4 gap-4 ${gridHeightClass} overflow-y-scroll`}
             >
               {previousAddresses.map(address => (
                 <AddressCard
