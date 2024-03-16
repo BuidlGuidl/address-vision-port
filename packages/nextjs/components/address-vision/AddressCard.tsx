@@ -14,7 +14,7 @@ export const AddressCard = ({
   removeAddress?: () => void;
 }) => {
   const cardSizeClass = isSmallCard
-    ? "flex-shrink-0 w-[350px] md:w-[300px] max-w-[350px] h-[100px]"
+    ? "flex-shrink-0 w-[350px] md:w-[310px] max-w-[350px] h-[100px]"
     : "flex-shrink-0 w-[370px] md:w-[425px] max-w-[425px]";
   const titleSizeClass = isSmallCard ? "text-md" : "text-xl";
   const balanceSizeClass = isSmallCard ? "text-md pt-0" : "text-xl";
