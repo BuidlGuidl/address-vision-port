@@ -78,7 +78,7 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
           address.vision
         </h1>
       </div>
-      <div className=" w-4/5 md:w-1/2">
+      <div className="w-11/12 md:w-1/2">
         <div className="flex-grow relative">
           <AddressInput
             placeholder="Enter an Ethereum address or ENS name to get started"
