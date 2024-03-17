@@ -117,7 +117,7 @@ export const Address = ({
     <div className="flex">
       {disableAddressLink || !isSmallCard ? (
         <div className=" flex items-center justify-center ">
-          <BlockieAvatar address={address} ensImage={ensAvatar} size={20} />
+          <BlockieAvatar address={address} ensImage={ensAvatar} size={75} />
           <span
             className={`ml-1.5 -mt-2  ${
               isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`
@@ -133,7 +133,7 @@ export const Address = ({
           href={ens ? `/${ens}` : `/${address}`}
           rel="noopener noreferrer"
         >
-          <BlockieAvatar address={address} ensImage={ensAvatar} size={10} />
+          <BlockieAvatar address={address} ensImage={ensAvatar} size={35} />
           <span className={`ml-1.5 mt-0.5 font-normal`}>{displayAddress}</span>
         </Link>
       )}
