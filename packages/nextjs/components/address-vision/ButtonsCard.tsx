@@ -170,7 +170,7 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
             title="View on Etherscan"
             tabIndex={1}
             onClick={() => {
-              window.open("https://https://arbiscan.io//address/" + address, "_blank");
+              window.open("https://arbiscan.io/address/" + address, "_blank");
             }}
           >
             Arbiscan
