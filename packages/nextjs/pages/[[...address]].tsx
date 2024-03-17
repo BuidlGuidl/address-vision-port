@@ -105,10 +105,10 @@ const Home: NextPage = () => {
 
       {previousAddresses.length > 0 && !searchedAddress && (
         <div className="relative flex flex-grow flex-col items-center top-10">
-          <h2 className="text-3xl mb-4">Previous Searches</h2>
+          <h2 className="text-2xl mb-4">Previous Searches</h2>
           <div className="relative">
             <div
-              className={`pb-12 px-8 grid grid-cols-1 h-[500px] md:grid-cols-3 lg:grid-cols-4 gap-4 ${gridHeightClass} overflow-y-scroll`}
+              className={`pb-12 px-8 grid grid-cols-1 h-36 md:grid-cols-3 lg:grid-cols-4 gap-4 ${gridHeightClass} overflow-y-scroll`}
             >
               {previousAddresses.map(address => (
                 <AddressCard
@@ -119,7 +119,7 @@ const Home: NextPage = () => {
                 />
               ))}
             </div>
-            <div className="absolute -bottom-1 left-0 right-0 h-20 bg-gradient-to-b from-transparent to-base-200"></div>
+            <div className="absolute -bottom-1 left-0 right-0 h-10 md:h-20 bg-gradient-to-b from-transparent to-base-200"></div>
           </div>
         </div>
       )}
@@ -171,8 +171,8 @@ const Home: NextPage = () => {
           }`}
         >
           <div className="mb-4 text-9xl">👀</div>
-          <h1 className="mb-4 text-center text-4xl font-bold">Welcome to address.vision!</h1>
-          <p className="mb-4 text-center text-xl">
+          <h1 className="m-4 text-center text-4xl font-bold">Welcome to address.vision!</h1>
+          <p className="m-4 text-center text-xl">
             To get started, enter an Ethereum address or ENS name in the search bar above.
           </p>
         </div>

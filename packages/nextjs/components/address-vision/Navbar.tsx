@@ -71,14 +71,14 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
   return (
     <div className="navbar flex-col md:flex-row justify-center">
       <div className="md:absolute left-6">
-        <div onClick={handleLogoClick} className="mb-4 cursor-pointer text-4xl">
+        <div onClick={handleLogoClick} className="cursor-pointer text-4xl">
           👀
         </div>
-        <h1 onClick={handleLogoClick} className="ml-2 cursor-pointer text-2xl font-bold">
+        <h1 onClick={handleLogoClick} className="ml-2 mb-0 cursor-pointer text-2xl font-bold">
           address.vision
         </h1>
       </div>
-      <div className=" w-4/5 md:w-1/2">
+      <div className="w-11/12 md:w-1/2">
         <div className="flex-grow relative">
           <AddressInput
             placeholder="Enter an Ethereum address or ENS name to get started"

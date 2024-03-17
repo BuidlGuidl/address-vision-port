@@ -4,11 +4,10 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { isAddress } from "viem";
 import { useEnsName } from "wagmi";
 import { Chain } from "wagmi";
-import { hardhat } from "wagmi/chains";
 import * as chains from "wagmi/chains";
 import { ArrowTopRightOnSquareIcon, CheckCircleIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
-import { getBlockExplorerAddressLink, getTargetNetwork } from "~~/utils/scaffold-eth";
+import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
 
 type TAddressProps = {
   address?: string;
@@ -19,17 +18,6 @@ type TAddressProps = {
   isAddressCard?: boolean;
   isSmallCard?: boolean;
 };
-
-// const blockieSizeMap = {
-//   xs: 6,
-//   sm: 7,
-//   base: 8,
-//   lg: 9,
-//   xl: 10,
-//   "2xl": 12,
-//   "3xl": 15,
-//   "4xl": 20,
-// };
 
 /**
  * Displays an address (or ENS) with a Blockie image and option to copy address.
@@ -129,16 +117,15 @@ export const Address = ({
     <div className="flex">
       {disableAddressLink || !isSmallCard ? (
         <div className=" flex items-center justify-center ">
-          <BlockieAvatar address={address} ensImage={ensAvatar} size={20} />
-          <span className={`ml-1.5 -mt-2  text-${size} font-normal`}>{displayAddress}</span>
+          <BlockieAvatar address={address} ensImage={ensAvatar} size={75} />
+          <span
+            className={`ml-1.5 -mt-2  ${
+              isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`
+            } font-normal`}
+          >
+            {displayAddress}
+          </span>
         </div>
-      ) : getTargetNetwork().id === hardhat.id ? (
-        <Link href={`/${address}`}>
-          <a className={`flex ${isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`}`}>
-            <BlockieAvatar address={address} ensImage={ensAvatar} size={16} />
-            <span className={`ml-1.5 font-normal`}>{displayAddress}</span>
-          </a>
-        </Link>
       ) : (
         <Link
           className={`flex ${isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`}`}
@@ -146,7 +133,7 @@ export const Address = ({
           href={ens ? `/${ens}` : `/${address}`}
           rel="noopener noreferrer"
         >
-          <BlockieAvatar address={address} ensImage={ensAvatar} size={10} />
+          <BlockieAvatar address={address} ensImage={ensAvatar} size={35} />
           <span className={`ml-1.5 mt-0.5 font-normal`}>{displayAddress}</span>
         </Link>
       )}
