@@ -146,8 +146,15 @@ export const Address = ({
   }
 
   let textDisplaySize = size;
-  if (ens && ens?.length > 17) {
+  if (ens && ens?.length > 22) {
+    textDisplaySize = "xl";
+  } else if (ens && ens?.length > 17) {
     textDisplaySize = "3xl";
+  }
+
+  let iconSizes = "h-6 w-6";
+  if (textDisplaySize === "xl") {
+    iconSizes = "h-5 w-5";
   }
 
   return (
@@ -160,7 +167,7 @@ export const Address = ({
       <span className={`text-${textDisplaySize}`}>{displayAddress}</span>
       <div className="ml-2 flex gap-1">
         {addressCopied ? (
-          <CheckCircleIcon className="h-6 w-6 text-green-500" aria-hidden="true" />
+          <CheckCircleIcon className={`${iconSizes} text-green-500`} aria-hidden="true" />
         ) : (
           <CopyToClipboard
             text={address}
@@ -171,11 +178,11 @@ export const Address = ({
               }, 800);
             }}
           >
-            <DocumentDuplicateIcon className="h-6 w-6 hover:text-green-500 link" aria-hidden="true" />
+            <DocumentDuplicateIcon className={`${iconSizes}  hover:text-green-500 link`} aria-hidden="true" />
           </CopyToClipboard>
         )}
         <a href={blockExplorerLink} target="_blank" rel="noopener noreferrer">
-          <ArrowTopRightOnSquareIcon aria-hidden="true" className="h-6 w-6 hover:text-blue-600" />
+          <ArrowTopRightOnSquareIcon aria-hidden="true" className={`${iconSizes} hover:text-blue-600`} />
         </a>
       </div>
     </div>
