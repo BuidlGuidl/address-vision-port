@@ -126,10 +126,8 @@ const Home: NextPage = () => {
               <div className="w-[370px] md:hidden lg:hidden">
                 <QRCodeCard address={searchedAddress} />
               </div>
-              <div className="lg:hidden">
-                <TotalBalanceCard />
-              </div>
               <ButtonsCard address={searchedAddress} />
+              <TotalBalanceCard />
               <NetworkCard address={searchedAddress} chain={chains.arbitrum} />
               <div className="lg:hidden">
                 <NetworkCard address={searchedAddress} chain={chains.polygon} />
@@ -150,7 +148,6 @@ const Home: NextPage = () => {
             </div>
 
             <div className="w-full space-y-4 p-4 hidden sm:w-1/2 md:hidden lg:block lg:w-1/3">
-              <TotalBalanceCard />
               <NetworkCard address={searchedAddress} chain={chains.mainnet} />
 
               <NetworkCard address={searchedAddress} chain={chains.polygon} />
@@ -159,7 +156,7 @@ const Home: NextPage = () => {
         </div>
       ) : (
         <div
-          className={`relative flex flex-grow flex-col items-center ${
+          className={`flex flex-grow flex-col items-center ${
             previousAddresses.length > 0 ? "xl:justify-start" : "justify-center"
           }`}
         >
