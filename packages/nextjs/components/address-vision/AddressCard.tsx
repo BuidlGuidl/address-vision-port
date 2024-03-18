@@ -13,15 +13,15 @@ export const AddressCard = ({
 }) => {
   if (isSmallCard) {
     return (
-      <div className="flex justify-between items-center bg-base-300 p-0.5 rounded-full">
+      <div className="flex justify-between items-center bg-base-300 p-0.5 pr-2 rounded-full">
         <AddressComp address={address} isSmallCard={isSmallCard} size="xl" />
-        <TrashIcon className="h-5 w-5 mx-1 hover:text-red-500 link text-black" onClick={removeAddress} />
+        <TrashIcon className="h-5 w-5 mx-1 hover:text-red-500 link" onClick={removeAddress} />
       </div>
     );
   }
 
   return (
-    <div className="flex items-center bg-base-100 shadow-xl card">
+    <div className="flex w-[370px] md:w-[425px] items-center bg-base-100 shadow-xl card">
       <div className="card-body">
         <div className="card-title">
           <AddressComp address={address} size="4xl" />
