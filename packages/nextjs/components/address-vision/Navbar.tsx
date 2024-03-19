@@ -91,9 +91,9 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
                 setInputValue("");
                 setSearchedAddress("");
               }}
-              className={`absolute right-20 top-1/2 transform -translate-y-1/2 px-2 py-1`}
+              className={`absolute right-20 top-1/2 transform -translate-y-1/2 py-1`}
             >
-              <XMarkIcon className="h-6 w-6 bg-base-200" />
+              <XMarkIcon className="h-6 w-6 bg-base-200 bg-opacity-60 rounded-full hover:text-red-500" />
             </button>
           )}
           <button
