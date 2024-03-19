@@ -77,7 +77,9 @@ export const AddressInput = ({ value, name, placeholder, onChange, disabled }: C
                 }
               </span>
             ) : null}
-            <span className="pb-1 pl-3 pr-2 leading-none text-neutral">{enteredEnsName ?? ensName}</span>
+            <span className="hidden md:block pb-1 pl-3 pr-2 leading-none text-neutral">
+              {enteredEnsName ?? ensName}
+            </span>
           </div>
         )
       }
