@@ -149,9 +149,9 @@ export const Address = ({
   if (ens && ens?.length > 22) {
     textDisplaySize = "lg";
   } else if (ens && ens?.length > 17) {
-    textDisplaySize = "3xl";
-  } else if (ens && ens?.length > 12) {
     textDisplaySize = "2xl";
+  } else if (ens && ens?.length > 12) {
+    textDisplaySize = "3xl";
   }
 
   let iconSizes = "h-6 w-6";
