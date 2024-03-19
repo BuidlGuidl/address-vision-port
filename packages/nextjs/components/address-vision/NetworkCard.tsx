@@ -4,7 +4,6 @@ import Link from "next/link";
 import { NftsCarousel } from "./NftsCarousel";
 import { TokensTable } from "./TokensTable";
 import { CovalentClient } from "@covalenthq/client-sdk";
-import { useDarkMode } from "usehooks-ts";
 import { Address, isAddress } from "viem";
 import { Chain } from "wagmi";
 import { useNetworkBalancesStore } from "~~/services/store/store";
@@ -24,8 +23,6 @@ export const NetworkCard = ({ address, chain }: { address: Address; chain: Chain
   const [loading, setLoading] = useState(true);
   const { setBalance, resetBalances } = useNetworkBalancesStore();
   const currentNetworkData = NETWORKS_EXTRA_DATA[chain.id];
-
-  const { isDarkMode } = useDarkMode();
 
   const getNfts = async () => {
     const options = {
@@ -162,7 +159,6 @@ export const NetworkCard = ({ address, chain }: { address: Address; chain: Chain
             >
               {currentNetworkData?.icon && (
                 <div className="relative w-6 h-6">
-                  {" "}
                   <Image src={currentNetworkData.icon} alt={`${chain.name} icon`} width={24} height={24} />
                 </div>
               )}
@@ -170,20 +166,7 @@ export const NetworkCard = ({ address, chain }: { address: Address; chain: Chain
             </Link>
           </h2>
           <h3 className="font-bold">NFTs</h3>
-          <NftsCarousel nfts={nfts} chain={chain} />
-          {nfts.length !== 0 && (
-            <div className="self-end flex items-center gap-2 absolute bottom-60">
-              <p className="text-xs">See more on </p>
-              <Link href={`https://opensea.io/${address}`} rel="noopener noreferrer" target="_blank" className="flex">
-                <Image
-                  src={isDarkMode ? "/opensea-logo-light.svg" : "/opensea-logo-dark.svg"}
-                  alt="opensea logo"
-                  width={70}
-                  height={20}
-                />
-              </Link>
-            </div>
-          )}
+          <NftsCarousel nfts={nfts} chain={chain} address={address} />
           <h3 className="mt-4 font-bold">Tokens</h3>
           <TokensTable tokens={filteredTokens} />
         </div>

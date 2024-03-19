@@ -1,11 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useDarkMode } from "usehooks-ts";
+import { Address } from "viem";
 import { Chain } from "wagmi";
 import { getChainNameForOpensea } from "~~/utils/scaffold-eth";
 
-export const NftsCarousel = ({ nfts, chain }: { nfts: any[]; chain: Chain }) => {
+export const NftsCarousel = ({ nfts, chain, address }: { nfts: any[]; chain: Chain; address: Address }) => {
   const [isAtStart, setIsAtStart] = useState(true);
   const [isAtEnd, setIsAtEnd] = useState(false);
+
+  const { isDarkMode } = useDarkMode();
 
   const carouselRef = useRef<HTMLDivElement>(null);
 
@@ -72,6 +77,17 @@ export const NftsCarousel = ({ nfts, chain }: { nfts: any[]; chain: Chain }) => 
                 </a>
               </div>
             ))}
+          </div>
+          <div className="self-end flex items-start gap-2 pt-2">
+            <p className="text-xs m-0">See more on </p>
+            <Link href={`https://opensea.io/${address}`} rel="noopener noreferrer" target="_blank" className="flex">
+              <Image
+                src={isDarkMode ? "/opensea-logo-light.svg" : "/opensea-logo-dark.svg"}
+                alt="opensea logo"
+                width={70}
+                height={20}
+              />
+            </Link>
           </div>
         </div>
       ) : (
