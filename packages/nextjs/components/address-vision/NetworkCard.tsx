@@ -152,7 +152,7 @@ export const NetworkCard = ({ address, chain }: { address: Address; chain: Chain
   if (address && isValidEnsOrAddress(address)) {
     return (
       <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl flex-grow">
-        <div className="card-body">
+        <div className="card-body py-6">
           <h2 className="card-title whitespace-nowrap flex items-center gap-2">
             <Link
               href={getBlockExplorerAddressLink(chain, address)}
