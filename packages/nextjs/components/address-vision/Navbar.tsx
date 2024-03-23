@@ -4,7 +4,7 @@ import { QrScanner } from "@yudiel/react-qr-scanner";
 import { Address, isAddress } from "viem";
 import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
-import { QrCodeIcon } from "@heroicons/react/24/outline";
+import { QrCodeIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { AddressInput } from "~~/components/scaffold-eth";
 
 const client = createPublicClient({
@@ -85,10 +85,21 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
             value={inputValue}
             onChange={setInputValue}
           />
+          {inputValue && (
+            <button
+              onClick={() => {
+                setInputValue("");
+                setSearchedAddress("");
+              }}
+              className={`absolute right-20 top-1/2 transform -translate-y-1/2 py-1`}
+            >
+              <XMarkIcon className="h-6 w-6 bg-base-200 bg-opacity-60 rounded-full hover:text-red-500" />
+            </button>
+          )}
           <button
             onClick={openScanner}
             className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-2 py-1 ${
-              searchedAddress !== "" ? "mr-8" : ""
+              inputValue !== "" ? "mr-8" : ""
             }`}
           >
             <div>

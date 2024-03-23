@@ -149,7 +149,7 @@ export const NetworkCard = ({ address, chain }: { address: Address; chain: Chain
   if (address && isValidEnsOrAddress(address)) {
     return (
       <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl flex-grow">
-        <div className="card-body">
+        <div className="card-body py-6">
           <h2 className="card-title whitespace-nowrap flex items-center gap-2">
             <Link
               href={getBlockExplorerAddressLink(chain, address)}
@@ -159,7 +159,6 @@ export const NetworkCard = ({ address, chain }: { address: Address; chain: Chain
             >
               {currentNetworkData?.icon && (
                 <div className="relative w-6 h-6">
-                  {" "}
                   <Image src={currentNetworkData.icon} alt={`${chain.name} icon`} width={24} height={24} />
                 </div>
               )}

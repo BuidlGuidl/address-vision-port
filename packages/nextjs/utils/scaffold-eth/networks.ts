@@ -51,11 +51,11 @@ export const NETWORKS_EXTRA_DATA: Record<string, TChainAttributes> = {
   },
   [chains.arbitrumGoerli.id]: {
     color: "#28a0f0",
-    icon: "/arbitrum.jpg",
+    icon: "/arbitrum.svg",
   },
   [chains.arbitrum.id]: {
     color: "#28a0f0",
-    icon: "/arbitrum.jpg",
+    icon: "/arbitrum.svg",
   },
   [chains.fantom.id]: {
     color: "#1969ff",

@@ -9,6 +9,7 @@ import { getChainNameForOpensea } from "~~/utils/scaffold-eth";
 export const NftsCarousel = ({ nfts, chain, address }: { nfts: any[]; chain: Chain; address: Address }) => {
   const [isAtStart, setIsAtStart] = useState(true);
   const [isAtEnd, setIsAtEnd] = useState(false);
+
   const { isDarkMode } = useDarkMode();
 
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -77,8 +78,8 @@ export const NftsCarousel = ({ nfts, chain, address }: { nfts: any[]; chain: Cha
               </div>
             ))}
           </div>
-          <div className="self-end flex gap-2 absolute bottom-[-35px] right-3">
-            <p className="text-xs">See more on </p>
+          <div className="self-end flex items-start gap-2 pt-2">
+            <p className="text-xs m-0">See more on </p>
             <Link href={`https://opensea.io/${address}`} rel="noopener noreferrer" target="_blank" className="flex">
               <Image
                 src={isDarkMode ? "/opensea-logo-light.svg" : "/opensea-logo-dark.svg"}

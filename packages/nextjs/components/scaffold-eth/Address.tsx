@@ -13,10 +13,22 @@ type TAddressProps = {
   address?: string;
   disableAddressLink?: boolean;
   format?: "short" | "long";
-  size?: "xs" | "sm" | "base" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
+  size?: "xs" | "sm" | "base" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl";
   chain?: Chain;
   isAddressCard?: boolean;
   isSmallCard?: boolean;
+};
+
+const blockieSizeMap = {
+  xs: 6,
+  sm: 7,
+  base: 8,
+  lg: 9,
+  xl: 10,
+  "2xl": 12,
+  "3xl": 15,
+  "4xl": 20,
+  "5xl": 25,
 };
 
 /**
@@ -24,11 +36,9 @@ type TAddressProps = {
  */
 export const Address = ({
   address,
-  disableAddressLink,
   format,
   size = "base",
   chain = chains.mainnet,
-  isAddressCard,
   isSmallCard = false,
 }: TAddressProps) => {
   const [ens, setEns] = useState<string | null>();
@@ -99,79 +109,84 @@ export const Address = ({
     displayAddress = address;
   }
 
-  const getTextSizeClass = (ensLength: number) => {
-    if (isSmallCard) {
-      if (ensLength <= 17) return "text-xl";
-      if (ensLength <= 21) return "text-md";
-      if (ensLength <= 26) return "text-sm";
-      return "text-base";
-    } else {
-      if (ensLength <= 17) return "text-4xl";
-      if (ensLength <= 21) return "text-3xl";
-      if (ensLength <= 26) return "text-2xl";
-      return "text-xl";
-    }
-  };
-
-  return (
-    <div className="flex">
-      {disableAddressLink || !isSmallCard ? (
-        <div className=" flex items-center justify-center ">
-          <BlockieAvatar address={address} ensImage={ensAvatar} size={75} />
-          <span
-            className={`ml-1.5 -mt-2  ${
-              isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`
-            } font-normal`}
-          >
-            {displayAddress}
-          </span>
-        </div>
-      ) : (
+  if (isSmallCard) {
+    return (
+      <div className="flex items-center">
         <Link
-          className={`flex ${isAddressCard ? getTextSizeClass(ens?.length || 0) : `text-${size}`}`}
+          className={"flex items-center gap-2"}
           target={"_self"}
           href={ens ? `/${ens}` : `/${address}`}
           rel="noopener noreferrer"
         >
-          <BlockieAvatar address={address} ensImage={ensAvatar} size={35} />
-          <span className={`ml-1.5 mt-0.5 font-normal`}>{displayAddress}</span>
+          <BlockieAvatar address={address} ensImage={ensAvatar} size={40} />
+          <span className={`text-lg`}>{displayAddress}</span>
         </Link>
-      )}
-      {addressCopied ? (
-        <CheckCircleIcon
-          className={`ml-1 ${
-            isSmallCard ? "h-5 w-5" : "mt-3 h-4 w-4"
-          } cursor-pointer self-start font-normal text-neutral`}
-          aria-hidden="true"
-        />
-      ) : (
-        <CopyToClipboard
-          text={address}
-          onCopy={() => {
-            setAddressCopied(true);
-            setTimeout(() => {
-              setAddressCopied(false);
-            }, 800);
-          }}
-        >
-          <DocumentDuplicateIcon
-            className={`ml-1 ${
-              isSmallCard ? "h-5 w-5" : "mt-3 h-4 w-4"
-            } cursor-pointer self-start font-normal text-neutral`}
-            aria-hidden="true"
-          />
-        </CopyToClipboard>
-      )}
-      <a
-        href={blockExplorerLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`ml-1 ${
-          isSmallCard ? "h-5 w-5" : "mt-3 h-4 w-4"
-        } cursor-pointer self-start font-normal text-neutral`}
-      >
-        <ArrowTopRightOnSquareIcon aria-hidden="true" />
-      </a>
+        <div className="ml-2 flex gap-1">
+          {addressCopied ? (
+            <CheckCircleIcon className="h-5 w-5 text-green-500" aria-hidden="true" />
+          ) : (
+            <CopyToClipboard
+              text={address}
+              onCopy={() => {
+                setAddressCopied(true);
+                setTimeout(() => {
+                  setAddressCopied(false);
+                }, 800);
+              }}
+            >
+              <DocumentDuplicateIcon className="h-5 w-5 hover:text-green-500 link" aria-hidden="true" />
+            </CopyToClipboard>
+          )}
+          <a href={blockExplorerLink} target="_blank" rel="noopener noreferrer">
+            <ArrowTopRightOnSquareIcon aria-hidden="true" className="h-5 w-5 hover:text-blue-600" />
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  let textDisplaySize = size;
+  if (ens && ens?.length > 22) {
+    textDisplaySize = "lg";
+  } else if (ens && ens?.length > 17) {
+    textDisplaySize = "2xl";
+  } else if (ens && ens?.length > 12) {
+    textDisplaySize = "3xl";
+  }
+
+  let iconSizes = "h-6 w-6";
+  if (textDisplaySize === "xl") {
+    iconSizes = "h-5 w-5";
+  }
+
+  return (
+    <div className="flex items-center gap-3">
+      <BlockieAvatar
+        address={address}
+        ensImage={ensAvatar}
+        size={(blockieSizeMap[textDisplaySize] * 24) / blockieSizeMap["base"]}
+      />
+      <span className={`text-${textDisplaySize}`}>{displayAddress}</span>
+      <div className="ml-2 flex gap-1">
+        {addressCopied ? (
+          <CheckCircleIcon className={`${iconSizes} text-green-500`} aria-hidden="true" />
+        ) : (
+          <CopyToClipboard
+            text={address}
+            onCopy={() => {
+              setAddressCopied(true);
+              setTimeout(() => {
+                setAddressCopied(false);
+              }, 800);
+            }}
+          >
+            <DocumentDuplicateIcon className={`${iconSizes}  hover:text-green-500 link`} aria-hidden="true" />
+          </CopyToClipboard>
+        )}
+        <a href={blockExplorerLink} target="_blank" rel="noopener noreferrer">
+          <ArrowTopRightOnSquareIcon aria-hidden="true" className={`${iconSizes} hover:text-blue-600`} />
+        </a>
+      </div>
     </div>
   );
 };
