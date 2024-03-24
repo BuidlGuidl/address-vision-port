@@ -14,9 +14,7 @@
 5. [License](#license)
 6. [Contact](#contact)
 
-
-
-![Screen Shot 2023-10-16 at 6 34 51 PM](https://github.com/BuidlGuidl/address-vision-port/assets/2653167/993840d1-741f-4678-bd3f-d46610841309)
+![rounded_ss](https://github.com/BuidlGuidl/address-vision-port/assets/108868128/a9c5eb4a-9cd4-4f06-adba-55aa7ebe4e9a)
 
 
 ## Installation
