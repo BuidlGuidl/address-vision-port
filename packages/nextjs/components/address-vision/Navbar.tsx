@@ -28,18 +28,17 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
   }, [searchedAddress]);
 
   useEffect(() => {
-    let trimmedAddress = inputValue;
+    let trimmedAddress = inputValue.trim();
     if (trimmedAddress.startsWith("eth:")) {
       trimmedAddress = trimmedAddress.slice(4);
     } else if (trimmedAddress.startsWith("oeth:")) {
       trimmedAddress = trimmedAddress.slice(5);
     }
-
     if (isAddress(trimmedAddress)) {
       setSearchedAddress(trimmedAddress);
     }
-    if (inputValue.endsWith(".eth")) {
-      router.push(`/${inputValue}`, undefined, { shallow: true });
+    if (trimmedAddress.endsWith(".eth")) {
+      router.push(`/${trimmedAddress}`, undefined, { shallow: true });
     } else if (isAddress(trimmedAddress)) {
       async function getEnsName(address: string) {
         const ensName = await client.getEnsName({ address });
