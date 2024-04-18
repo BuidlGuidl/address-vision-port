@@ -119,8 +119,8 @@ const Home: NextPage = () => {
 
       {searchedAddress ? (
         <div className="flex w-full flex-grow flex-col items-center justify-center gap-4 p-4 md:mt-4">
-          <div className="flex flex-wrap">
-            <div className={`w-full flex-wrap space-y-4 p-4 sm:w-1/2 ${cardWidthClass}`}>
+          <div className="flex">
+            <div className={`w-full flex-wrap space-y-4 md:p-4 sm:w-1/2 ${cardWidthClass}`}>
               <AddressCard address={searchedAddress} />
 
               <div className="w-[370px] md:hidden lg:hidden">

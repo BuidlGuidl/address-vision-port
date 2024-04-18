@@ -22,7 +22,7 @@ export const AddressCard = ({
 
   return (
     <div className="flex w-[370px] md:w-[425px] items-center bg-base-100 shadow-xl card">
-      <div className="card-body">
+      <div className="card-body p-0 py-8 ">
         <div className="card-title">
           <AddressComp address={address} size="4xl" />
         </div>
