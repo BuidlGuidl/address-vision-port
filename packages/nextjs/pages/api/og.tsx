@@ -47,33 +47,59 @@ async function getBalance(address: string | undefined): Promise<bigint> {
   }
 }
 
+async function getEnsAvatar(ensName: string) {
+  const url = `https://metadata.ens.domains/mainnet/avatar/${ensName}`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Failed to fetch ENS avatar");
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.startsWith("image")) {
+      return url;
+    } else {
+      const data = await response.json();
+      if (data.message === "There is no avatar set under given address") {
+        throw new Error("No ENS avatar");
+      }
+      return url;
+    }
+  } catch (error) {
+    console.error("Error fetching ENS avatar:", error);
+    return undefined;
+  }
+}
+
 export default async function handler(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    if (!searchParams.has("title")) {
-      return new Response("Missing 'title' query parameter", { status: 400 });
+    if (!searchParams.has("addyOrEns")) {
+      return new Response("Missing 'addyOrEns' query parameter", { status: 400 });
     }
-    const title = searchParams.get("title")?.slice(0, 100) || "My default title";
+    const addyOrEns = searchParams.get("addyOrEns")?.slice(0, 100) || "blank";
 
-    let address: string | undefined = title;
+    let address: string | undefined = addyOrEns;
     let ensName: string | undefined;
     let balance = 0n;
+    let avatarUrl: string | undefined;
 
-    if (/\..+$/.test(title)) {
-      address = await resolveEnsToAddress(title);
+    if (/\..+$/.test(addyOrEns)) {
+      address = await resolveEnsToAddress(addyOrEns);
       if (address) {
         ensName = await getEnsNameForAddress(address);
         balance = await getBalance(address);
+        avatarUrl = await getEnsAvatar(ensName as string);
       }
-    } else if (isAddress(title)) {
-      ensName = await getEnsNameForAddress(title);
-      balance = await getBalance(title);
+    } else if (isAddress(addyOrEns)) {
+      ensName = await getEnsNameForAddress(addyOrEns);
+      balance = await getBalance(addyOrEns);
+      avatarUrl = await getEnsAvatar(ensName || addyOrEns);
     }
 
-    const imageSrc = `https://metadata.ens.domains/mainnet/avatar/${ensName || title}`;
+    if (!avatarUrl) {
+      avatarUrl = blo(address as `0x${string}`);
+    }
 
     const formattedTitle = ensName || (address ? `${address.slice(0, 6)}...${address.slice(-5)}` : "Unknown");
-    const displayAddressSearchBar = title?.slice(0, 13) + "..." + title?.slice(-12);
+    const displayAddressSearchBar = addyOrEns?.slice(0, 13) + "..." + addyOrEns?.slice(-12);
 
     return new ImageResponse(
       (
@@ -90,7 +116,7 @@ export default async function handler(request: NextRequest) {
                 <div tw="flex">
                   <div tw="bg-white text-4xl m-8 p-8 h-[400px] rounded-16 shadow-2xl flex items-center justify-between ">
                     <img
-                      src={ensName || title?.endsWith(".eth") ? imageSrc : blo(address as `0x${string}`)}
+                      src={avatarUrl}
                       width={200}
                       height={200}
                       tw="rounded-full"
@@ -108,7 +134,7 @@ export default async function handler(request: NextRequest) {
                   </div>
                   <div tw="bg-white text-4xl m-8 ml-0 p-8 h-[400px] rounded-16 shadow-2xl flex items-center justify-between ">
                     <img
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=330x330&data=${address || title}`}
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=330x330&data=${address || addyOrEns}`}
                       width={330}
                       height={330}
                       alt="QR Code"

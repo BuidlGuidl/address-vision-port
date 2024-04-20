@@ -114,7 +114,7 @@ const Home: NextPage<Props> = ({ address }) => {
 
   return (
     <>
-      <MetaHeader title={address as string} />
+      <MetaHeader address={address as string} />
       <Navbar searchedAddress={searchedAddress} setSearchedAddress={setSearchedAddress} />
 
       {previousAddresses.length > 0 && !searchedAddress && (

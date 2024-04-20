@@ -2,6 +2,7 @@ import React from "react";
 import Head from "next/head";
 
 type MetaHeaderProps = {
+  address?: string;
   title?: string;
   description?: string;
   image?: string;
@@ -12,13 +13,14 @@ type MetaHeaderProps = {
 const baseUrl = "https://address.vision";
 
 export const MetaHeader = ({
+  address,
   title = "address.vision",
   description = "Peek into any address or ENS",
   image = "thumbnail.png",
   twitterCard = "summary_large_image",
   children,
 }: MetaHeaderProps) => {
-  const imageUrl = title ? `${baseUrl}/api/og/?title=${title}` : `${baseUrl}/thumbnail.png`;
+  const imageUrl = address ? `${baseUrl}/api/og/?addyOrEns=${address}` : `${baseUrl}/thumbnail.png`;
 
   return (
     <Head>
