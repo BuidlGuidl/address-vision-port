@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { Address, isAddress } from "viem";
 import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
@@ -17,7 +17,23 @@ export const publicClient = createPublicClient({
   transport: http(),
 });
 
-const Home: NextPage = () => {
+type Props = {
+  address: string | null;
+};
+
+export const getServerSideProps: GetServerSideProps = async context => {
+  // Extract address from the URL
+  const address = context.params?.address || null;
+  const formattedAddress = Array.isArray(address) ? address.join("/") : address;
+
+  return {
+    props: {
+      address: formattedAddress,
+    },
+  };
+};
+
+const Home: NextPage<Props> = ({ address }) => {
   const [searchedAddress, setSearchedAddress] = useState("");
   const [searchedEns, setSearchedEns] = useState("");
   const [previousAddresses, setPreviousAddresses] = useState<Address[]>([]);
@@ -98,7 +114,7 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <MetaHeader />
+      <MetaHeader title={address as string} />
       <Navbar searchedAddress={searchedAddress} setSearchedAddress={setSearchedAddress} />
 
       {previousAddresses.length > 0 && !searchedAddress && (

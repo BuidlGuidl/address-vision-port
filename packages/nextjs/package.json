@@ -20,6 +20,7 @@
     "@rainbow-me/rainbowkit": "1.0.8",
     "@uniswap/sdk-core": "^4.0.1",
     "@uniswap/v2-sdk": "^3.0.1",
+    "@vercel/og": "^0.6.2",
     "@yudiel/react-qr-scanner": "^1.2.6",
     "blo": "^1.0.1",
     "daisyui": "^3.5.1",

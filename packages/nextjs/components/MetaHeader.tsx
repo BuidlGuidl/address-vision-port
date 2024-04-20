@@ -9,7 +9,7 @@ type MetaHeaderProps = {
   children?: React.ReactNode;
 };
 
-const baseUrl = "https://address.vision/";
+const baseUrl = "https://address.vision";
 
 export const MetaHeader = ({
   title = "address.vision",
@@ -18,7 +18,7 @@ export const MetaHeader = ({
   twitterCard = "summary_large_image",
   children,
 }: MetaHeaderProps) => {
-  const imageUrl = baseUrl + image;
+  const imageUrl = title ? `${baseUrl}/api/og/?title=${title}` : `${baseUrl}/thumbnail.png`;
 
   return (
     <Head>
