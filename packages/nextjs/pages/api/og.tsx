@@ -73,13 +73,13 @@ export default async function handler(request: NextRequest) {
     const imageSrc = `https://metadata.ens.domains/mainnet/avatar/${ensName || title}`;
 
     const formattedTitle = ensName || (address ? `${address.slice(0, 6)}...${address.slice(-5)}` : "Unknown");
-    const displayAddressSearchBar = title?.slice(0, 15) + "..." + title?.slice(-14);
+    const displayAddressSearchBar = title?.slice(0, 13) + "..." + title?.slice(-12);
 
     return new ImageResponse(
       (
         <div style={{ display: "flex" }} tw="w-full h-full">
           <div style={{ display: "flex" }} tw="flex-col flex-grow">
-            <div style={{ display: "flex" }} tw="max-h-[125px] bg-white p-4 pt-6 items-center flex-grow">
+            <div style={{ display: "flex" }} tw="max-h-[125px] font-bold bg-white p-4 pt-6 items-center flex-grow">
               <strong tw="text-6xl">👀 address.vision</strong>
               <div tw="ml-12 text-4xl bg-blue-50 p-4 px-6 rounded-full border border-slate-300 ">
                 {ensName || displayAddressSearchBar}
