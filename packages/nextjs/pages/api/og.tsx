@@ -53,6 +53,7 @@ export default async function handler(request: NextRequest) {
 
     if (/\.eth$/.test(title as string)) {
       resolvedEns = await resolveEnsToAddress(title as string);
+      displayEns = await getEnsNameForAddress(resolvedEns as string);
     } else if (isAddress(title as string)) {
       displayEns = await getEnsNameForAddress(title as string);
     }
