@@ -79,13 +79,13 @@ export default async function handler(request: NextRequest) {
       (
         <div style={{ display: "flex" }} tw="w-full h-full">
           <div style={{ display: "flex" }} tw="flex-col flex-grow">
-            <div style={{ display: "flex" }} tw="max-h-[125px] bg-white p-4 pt-6 items-center flex-grow ">
-              <strong tw="text-5xl">👀 address.vision</strong>
+            <div style={{ display: "flex" }} tw="max-h-[125px] bg-white p-4 pt-6 items-center flex-grow">
+              <strong tw="text-6xl">👀 address.vision</strong>
               <div tw="ml-12 text-4xl bg-blue-50 p-4 px-6 rounded-full border border-slate-300 ">
                 {ensName || displayAddressSearchBar}
               </div>
             </div>
-            <div tw="flex bg-blue-50 flex-grow justify-between pt-2 pl-10">
+            <div tw="flex bg-blue-50 flex-grow justify-between pt-6 pl-10">
               <div tw="flex flex-col">
                 <div tw="flex">
                   <div tw="bg-white text-4xl m-8 p-8 h-[400px] rounded-16 shadow-2xl flex items-center justify-between ">
