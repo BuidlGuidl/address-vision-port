@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Address as AddressComp } from "../scaffold-eth";
-import { useDarkMode } from "usehooks-ts";
+import { useTheme } from "next-themes";
 import { Address, isAddress } from "viem";
 import { usePublicClient } from "wagmi";
 
@@ -30,7 +30,10 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
   const [isGnosisSafe, setIsGnosisSafe] = useState<boolean>(false);
   const [safeOwners, setSafeOwners] = useState<Address[]>([]);
   const [safeThreshold, setSafeThreshold] = useState<number>(0);
-  const { isDarkMode } = useDarkMode();
+
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
+
   const client = usePublicClient();
 
   useEffect(() => {
