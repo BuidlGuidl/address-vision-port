@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useDarkMode } from "usehooks-ts";
+import { useTheme } from "next-themes";
 import { Address } from "viem";
 import { Chain } from "wagmi";
 import { getChainNameForOpensea } from "~~/utils/scaffold-eth";
@@ -10,7 +10,8 @@ export const NftsCarousel = ({ nfts, chain, address }: { nfts: any[]; chain: Cha
   const [isAtStart, setIsAtStart] = useState(true);
   const [isAtEnd, setIsAtEnd] = useState(false);
 
-  const { isDarkMode } = useDarkMode();
+  const { resolvedTheme } = useTheme();
+  const isDarkMode = resolvedTheme === "dark";
 
   const carouselRef = useRef<HTMLDivElement>(null);
 
