@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { QrScanner } from "@yudiel/react-qr-scanner";
 import { Address, isAddress } from "viem";
@@ -19,6 +19,7 @@ interface NavbarProps {
 
 export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => {
   const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null); // Step 1: Creating a ref
 
   const [isScannerVisible, setIsScannerVisible] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -59,6 +60,12 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
     setIsScannerVisible(false);
   };
 
+  const clearInput = () => {
+    setInputValue("");
+    setSearchedAddress("");
+    inputRef.current?.focus(); // Step 3: Focus the input when clearing it
+  };
+
   const openScanner = () => {
     setIsScannerVisible(true);
   };
@@ -83,15 +90,10 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
             placeholder="Enter an Ethereum address or ENS name to get started"
             value={inputValue}
             onChange={setInputValue}
+            ref={inputRef}
           />
           {inputValue && (
-            <button
-              onClick={() => {
-                setInputValue("");
-                setSearchedAddress("");
-              }}
-              className={`absolute right-20 top-1/2 transform -translate-y-1/2 py-1`}
-            >
+            <button onClick={clearInput} className={`absolute right-20 top-1/2 transform -translate-y-1/2 py-1`}>
               <XMarkIcon className="h-6 w-6 bg-base-200 bg-opacity-60 rounded-full hover:text-red-500" />
             </button>
           )}

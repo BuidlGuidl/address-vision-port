@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { forwardRef, useCallback, useEffect, useState } from "react";
 import { blo } from "blo";
 import { isAddress } from "viem";
 import { Address } from "viem";
@@ -11,83 +11,87 @@ const isENS = (address = "") => address.endsWith(".eth") || address.endsWith(".x
 /**
  * Address input with ENS name resolution
  */
-export const AddressInput = ({ value, name, placeholder, onChange, disabled }: CommonInputProps<Address | string>) => {
-  const { data: ensAddress, isLoading: isEnsAddressLoading } = useEnsAddress({
-    name: value,
-    enabled: isENS(value),
-    chainId: 1,
-    cacheTime: 30_000,
-  });
+export const AddressInput = forwardRef<HTMLInputElement, CommonInputProps<Address | string>>(
+  ({ value, name, placeholder, onChange, disabled }, ref) => {
+    const { data: ensAddress, isLoading: isEnsAddressLoading } = useEnsAddress({
+      name: value,
+      enabled: isENS(value),
+      chainId: 1,
+      cacheTime: 30_000,
+    });
 
-  const [enteredEnsName, setEnteredEnsName] = useState<string>();
-  const { data: ensName, isLoading: isEnsNameLoading } = useEnsName({
-    address: value,
-    enabled: isAddress(value),
-    chainId: 1,
-    cacheTime: 30_000,
-  });
+    const [enteredEnsName, setEnteredEnsName] = useState<string>();
+    const { data: ensName, isLoading: isEnsNameLoading } = useEnsName({
+      address: value,
+      enabled: isAddress(value),
+      chainId: 1,
+      cacheTime: 30_000,
+    });
 
-  const { data: ensAvatar } = useEnsAvatar({
-    name: ensName,
-    enabled: Boolean(ensName),
-    chainId: 1,
-    cacheTime: 30_000,
-  });
+    const { data: ensAvatar } = useEnsAvatar({
+      name: ensName,
+      enabled: Boolean(ensName),
+      chainId: 1,
+      cacheTime: 30_000,
+    });
 
-  useEffect(() => {
-    if (!isENS(value)) {
-      setEnteredEnsName(undefined);
-    }
-  }, [value]);
+    useEffect(() => {
+      if (!isENS(value)) {
+        setEnteredEnsName(undefined);
+      }
+    }, [value]);
 
-  // ens => address
-  useEffect(() => {
-    if (!ensAddress) return;
+    // ens => address
+    useEffect(() => {
+      if (!ensAddress) return;
 
-    // ENS resolved successfully
-    setEnteredEnsName(value);
-    onChange(ensAddress);
-  }, [ensAddress, onChange, value]);
+      // ENS resolved successfully
+      setEnteredEnsName(value);
+      onChange(ensAddress);
+    }, [ensAddress, onChange, value]);
 
-  const handleChange = useCallback(
-    (newValue: Address) => {
-      setEnteredEnsName(undefined);
-      onChange(newValue);
-    },
-    [onChange],
-  );
+    const handleChange = useCallback(
+      (newValue: Address) => {
+        setEnteredEnsName(undefined);
+        onChange(newValue);
+      },
+      [onChange],
+    );
 
-  return (
-    <InputBase<Address>
-      autoFocus={true}
-      name={name}
-      placeholder={placeholder}
-      error={ensAddress === null}
-      value={value}
-      onChange={handleChange}
-      disabled={isEnsAddressLoading || isEnsNameLoading || disabled}
-      prefix={
-        ensName && (
-          <div className="flex items-center rounded-l-full md:bg-base-300">
-            {ensAvatar ? (
-              <span className="w-[35px]">
-                {
-                  // eslint-disable-next-line
-                  <img className="w-full rounded-full" src={ensAvatar} alt={`${ensAddress} avatar`} />
-                }
+    return (
+      <InputBase
+        autoFocus={true}
+        name={name}
+        placeholder={placeholder}
+        error={ensAddress === null}
+        value={value}
+        onChange={handleChange}
+        disabled={isEnsAddressLoading || isEnsNameLoading || disabled}
+        ref={ref}
+        prefix={
+          ensName && (
+            <div className="flex items-center rounded-l-full md:bg-base-300">
+              {ensAvatar ? (
+                <span className="w-[35px]">
+                  {
+                    // eslint-disable-next-line
+                    <img className="w-full rounded-full" src={ensAvatar} alt={`${ensAddress} avatar`} />
+                  }
+                </span>
+              ) : null}
+              <span className="hidden md:block pb-1 pl-3 pr-2 leading-none text-neutral">
+                {enteredEnsName ?? ensName}
               </span>
-            ) : null}
-            <span className="hidden md:block pb-1 pl-3 pr-2 leading-none text-neutral">
-              {enteredEnsName ?? ensName}
-            </span>
-          </div>
-        )
-      }
-      suffix={
-        // Don't want to use nextJS Image here (and adding remote patterns for the URL)
-        // eslint-disable-next-line @next/next/no-img-element
-        value && <img alt="" className="!rounded-full" src={blo(value as `0x${string}`)} width="35" height="35" />
-      }
-    />
-  );
-};
+            </div>
+          )
+        }
+        suffix={
+          // Don't want to use nextJS Image here (and adding remote patterns for the URL)
+          // eslint-disable-next-line @next/next/no-img-element
+          value && <img alt="" className="!rounded-full" src={blo(value as `0x${string}`)} width="35" height="35" />
+        }
+      />
+    );
+  },
+);
+AddressInput.displayName = "AddressInput";
