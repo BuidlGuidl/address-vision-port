@@ -13,8 +13,8 @@ const client = createPublicClient({
 });
 
 interface NavbarProps {
-  searchedAddress: Address;
-  setSearchedAddress: React.Dispatch<React.SetStateAction<string>>;
+  searchedAddress: Address | "";
+  setSearchedAddress: React.Dispatch<React.SetStateAction<Address | "">>;
 }
 
 export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => {
@@ -41,7 +41,7 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
     if (trimmedAddress.endsWith(".eth")) {
       router.push(`/${trimmedAddress}`, undefined, { shallow: true });
     } else if (isAddress(trimmedAddress)) {
-      async function getEnsName(address: string) {
+      async function getEnsName(address: Address) {
         const ensName = await client.getEnsName({ address });
         router.push(`/${ensName || address}`, undefined, { shallow: true });
       }

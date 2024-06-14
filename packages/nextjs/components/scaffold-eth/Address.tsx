@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { isAddress } from "viem";
+import { Address as AddressType, isAddress } from "viem";
 import { useEnsName } from "wagmi";
 import { Chain } from "wagmi";
 import * as chains from "wagmi/chains";
@@ -45,7 +45,11 @@ export const Address = ({
   const [ensAvatar, setEnsAvatar] = useState<string | null>();
   const [addressCopied, setAddressCopied] = useState(false);
 
-  const { data: fetchedEns } = useEnsName({ address, enabled: isAddress(address ?? ""), chainId: 1 });
+  const { data: fetchedEns } = useEnsName({
+    address: address as AddressType,
+    enabled: isAddress(address ?? ""),
+    chainId: 1,
+  });
 
   // We need to apply this pattern to avoid Hydration errors.
   useEffect(() => {

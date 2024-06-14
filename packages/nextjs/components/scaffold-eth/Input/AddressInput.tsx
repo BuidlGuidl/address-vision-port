@@ -22,7 +22,7 @@ export const AddressInput = forwardRef<HTMLInputElement, CommonInputProps<Addres
 
     const [enteredEnsName, setEnteredEnsName] = useState<string>();
     const { data: ensName, isLoading: isEnsNameLoading } = useEnsName({
-      address: value,
+      address: value as Address,
       enabled: isAddress(value),
       chainId: 1,
       cacheTime: 30_000,

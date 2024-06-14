@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
 };
 
 const Home: NextPage<Props> = ({ address }) => {
-  const [searchedAddress, setSearchedAddress] = useState("");
+  const [searchedAddress, setSearchedAddress] = useState<Address | "">("");
   const [searchedEns, setSearchedEns] = useState("");
   const [previousAddresses, setPreviousAddresses] = useState<Address[]>([]);
   const router = useRouter();
@@ -79,7 +79,7 @@ const Home: NextPage<Props> = ({ address }) => {
               name: normalize(address),
             });
             if (ensAddress && isAddress(ensAddress)) {
-              setSearchedAddress(ensAddress as Address);
+              setSearchedAddress(ensAddress);
             } else {
               notification.error("ENS name not found or does not resolve to a valid address.", {
                 position: "bottom-center",

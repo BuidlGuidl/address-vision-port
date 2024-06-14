@@ -2,7 +2,7 @@
 import { NextRequest } from "next/server";
 import { ImageResponse } from "@vercel/og";
 import { blo } from "blo";
-import { createPublicClient, formatEther, http, isAddress } from "viem";
+import { Address, createPublicClient, formatEther, http, isAddress } from "viem";
 import { mainnet } from "viem/chains";
 import { normalize } from "viem/ens";
 
@@ -15,7 +15,7 @@ export const config = {
   runtime: "edge",
 };
 
-async function resolveEnsToAddress(ens: string): Promise<string | undefined> {
+async function resolveEnsToAddress(ens: string): Promise<Address | undefined> {
   try {
     const address = await publicClient.getEnsAddress({ name: normalize(ens) });
     return address || undefined;
@@ -25,7 +25,7 @@ async function resolveEnsToAddress(ens: string): Promise<string | undefined> {
   }
 }
 
-async function getEnsNameForAddress(address: string | undefined): Promise<string | undefined> {
+async function getEnsNameForAddress(address: Address | undefined): Promise<string | undefined> {
   if (!address) return undefined;
   try {
     const ensName = await publicClient.getEnsName({ address });
@@ -36,7 +36,7 @@ async function getEnsNameForAddress(address: string | undefined): Promise<string
   }
 }
 
-async function getBalance(address: string | undefined): Promise<bigint> {
+async function getBalance(address: Address | undefined): Promise<bigint> {
   if (!address) return 0n;
   try {
     const balance = await publicClient.getBalance({ address });
@@ -84,8 +84,8 @@ export default async function handler(request: NextRequest) {
     if (/\..+$/.test(addyOrEns)) {
       address = await resolveEnsToAddress(addyOrEns);
       if (address) {
-        ensName = await getEnsNameForAddress(address);
-        balance = await getBalance(address);
+        ensName = await getEnsNameForAddress(address as Address);
+        balance = await getBalance(address as Address);
         avatarUrl = await getEnsAvatar(ensName as string);
       }
     } else if (isAddress(addyOrEns)) {

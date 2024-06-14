@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useBalance } from "wagmi";
+import { Address, useBalance } from "wagmi";
 import * as chains from "wagmi/chains";
 import { useGlobalState } from "~~/services/store/store";
 
@@ -13,7 +13,7 @@ export function useAccountBalance(targetNetwork: chains.Chain = chains.mainnet, 
     isError,
     isLoading,
   } = useBalance({
-    address,
+    address: address as Address,
     watch: true,
     chainId: targetNetwork.id,
   });
