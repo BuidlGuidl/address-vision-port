@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import type { GetServerSideProps, NextPage } from "next";
-import { Address, isAddress } from "viem";
-import { createPublicClient, http } from "viem";
+import { Address, createPublicClient, http, isAddress } from "viem";
 import { mainnet } from "viem/chains";
 import { normalize } from "viem/ens";
 import * as chains from "wagmi/chains";
