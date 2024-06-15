@@ -23,6 +23,17 @@ export const Navbar = () => {
   const { ensName, resolvedAddress, setEnsName, setResolvedAddress } = useAddressStore();
 
   useEffect(() => {
+    if (resolvedAddress) {
+      const savedAddresses = localStorage.getItem("searchedAddresses");
+      const addresses = savedAddresses ? JSON.parse(savedAddresses) : [];
+      if (!addresses.includes(resolvedAddress)) {
+        addresses.unshift(resolvedAddress);
+        localStorage.setItem("searchedAddresses", JSON.stringify(addresses));
+      }
+    }
+  }, [resolvedAddress]);
+
+  useEffect(() => {
     if (ensName) {
       setInputValue(ensName);
     } else if (resolvedAddress) {
