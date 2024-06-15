@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import { AddressInput } from "../scaffold-eth";
 import { QrScanner } from "@yudiel/react-qr-scanner";
 import { Address, isAddress } from "viem";
 import { createPublicClient, http } from "viem";
@@ -96,19 +97,16 @@ export const Navbar = () => {
   return (
     <div className="navbar flex-col md:flex-row justify-center">
       <div className="md:absolute left-6 mb-2">
-        <div onClick={handleLogoClick} className="cursor-pointer text-4xl">
-          👀
-        </div>
         <h1 onClick={handleLogoClick} className="ml-2 mb-0 cursor-pointer text-2xl font-bold">
-          address.vision
+          👀 address.vision
         </h1>
       </div>
       <div className="w-11/12 md:w-1/2">
         <div className="flex-grow relative">
-          <input
+          <AddressInput
             placeholder="Enter an Ethereum address or ENS name to get started"
             value={inputValue}
-            onChange={e => setInputValue(e.target.value)}
+            onChange={setInputValue}
             ref={inputRef}
           />
           {inputValue && (
