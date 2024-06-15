@@ -76,7 +76,7 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
 
   return (
     <div className="navbar flex-col md:flex-row justify-center">
-      <div className="md:absolute left-6">
+      <div className="md:absolute left-6 mb-2">
         <div onClick={handleLogoClick} className="cursor-pointer text-4xl">
           👀
         </div>
