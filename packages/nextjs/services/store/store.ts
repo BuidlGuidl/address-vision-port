@@ -1,3 +1,4 @@
+import { Address } from "viem";
 import create from "zustand";
 
 /**
@@ -41,4 +42,18 @@ export const useNetworkBalancesStore: () => NetworkBalancesState = create<Networ
       (acc: number, val: { balance: number; networkId: number }) => acc + val.balance,
       0,
     ),
+}));
+
+type AddressState = {
+  ensName: string;
+  resolvedAddress: Address | "";
+  setEnsName: (ensName: string) => void;
+  setResolvedAddress: (address: Address | "") => void;
+};
+
+export const useAddressStore = create<AddressState>(set => ({
+  ensName: "",
+  resolvedAddress: "",
+  setEnsName: ensName => set({ ensName }),
+  setResolvedAddress: address => set({ resolvedAddress: address }),
 }));

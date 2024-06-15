@@ -4,29 +4,31 @@ import { QrScanner } from "@yudiel/react-qr-scanner";
 import { Address, isAddress } from "viem";
 import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
+import { normalize } from "viem/ens";
 import { QrCodeIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { AddressInput } from "~~/components/scaffold-eth";
+import { useAddressStore } from "~~/services/store/store";
 
 const client = createPublicClient({
   chain: mainnet,
   transport: http(),
 });
 
-interface NavbarProps {
-  searchedAddress: Address | "";
-  setSearchedAddress: React.Dispatch<React.SetStateAction<Address | "">>;
-}
-
-export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => {
-  const router = useRouter();
-  const inputRef = useRef<HTMLInputElement>(null); // Step 1: Creating a ref
-
-  const [isScannerVisible, setIsScannerVisible] = useState(false);
+export const Navbar = () => {
   const [inputValue, setInputValue] = useState("");
+  const [isScannerVisible, setIsScannerVisible] = useState(false);
+
+  const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const { ensName, resolvedAddress, setEnsName, setResolvedAddress } = useAddressStore();
 
   useEffect(() => {
-    setInputValue(searchedAddress);
-  }, [searchedAddress]);
+    if (ensName) {
+      setInputValue(ensName);
+    } else if (resolvedAddress) {
+      setInputValue(resolvedAddress);
+    }
+  }, [ensName, resolvedAddress]);
 
   useEffect(() => {
     let trimmedAddress = inputValue.trim();
@@ -35,23 +37,30 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
     } else if (trimmedAddress.startsWith("oeth:")) {
       trimmedAddress = trimmedAddress.slice(5);
     }
-    if (isAddress(trimmedAddress)) {
-      setSearchedAddress(trimmedAddress);
-    }
+
     if (trimmedAddress.endsWith(".eth")) {
       router.push(`/${trimmedAddress}`, undefined, { shallow: true });
+      setEnsName(trimmedAddress);
+      async function getEnsAddress(ensName: string) {
+        const resolvedEnsName = await client.getEnsAddress({ name: normalize(ensName) });
+        setResolvedAddress(resolvedEnsName as Address);
+      }
+      getEnsAddress(trimmedAddress);
     } else if (isAddress(trimmedAddress)) {
+      setResolvedAddress(trimmedAddress);
       async function getEnsName(address: Address) {
         const ensName = await client.getEnsName({ address });
         router.push(`/${ensName || address}`, undefined, { shallow: true });
+        setEnsName(ensName || "");
       }
       getEnsName(trimmedAddress);
     }
   }, [inputValue]);
 
   const handleLogoClick = () => {
-    setSearchedAddress("");
     setInputValue("");
+    setEnsName("");
+    setResolvedAddress("");
     router.push("/", undefined, { shallow: true });
   };
 
@@ -62,8 +71,7 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
 
   const clearInput = () => {
     setInputValue("");
-    setSearchedAddress("");
-    inputRef.current?.focus(); // Step 3: Focus the input when clearing it
+    inputRef.current?.focus();
   };
 
   const openScanner = () => {
@@ -86,10 +94,10 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
       </div>
       <div className="w-11/12 md:w-1/2">
         <div className="flex-grow relative">
-          <AddressInput
+          <input
             placeholder="Enter an Ethereum address or ENS name to get started"
             value={inputValue}
-            onChange={setInputValue}
+            onChange={e => setInputValue(e.target.value)}
             ref={inputRef}
           />
           {inputValue && (
