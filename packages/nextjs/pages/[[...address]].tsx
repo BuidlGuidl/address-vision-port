@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import type { GetServerSideProps, NextPage } from "next";
+import type { NextPage } from "next";
 import { Address, createPublicClient, http, isAddress } from "viem";
 import { mainnet } from "viem/chains";
 import { normalize } from "viem/ens";
@@ -16,29 +16,14 @@ export const publicClient = createPublicClient({
   transport: http(),
 });
 
-type Props = {
-  address: string | null;
-};
-
-export const getServerSideProps: GetServerSideProps = async context => {
-  // Extract address from the URL
-  const address = context.params?.address || null;
-  const formattedAddress = Array.isArray(address) ? address.join("/") : address;
-
-  return {
-    props: {
-      address: formattedAddress,
-    },
-  };
-};
-
-const Home: NextPage<Props> = ({ address }) => {
+const Home: NextPage = () => {
   const [searchedAddress, setSearchedAddress] = useState<Address | "">("");
   const [searchedEns, setSearchedEns] = useState("");
   const [previousAddresses, setPreviousAddresses] = useState<Address[]>([]);
-  const router = useRouter();
 
   const { balance, isLoading } = useAccountBalance(chains.mainnet, searchedAddress);
+
+  const router = useRouter();
 
   useEffect(() => {
     const savedAddresses = localStorage.getItem("searchedAddresses");
@@ -59,23 +44,24 @@ const Home: NextPage<Props> = ({ address }) => {
         router.push(`/${searchedAddress}`, undefined, { shallow: true });
       }
     }
-  }, [searchedAddress]);
+  }, [searchedAddress, setPreviousAddresses, router, searchedEns]);
 
   useEffect(() => {
-    if (router.query.address) {
-      const address = Array.isArray(router.query.address) ? router.query.address[0] : router.query.address;
-      if (isAddress(address)) {
-        setSearchedAddress(address);
-      } else if (/\.eth$/.test(address)) {
-        setSearchedEns(address);
-        const intendedPath = `/${address}`;
+    const { address } = router.query;
+    if (address) {
+      const formattedAddress = Array.isArray(address) ? address[0] : address;
+      if (isAddress(formattedAddress)) {
+        setSearchedAddress(formattedAddress);
+      } else if (/\.eth$/.test(formattedAddress)) {
+        setSearchedEns(formattedAddress);
+        const intendedPath = `/${formattedAddress}`;
         if (router.asPath !== intendedPath) {
           router.push(intendedPath, undefined, { shallow: true });
         }
         const resolveEns = async () => {
           try {
             const ensAddress = await publicClient.getEnsAddress({
-              name: normalize(address),
+              name: normalize(formattedAddress),
             });
             if (ensAddress && isAddress(ensAddress)) {
               setSearchedAddress(ensAddress);
@@ -98,7 +84,7 @@ const Home: NextPage<Props> = ({ address }) => {
         resolveEns();
       }
     }
-  }, [router.query.address, router.asPath]);
+  }, [router.query.address, router.asPath, router]);
 
   let cardWidthClass = "lg:w-1/3";
   if (!isLoading && !balance && isAddress(searchedAddress)) {
@@ -113,7 +99,7 @@ const Home: NextPage<Props> = ({ address }) => {
 
   return (
     <>
-      <MetaHeader address={address as string} />
+      <MetaHeader address={searchedAddress} />
       <Navbar searchedAddress={searchedAddress} setSearchedAddress={setSearchedAddress} />
 
       {previousAddresses.length > 0 && !searchedAddress && (
@@ -164,7 +150,6 @@ const Home: NextPage<Props> = ({ address }) => {
 
             <div className="w-full space-y-4 p-4 hidden sm:w-1/2 md:hidden lg:block lg:w-1/3">
               <NetworkCard address={searchedAddress} chain={chains.mainnet} />
-
               <NetworkCard address={searchedAddress} chain={chains.polygon} />
             </div>
           </div>
