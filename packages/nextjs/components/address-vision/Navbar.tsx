@@ -7,7 +7,7 @@ import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
 import { normalize } from "viem/ens";
 import { QrCodeIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useAddressStore } from "~~/services/store/store";
+import { useAddressStore, useNetworkBalancesStore } from "~~/services/store/store";
 
 const client = createPublicClient({
   chain: mainnet,
@@ -22,6 +22,7 @@ export const Navbar = () => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { ensName, resolvedAddress, setEnsName, setResolvedAddress } = useAddressStore();
+  const { resetBalances } = useNetworkBalancesStore();
 
   useEffect(() => {
     if (resolvedAddress) {
@@ -73,6 +74,7 @@ export const Navbar = () => {
     setInputValue("");
     setEnsName("");
     setResolvedAddress("");
+    resetBalances();
     router.push("/", undefined, { shallow: true });
   };
 
