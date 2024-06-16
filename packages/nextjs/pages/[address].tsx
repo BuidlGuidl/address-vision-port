@@ -67,28 +67,28 @@ const AddressPage: NextPage<Props> = ({ address }) => {
               </div>
               <ButtonsCard address={resolvedAddress} />
               <TotalBalanceCard />
-              <NetworkCard address={resolvedAddress} chain={chains.arbitrum} />
+              <NetworkCard chain={chains.arbitrum} />
               <div className="lg:hidden">
-                <NetworkCard address={resolvedAddress} chain={chains.polygon} />
+                <NetworkCard chain={chains.polygon} />
               </div>
-              <NetworkCard address={resolvedAddress} chain={chains.base} />
+              <NetworkCard chain={chains.base} />
               <div className="space-y-4 md:hidden lg:hidden">
-                <NetworkCard address={resolvedAddress} chain={chains.mainnet} />
-                <NetworkCard address={resolvedAddress} chain={chains.optimism} />
+                <NetworkCard chain={chains.mainnet} />
+                <NetworkCard chain={chains.optimism} />
               </div>
             </div>
 
             <div className="w-full space-y-4 p-4 hidden sm:w-1/2 md:block lg:block lg:w-1/3">
               <QRCodeCard address={resolvedAddress} />
               <div className="lg:hidden">
-                <NetworkCard address={resolvedAddress} chain={chains.mainnet} />
+                <NetworkCard chain={chains.mainnet} />
               </div>
-              <NetworkCard address={resolvedAddress} chain={chains.optimism} />
+              <NetworkCard chain={chains.optimism} />
             </div>
 
             <div className="w-full space-y-4 p-4 hidden sm:w-1/2 md:hidden lg:block lg:w-1/3">
-              <NetworkCard address={resolvedAddress} chain={chains.mainnet} />
-              <NetworkCard address={resolvedAddress} chain={chains.polygon} />
+              <NetworkCard chain={chains.mainnet} />
+              <NetworkCard chain={chains.polygon} />
             </div>
           </div>
         </div>
