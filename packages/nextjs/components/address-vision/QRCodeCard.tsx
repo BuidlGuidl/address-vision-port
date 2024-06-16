@@ -1,7 +1,10 @@
 import { QRCodeSVG } from "qrcode.react";
-import { Address, isAddress } from "viem";
+import { isAddress } from "viem";
+import { useAddressStore } from "~~/services/store/store";
 
-export const QRCodeCard = ({ address }: { address: Address }) => {
+export const QRCodeCard = () => {
+  const { resolvedAddress: address } = useAddressStore();
+
   if (!isAddress(address))
     return (
       <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl">

@@ -57,50 +57,40 @@ const AddressPage: NextPage<Props> = ({ address }) => {
       <MetaHeader address={address} />
       <Navbar />
 
-      {resolvedAddress ? (
-        <div className="flex w-full flex-grow flex-col items-center justify-center gap-4 p-4 md:mt-4">
-          <div className="flex">
-            <div className={`w-full flex-wrap space-y-4 md:p-4 sm:w-1/2 ${cardWidthClass}`}>
-              <AddressCard address={resolvedAddress} />
-              <div className="w-[370px] md:hidden lg:hidden">
-                <QRCodeCard address={resolvedAddress} />
-              </div>
-              <ButtonsCard address={resolvedAddress} />
-              <TotalBalanceCard />
-              <NetworkCard chain={chains.arbitrum} />
-              <div className="lg:hidden">
-                <NetworkCard chain={chains.polygon} />
-              </div>
-              <NetworkCard chain={chains.base} />
-              <div className="space-y-4 md:hidden lg:hidden">
-                <NetworkCard chain={chains.mainnet} />
-                <NetworkCard chain={chains.optimism} />
-              </div>
+      <div className="flex w-full flex-grow flex-col items-center justify-center gap-4 p-4 md:mt-4">
+        <div className="flex">
+          <div className={`w-full flex-wrap space-y-4 md:p-4 sm:w-1/2 ${cardWidthClass}`}>
+            <AddressCard />
+            <div className="w-[370px] md:hidden lg:hidden">
+              <QRCodeCard />
             </div>
-
-            <div className="w-full space-y-4 p-4 hidden sm:w-1/2 md:block lg:block lg:w-1/3">
-              <QRCodeCard address={resolvedAddress} />
-              <div className="lg:hidden">
-                <NetworkCard chain={chains.mainnet} />
-              </div>
-              <NetworkCard chain={chains.optimism} />
-            </div>
-
-            <div className="w-full space-y-4 p-4 hidden sm:w-1/2 md:hidden lg:block lg:w-1/3">
-              <NetworkCard chain={chains.mainnet} />
+            <ButtonsCard />
+            <TotalBalanceCard />
+            <NetworkCard chain={chains.arbitrum} />
+            <div className="lg:hidden">
               <NetworkCard chain={chains.polygon} />
             </div>
+            <NetworkCard chain={chains.base} />
+            <div className="space-y-4 md:hidden lg:hidden">
+              <NetworkCard chain={chains.mainnet} />
+              <NetworkCard chain={chains.optimism} />
+            </div>
+          </div>
+
+          <div className="w-full space-y-4 p-4 hidden sm:w-1/2 md:block lg:block lg:w-1/3">
+            <QRCodeCard />
+            <div className="lg:hidden">
+              <NetworkCard chain={chains.mainnet} />
+            </div>
+            <NetworkCard chain={chains.optimism} />
+          </div>
+
+          <div className="w-full space-y-4 p-4 hidden sm:w-1/2 md:hidden lg:block lg:w-1/3">
+            <NetworkCard chain={chains.mainnet} />
+            <NetworkCard chain={chains.polygon} />
           </div>
         </div>
-      ) : (
-        <div className={`flex flex-grow flex-col items-center xl:justify-start justify-center`}>
-          <div className="mb-4 text-9xl">👀</div>
-          <h1 className="m-4 text-center text-4xl font-bold">Welcome to address.vision!</h1>
-          <p className="m-4 text-center text-xl">
-            To get started, enter an Ethereum address or ENS name in the search bar above.
-          </p>
-        </div>
-      )}
+      </div>
     </>
   );
 };
