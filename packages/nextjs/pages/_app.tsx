@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import type { AppProps } from "next/app";
 import "@rainbow-me/rainbowkit/styles.css";
 import { ThemeProvider } from "next-themes";
-import NextNProgress from "nextjs-progressbar";
 import { Toaster } from "react-hot-toast";
 import { WagmiConfig } from "wagmi";
 import { Footer } from "~~/components/Footer";
@@ -25,7 +24,6 @@ const ScaffoldEthApp = ({ Component, pageProps }: AppProps) => {
   return (
     <ThemeProvider>
       <WagmiConfig config={wagmiConfig}>
-        <NextNProgress />
         <div className="flex flex-col min-h-screen">
           <main className="relative flex flex-col flex-1">
             <Component {...pageProps} />
