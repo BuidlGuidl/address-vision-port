@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import type { NextPage } from "next";
 import { Address } from "viem";
-import { AddressCard, Navbar } from "~~/components/address-vision/";
+import { Navbar } from "~~/components/address-vision/";
+import { SmallAddressComp } from "~~/components/scaffold-eth";
 
 const Home: NextPage = () => {
   const [previousAddresses, setPreviousAddresses] = useState<Address[]>([]);
@@ -27,12 +28,7 @@ const Home: NextPage = () => {
           <h2 className="text-2xl mb-4">Previous Searches</h2>
           <div className="w-full md:w-1/2 flex flex-wrap justify-center items-center gap-4 overflow-y-auto">
             {previousAddresses.map(address => (
-              <AddressCard
-                key={address}
-                address={address}
-                isSmallCard={true}
-                removeAddress={() => removeAddress(address)}
-              />
+              <SmallAddressComp key={address} address={address} removeAddress={() => removeAddress(address)} />
             ))}
           </div>
         </div>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Address as AddressComp } from "../scaffold-eth";
+import { SafeOwner } from "./SafeOwner";
 import { useTheme } from "next-themes";
 import { Address, isAddress } from "viem";
 import { usePublicClient } from "wagmi";
@@ -123,7 +123,9 @@ export const ButtonsCard = () => {
           <div>
             {safeOwners.map(owner => (
               <div key={owner} className="mb-1">
-                <AddressComp address={owner} isSmallCard={true} />
+                <div className="flex items-center">
+                  <SafeOwner address={owner} />
+                </div>
               </div>
             ))}
           </div>
