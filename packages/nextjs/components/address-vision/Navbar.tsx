@@ -8,6 +8,7 @@ import { mainnet } from "viem/chains";
 import { normalize } from "viem/ens";
 import { QrCodeIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useAddressStore, useNetworkBalancesStore } from "~~/services/store/store";
+import { notification } from "~~/utils/scaffold-eth";
 
 const client = createPublicClient({
   chain: mainnet,
@@ -56,6 +57,12 @@ export const Navbar = () => {
       setEnsName(trimmedAddress);
       async function getEnsAddress(ensName: string) {
         const resolvedEnsName = await client.getEnsAddress({ name: normalize(ensName) });
+        if (!resolvedEnsName) {
+          notification.error("ENS name not found");
+          resetState();
+          router.push("/", undefined, { shallow: true });
+          return;
+        }
         setResolvedAddress(resolvedEnsName as Address);
       }
       getEnsAddress(trimmedAddress);
@@ -70,11 +77,15 @@ export const Navbar = () => {
     }
   }, [inputValue]);
 
-  const handleLogoClick = () => {
+  const resetState = () => {
     setInputValue("");
     setEnsName("");
     setResolvedAddress("");
     resetBalances();
+  };
+
+  const handleLogoClick = () => {
+    resetState();
     router.push("/", undefined, { shallow: true });
   };
 
