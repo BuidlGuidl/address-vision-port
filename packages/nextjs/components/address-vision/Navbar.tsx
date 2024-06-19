@@ -53,7 +53,7 @@ export const Navbar = () => {
       trimmedAddress = trimmedAddress.slice(5);
     }
 
-    if (trimmedAddress.endsWith(".eth")) {
+    if (trimmedAddress.endsWith(".eth") || trimmedAddress.endsWith(".xyz")) {
       router.push(`/${trimmedAddress}`, undefined, { shallow: true });
       setEnsName(trimmedAddress);
       async function getEnsAddress(ensName: string) {
