@@ -1,8 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
-import { AvatarComponent } from "@rainbow-me/rainbowkit";
 import { blo } from "blo";
+import { Address } from "viem";
 
-export const BlockieAvatar: AvatarComponent = ({ address, ensImage, size }) => (
+interface BlockieAvatarProps {
+  address: Address;
+  ensImage?: string | null;
+  size: number;
+}
+
+export const BlockieAvatar = ({ address, ensImage, size }: BlockieAvatarProps) => (
   <div
     style={{
       height: `${size}px`,
