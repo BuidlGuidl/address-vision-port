@@ -79,6 +79,7 @@ export const Navbar = () => {
   }, [inputValue]);
 
   const resetState = () => {
+    router.push("/", undefined, { shallow: true });
     setInputValue("");
     setEnsName("");
     setResolvedAddress("");
@@ -87,7 +88,6 @@ export const Navbar = () => {
 
   const handleLogoClick = () => {
     resetState();
-    router.push("/", undefined, { shallow: true });
   };
 
   const handleDecode = (result: string) => {
@@ -96,7 +96,7 @@ export const Navbar = () => {
   };
 
   const clearInput = () => {
-    setInputValue("");
+    resetState();
     inputRef.current?.focus();
   };
 
