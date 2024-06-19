@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import type { AppProps } from "next/app";
-import "@rainbow-me/rainbowkit/styles.css";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import { WagmiConfig } from "wagmi";
