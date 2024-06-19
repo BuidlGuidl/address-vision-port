@@ -8,8 +8,8 @@ import { useAddressStore } from "~~/services/store/store";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
 
 const getSize = (name: string) => {
-  if (name.length > 30) return "base";
-  if (name.length > 20) return "lg";
+  if (name.length > 24) return "xl";
+  if (name.length > 20) return "2xl";
   if (name.length > 12) return "3xl";
   return "4xl";
 };
@@ -84,6 +84,7 @@ export const AddressCard = () => {
   const blockieSize = {
     base: 32,
     lg: 40,
+    xl: 44,
     "2xl": 48,
     "3xl": 56,
     "4xl": 64,
