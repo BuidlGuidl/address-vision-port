@@ -57,7 +57,7 @@ const AddressPage: NextPage<Props> = ({ address }) => {
       <MetaHeader address={address} />
       <Navbar />
 
-      <div className="flex w-full flex-grow flex-col items-center justify-center gap-4 p-4 md:mt-4">
+      <div className="flex w-full flex-grow flex-col items-center gap-4 p-4 md:mt-4">
         <div className="flex">
           <div className={`w-full flex-wrap space-y-4 md:p-4 sm:w-1/2 ${cardWidthClass}`}>
             <AddressCard />
