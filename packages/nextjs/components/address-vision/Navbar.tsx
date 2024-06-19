@@ -45,6 +45,7 @@ export const Navbar = () => {
   }, [ensName, resolvedAddress]);
 
   useEffect(() => {
+    setEnsName("");
     let trimmedAddress = inputValue.trim();
     if (trimmedAddress.startsWith("eth:")) {
       trimmedAddress = trimmedAddress.slice(4);
