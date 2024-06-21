@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Address as AddressComp } from "../scaffold-eth";
+import { SafeOwner } from "./SafeOwner";
 import { useTheme } from "next-themes";
 import { Address, isAddress } from "viem";
 import { usePublicClient } from "wagmi";
+import { useAddressStore } from "~~/services/store/store";
 
 const GNOSIS_SAFE_BYTECODE_PATTERN = "0x608060405273ffffffffffffffffffffffffffffffffffffffff600054167fa619486e";
 
@@ -25,11 +26,13 @@ const SAFE_ABI = [
   },
 ];
 
-export const ButtonsCard = ({ address }: { address: Address }) => {
+export const ButtonsCard = () => {
   const [isContractAddress, setIsContractAddress] = useState<boolean>(false);
   const [isGnosisSafe, setIsGnosisSafe] = useState<boolean>(false);
   const [safeOwners, setSafeOwners] = useState<Address[]>([]);
   const [safeThreshold, setSafeThreshold] = useState<number>(0);
+
+  const { resolvedAddress: address } = useAddressStore();
 
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
@@ -45,6 +48,7 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
 
   useEffect(() => {
     const checkGnosisSafe = async () => {
+      if (!address || !client) return;
       try {
         const bytecode = await client.getBytecode({ address });
         const isContract = bytecode && bytecode.length > 2;
@@ -119,7 +123,9 @@ export const ButtonsCard = ({ address }: { address: Address }) => {
           <div>
             {safeOwners.map(owner => (
               <div key={owner} className="mb-1">
-                <AddressComp address={owner} isSmallCard={true} />
+                <div className="flex items-center">
+                  <SafeOwner address={owner} />
+                </div>
               </div>
             ))}
           </div>

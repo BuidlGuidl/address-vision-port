@@ -47,10 +47,14 @@ export const TotalBalanceCard = () => {
         </p>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-        {Object.entries(balances)
-          .filter(([, { balance }]) => balance > 0)
-          .sort(([, a], [, b]) => b.balance - a.balance)
-          .map(renderNetworkBalance)}
+        {isDataLoading
+          ? Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="skeleton py-3 bg-slate-300 animate-pulse h-16 rounded-box"></div>
+            ))
+          : Object.entries(balances)
+              .filter(([, { balance }]) => balance > 0)
+              .sort(([, a], [, b]) => b.balance - a.balance)
+              .map(renderNetworkBalance)}
       </div>
     </div>
   );

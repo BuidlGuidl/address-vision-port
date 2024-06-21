@@ -4,9 +4,9 @@ import Link from "next/link";
 import { NftsCarousel } from "./NftsCarousel";
 import { TokensTable } from "./TokensTable";
 import { CovalentClient } from "@covalenthq/client-sdk";
-import { Address, isAddress } from "viem";
+import { isAddress } from "viem";
 import { Chain } from "wagmi";
-import { useNetworkBalancesStore } from "~~/services/store/store";
+import { useAddressStore, useNetworkBalancesStore } from "~~/services/store/store";
 import {
   NETWORKS_EXTRA_DATA,
   getBlockExplorerAddressLink,
@@ -17,12 +17,13 @@ import {
 
 const client = new CovalentClient(process.env.NEXT_PUBLIC_COVALENT_API_KEY as string);
 
-export const NetworkCard = ({ address, chain }: { address: Address; chain: Chain }) => {
+export const NetworkCard = ({ chain }: { chain: Chain }) => {
   const [nfts, setNfts] = useState<any[]>([]);
   const [tokenBalances, setTokenBalances] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { setBalance, resetBalances } = useNetworkBalancesStore();
   const currentNetworkData = NETWORKS_EXTRA_DATA[chain.id];
+  const { resolvedAddress: address } = useAddressStore();
 
   const getNfts = async () => {
     const options = {
@@ -152,7 +153,7 @@ export const NetworkCard = ({ address, chain }: { address: Address; chain: Chain
         <div className="card-body py-6">
           <h2 className="card-title whitespace-nowrap flex items-center gap-2">
             <Link
-              href={getBlockExplorerAddressLink(chain, address)}
+              href={getBlockExplorerAddressLink(address)}
               rel="noopener noreferrer"
               target="_blank"
               className="flex items-center gap-2"

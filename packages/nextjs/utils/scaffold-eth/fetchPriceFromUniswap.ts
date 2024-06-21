@@ -38,17 +38,17 @@ export const fetchPriceFromUniswap = async (): Promise<number> => {
       address: pairAddress,
       abi: ABI,
     };
-
+    // @ts-ignore
     const reserves = await publicClient.readContract({
       ...wagmiConfig,
       functionName: "getReserves",
     });
-
+    // @ts-ignore
     const token0Address = await publicClient.readContract({
       ...wagmiConfig,
       functionName: "token0",
     });
-
+    // @ts-ignore
     const token1Address = await publicClient.readContract({
       ...wagmiConfig,
       functionName: "token1",

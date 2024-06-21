@@ -1,58 +1,98 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import { AddressInput } from "../scaffold-eth";
 import { QrScanner } from "@yudiel/react-qr-scanner";
 import { Address, isAddress } from "viem";
 import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
+import { normalize } from "viem/ens";
 import { QrCodeIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { AddressInput } from "~~/components/scaffold-eth";
+import { useAddressStore, useNetworkBalancesStore } from "~~/services/store/store";
+import { notification } from "~~/utils/scaffold-eth";
 
 const client = createPublicClient({
   chain: mainnet,
   transport: http(),
 });
 
-interface NavbarProps {
-  searchedAddress: Address;
-  setSearchedAddress: React.Dispatch<React.SetStateAction<string>>;
-}
-
-export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => {
-  const router = useRouter();
-  const inputRef = useRef<HTMLInputElement>(null); // Step 1: Creating a ref
-
-  const [isScannerVisible, setIsScannerVisible] = useState(false);
+export const Navbar = () => {
   const [inputValue, setInputValue] = useState("");
+  const [isScannerVisible, setIsScannerVisible] = useState(false);
+  const [inputChanged, setInputChanged] = useState(false);
+
+  const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const { ensName, resolvedAddress, setEnsName, setResolvedAddress } = useAddressStore();
+  const { resetBalances } = useNetworkBalancesStore();
 
   useEffect(() => {
-    setInputValue(searchedAddress);
-  }, [searchedAddress]);
+    if (resolvedAddress && !inputChanged) {
+      const savedAddresses = localStorage.getItem("searchedAddresses");
+      const addresses = savedAddresses ? JSON.parse(savedAddresses) : [];
+      if (!addresses.includes(resolvedAddress)) {
+        addresses.unshift(resolvedAddress);
+        localStorage.setItem("searchedAddresses", JSON.stringify(addresses));
+      }
+    }
+  }, [resolvedAddress]);
 
   useEffect(() => {
+    if (!inputChanged) {
+      if (ensName) {
+        setInputValue(ensName);
+      } else if (resolvedAddress) {
+        setInputValue(resolvedAddress);
+      }
+    }
+  }, [ensName, resolvedAddress]);
+
+  useEffect(() => {
+    setEnsName("");
     let trimmedAddress = inputValue.trim();
     if (trimmedAddress.startsWith("eth:")) {
       trimmedAddress = trimmedAddress.slice(4);
     } else if (trimmedAddress.startsWith("oeth:")) {
       trimmedAddress = trimmedAddress.slice(5);
     }
-    if (isAddress(trimmedAddress)) {
-      setSearchedAddress(trimmedAddress);
-    }
-    if (trimmedAddress.endsWith(".eth")) {
+
+    if (trimmedAddress.endsWith(".eth") || trimmedAddress.endsWith(".xyz")) {
       router.push(`/${trimmedAddress}`, undefined, { shallow: true });
+      setEnsName(trimmedAddress);
+      async function getEnsAddress(ensName: string) {
+        const resolvedEnsName = await client.getEnsAddress({ name: normalize(ensName) });
+        if (!resolvedEnsName) {
+          notification.error("ENS name not found");
+          resetState();
+          router.push("/", undefined, { shallow: true });
+          return;
+        }
+        setResolvedAddress(resolvedEnsName as Address);
+        inputRef.current?.blur();
+      }
+      getEnsAddress(trimmedAddress);
     } else if (isAddress(trimmedAddress)) {
-      async function getEnsName(address: string) {
+      setResolvedAddress(trimmedAddress);
+      async function getEnsName(address: Address) {
         const ensName = await client.getEnsName({ address });
         router.push(`/${ensName || address}`, undefined, { shallow: true });
+        setEnsName(ensName || "");
+        inputRef.current?.blur();
       }
       getEnsName(trimmedAddress);
     }
   }, [inputValue]);
 
-  const handleLogoClick = () => {
-    setSearchedAddress("");
-    setInputValue("");
+  const resetState = () => {
     router.push("/", undefined, { shallow: true });
+    setInputValue("");
+    setEnsName("");
+    setResolvedAddress("");
+    resetBalances();
+  };
+
+  const handleLogoClick = () => {
+    resetState();
   };
 
   const handleDecode = (result: string) => {
@@ -61,9 +101,8 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
   };
 
   const clearInput = () => {
-    setInputValue("");
-    setSearchedAddress("");
-    inputRef.current?.focus(); // Step 3: Focus the input when clearing it
+    resetState();
+    inputRef.current?.focus();
   };
 
   const openScanner = () => {
@@ -74,14 +113,16 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
     setIsScannerVisible(false);
   };
 
+  const handleInputChange = (value: string) => {
+    setInputValue(value);
+    setInputChanged(true);
+  };
+
   return (
     <div className="navbar flex-col md:flex-row justify-center">
-      <div className="md:absolute left-6">
-        <div onClick={handleLogoClick} className="cursor-pointer text-4xl">
-          👀
-        </div>
+      <div className="md:absolute left-6 mb-2">
         <h1 onClick={handleLogoClick} className="ml-2 mb-0 cursor-pointer text-2xl font-bold">
-          address.vision
+          👀 address.vision
         </h1>
       </div>
       <div className="w-11/12 md:w-1/2">
@@ -89,7 +130,7 @@ export const Navbar = ({ searchedAddress, setSearchedAddress }: NavbarProps) => 
           <AddressInput
             placeholder="Enter an Ethereum address or ENS name to get started"
             value={inputValue}
-            onChange={setInputValue}
+            onChange={handleInputChange}
             ref={inputRef}
           />
           {inputValue && (
