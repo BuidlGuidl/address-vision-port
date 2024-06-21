@@ -18,6 +18,7 @@ const client = createPublicClient({
 export const Navbar = () => {
   const [inputValue, setInputValue] = useState("");
   const [isScannerVisible, setIsScannerVisible] = useState(false);
+  const [inputChanged, setInputChanged] = useState(false);
 
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -26,7 +27,7 @@ export const Navbar = () => {
   const { resetBalances } = useNetworkBalancesStore();
 
   useEffect(() => {
-    if (resolvedAddress) {
+    if (resolvedAddress && !inputChanged) {
       const savedAddresses = localStorage.getItem("searchedAddresses");
       const addresses = savedAddresses ? JSON.parse(savedAddresses) : [];
       if (!addresses.includes(resolvedAddress)) {
@@ -37,10 +38,12 @@ export const Navbar = () => {
   }, [resolvedAddress]);
 
   useEffect(() => {
-    if (ensName) {
-      setInputValue(ensName);
-    } else if (resolvedAddress) {
-      setInputValue(resolvedAddress);
+    if (!inputChanged) {
+      if (ensName) {
+        setInputValue(ensName);
+      } else if (resolvedAddress) {
+        setInputValue(resolvedAddress);
+      }
     }
   }, [ensName, resolvedAddress]);
 
@@ -108,6 +111,11 @@ export const Navbar = () => {
     setIsScannerVisible(false);
   };
 
+  const handleInputChange = (value: string) => {
+    setInputValue(value);
+    setInputChanged(true);
+  };
+
   return (
     <div className="navbar flex-col md:flex-row justify-center">
       <div className="md:absolute left-6 mb-2">
@@ -120,7 +128,7 @@ export const Navbar = () => {
           <AddressInput
             placeholder="Enter an Ethereum address or ENS name to get started"
             value={inputValue}
-            onChange={setInputValue}
+            onChange={handleInputChange}
             ref={inputRef}
           />
           {inputValue && (
