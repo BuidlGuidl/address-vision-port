@@ -68,6 +68,7 @@ export const Navbar = () => {
           return;
         }
         setResolvedAddress(resolvedEnsName as Address);
+        inputRef.current?.blur();
       }
       getEnsAddress(trimmedAddress);
     } else if (isAddress(trimmedAddress)) {
@@ -76,6 +77,7 @@ export const Navbar = () => {
         const ensName = await client.getEnsName({ address });
         router.push(`/${ensName || address}`, undefined, { shallow: true });
         setEnsName(ensName || "");
+        inputRef.current?.blur();
       }
       getEnsName(trimmedAddress);
     }
