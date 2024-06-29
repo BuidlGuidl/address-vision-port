@@ -3,8 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { SafeOwner } from "./SafeOwner";
 import { useTheme } from "next-themes";
-import { Address, isAddress } from "viem";
-import { usePublicClient } from "wagmi";
+import { Address, createPublicClient, http, isAddress } from "viem";
+import { mainnet } from "viem/chains";
 import { useAddressStore } from "~~/services/store/store";
 
 const GNOSIS_SAFE_BYTECODE_PATTERN = "0x608060405273ffffffffffffffffffffffffffffffffffffffff600054167fa619486e";
@@ -26,6 +26,11 @@ const SAFE_ABI = [
   },
 ];
 
+export const client = createPublicClient({
+  chain: mainnet,
+  transport: http(),
+});
+
 export const ButtonsCard = () => {
   const [isContractAddress, setIsContractAddress] = useState<boolean>(false);
   const [isGnosisSafe, setIsGnosisSafe] = useState<boolean>(false);
@@ -36,8 +41,6 @@ export const ButtonsCard = () => {
 
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
-
-  const client = usePublicClient();
 
   useEffect(() => {
     setIsContractAddress(false);
@@ -50,7 +53,7 @@ export const ButtonsCard = () => {
     const checkGnosisSafe = async () => {
       if (!address || !client) return;
       try {
-        const bytecode = await client.getBytecode({ address });
+        const bytecode = await client.getCode({ address });
         const isContract = bytecode && bytecode.length > 2;
 
         setIsContractAddress(isContract || false);

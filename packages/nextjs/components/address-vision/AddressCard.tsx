@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { Address as AddressType, isAddress } from "viem";
+import { Address as AddressType } from "viem";
 import { useEnsName } from "wagmi";
 import { ArrowTopRightOnSquareIcon, CheckCircleIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
@@ -23,7 +23,6 @@ export const AddressCard = () => {
 
   const { data: fetchedEns } = useEnsName({
     address: address as AddressType,
-    enabled: isAddress(address ?? ""),
     chainId: 1,
   });
 

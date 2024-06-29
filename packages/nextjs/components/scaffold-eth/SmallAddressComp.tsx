@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import { Address as AddressType, isAddress } from "viem";
+import { Address as AddressType } from "viem";
 import { Address } from "viem";
 import { useEnsName } from "wagmi";
 import {
@@ -20,7 +20,6 @@ export const SmallAddressComp = ({ address, removeAddress }: { address: Address;
 
   const { data: fetchedEns } = useEnsName({
     address: address as AddressType,
-    enabled: isAddress(address ?? ""),
     chainId: 1,
   });
 

@@ -1,7 +1,7 @@
-import * as chains from "wagmi/chains";
+import * as chains from "viem/chains";
 import scaffoldConfig from "~~/scaffold.config";
 
-export type TChainAttributes = {
+type ChainAttributes = {
   // color | [lightThemeColor, darkThemeColor]
   color: string | [string, string];
   // Used to fetch price by providing mainnet token address
@@ -10,7 +10,37 @@ export type TChainAttributes = {
   icon?: string;
 };
 
-export const NETWORKS_EXTRA_DATA: Record<string, TChainAttributes> = {
+export type ChainWithAttributes = chains.Chain & Partial<ChainAttributes>;
+
+// Mapping of chainId to RPC chain name an format followed by alchemy and infura
+export const RPC_CHAIN_NAMES: Record<number, string> = {
+  [chains.mainnet.id]: "eth-mainnet",
+  [chains.goerli.id]: "eth-goerli",
+  [chains.sepolia.id]: "eth-sepolia",
+  [chains.optimism.id]: "opt-mainnet",
+  [chains.optimismGoerli.id]: "opt-goerli",
+  [chains.optimismSepolia.id]: "opt-sepolia",
+  [chains.arbitrum.id]: "arb-mainnet",
+  [chains.arbitrumGoerli.id]: "arb-goerli",
+  [chains.arbitrumSepolia.id]: "arb-sepolia",
+  [chains.polygon.id]: "polygon-mainnet",
+  [chains.polygonMumbai.id]: "polygon-mumbai",
+  [chains.polygonAmoy.id]: "polygon-amoy",
+  [chains.astar.id]: "astar-mainnet",
+  [chains.polygonZkEvm.id]: "polygonzkevm-mainnet",
+  [chains.polygonZkEvmTestnet.id]: "polygonzkevm-testnet",
+  [chains.base.id]: "base-mainnet",
+  [chains.baseGoerli.id]: "base-goerli",
+  [chains.baseSepolia.id]: "base-sepolia",
+};
+
+export const getAlchemyHttpUrl = (chainId: number) => {
+  return RPC_CHAIN_NAMES[chainId]
+    ? `https://${RPC_CHAIN_NAMES[chainId]}.g.alchemy.com/v2/${scaffoldConfig.alchemyApiKey}`
+    : undefined;
+};
+
+export const NETWORKS_EXTRA_DATA: Record<string, ChainAttributes> = {
   [chains.hardhat.id]: {
     color: "#b8af0c",
     icon: "/hardhat.png",
@@ -23,10 +53,6 @@ export const NETWORKS_EXTRA_DATA: Record<string, TChainAttributes> = {
     color: ["#5f4bb6", "#87ff65"],
     icon: "/mainnet.svg",
   },
-  [chains.goerli.id]: {
-    color: "#0975F6",
-    icon: "/mainnet.svg",
-  },
   [chains.gnosis.id]: {
     color: "#48a9a6",
     icon: "/gnosis.svg",
@@ -36,46 +62,18 @@ export const NETWORKS_EXTRA_DATA: Record<string, TChainAttributes> = {
     nativeCurrencyTokenAddress: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
     icon: "/polygon.svg",
   },
-  [chains.polygonMumbai.id]: {
-    color: "#92D9FA",
-    nativeCurrencyTokenAddress: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
-    icon: "/polygon.svg",
-  },
-  [chains.optimismGoerli.id]: {
-    color: "#f01a37",
-    icon: "/optimism.svg",
-  },
   [chains.optimism.id]: {
     color: "#f01a37",
     icon: "/optimism.svg",
-  },
-  [chains.arbitrumGoerli.id]: {
-    color: "#28a0f0",
-    icon: "/arbitrum.svg",
   },
   [chains.arbitrum.id]: {
     color: "#28a0f0",
     icon: "/arbitrum.svg",
   },
-  [chains.fantom.id]: {
-    color: "#1969ff",
-    icon: "/fantom.svg",
-  },
-  [chains.fantomTestnet.id]: {
-    color: "#1969ff",
-    icon: "/fantom.svg",
-  },
-  [chains.base.id]: {
-    color: "#1450EE",
-    icon: "/base.png",
-  },
 };
 
 /**
- * Gives the block explorer transaction URL.
- * @param network
- * @param txnHash
- * @dev returns empty string if the network is localChain
+ * Gives the block explorer transaction URL, returns empty string if the network is a local chain
  */
 export function getBlockExplorerTxLink(chainId: number, txnHash: string) {
   const chainNames = Object.keys(chains);
@@ -90,7 +88,6 @@ export function getBlockExplorerTxLink(chainId: number, txnHash: string) {
   }
 
   const targetChain = targetChainArr[0] as keyof typeof chains;
-  // @ts-expect-error : ignoring error since `blockExplorers` key may or may not be present on some chains
   const blockExplorerTxURL = chains[targetChain]?.blockExplorers?.default?.url;
 
   if (!blockExplorerTxURL) {
@@ -101,24 +98,28 @@ export function getBlockExplorerTxLink(chainId: number, txnHash: string) {
 }
 
 /**
- * Gives the block explorer Address URL.
- * @param network - wagmi chain object
- * @param address
- * @returns block explorer address URL and etherscan URL if block explorer URL is not present for wagmi network
+ * Gives the block explorer URL for a given address.
+ * Defaults to Etherscan if no (wagmi) block explorer is configured for the network.
  */
-export function getBlockExplorerAddressLink(address: string) {
-  return `https://etherscan.io/address/${address}`;
+export function getBlockExplorerAddressLink(address: string, network: chains.Chain = chains.mainnet) {
+  const blockExplorerBaseURL = network.blockExplorers?.default?.url;
+  if (network.id === chains.hardhat.id) {
+    return `/blockexplorer/address/${address}`;
+  }
+
+  if (!blockExplorerBaseURL) {
+    return `https://etherscan.io/address/${address}`;
+  }
+
+  return `${blockExplorerBaseURL}/address/${address}`;
 }
 
 /**
- * @returns targetNetwork object consisting targetNetwork from scaffold.config and extra network metadata
+ * @returns targetNetworks array containing networks configured in scaffold.config including extra network metadata
  */
-
-export function getTargetNetwork(): chains.Chain & Partial<TChainAttributes> {
-  const configuredNetwork = scaffoldConfig.targetNetwork;
-
-  return {
-    ...configuredNetwork,
-    ...NETWORKS_EXTRA_DATA[configuredNetwork.id],
-  };
+export function getTargetNetworks(): ChainWithAttributes[] {
+  return scaffoldConfig.targetNetworks.map(targetNetwork => ({
+    ...targetNetwork,
+    ...NETWORKS_EXTRA_DATA[targetNetwork.id],
+  }));
 }

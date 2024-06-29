@@ -4,8 +4,7 @@ import Link from "next/link";
 import { NftsCarousel } from "./NftsCarousel";
 import { TokensTable } from "./TokensTable";
 import { CovalentClient } from "@covalenthq/client-sdk";
-import { isAddress } from "viem";
-import { Chain } from "wagmi";
+import { Chain, isAddress } from "viem";
 import { useAddressStore, useNetworkBalancesStore } from "~~/services/store/store";
 import {
   NETWORKS_EXTRA_DATA,

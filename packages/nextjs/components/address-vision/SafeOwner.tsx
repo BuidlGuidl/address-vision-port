@@ -12,7 +12,7 @@ export const SafeOwner = ({ address }: { address: Address }) => {
   const [ensAvatar, setEnsAvatar] = useState<string | null>();
   const [addressCopied, setAddressCopied] = useState(false);
 
-  const { data: fetchedEns } = useEnsName({ address, enabled: isAddress(address ?? ""), chainId: 1 });
+  const { data: fetchedEns } = useEnsName({ address, chainId: 1 });
 
   // We need to apply this pattern to avoid Hydration errors.
   useEffect(() => {
