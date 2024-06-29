@@ -6,100 +6,87 @@ import { Address, createPublicClient, formatEther, http, isAddress } from "viem"
 import { mainnet } from "viem/chains";
 import { normalize } from "viem/ens";
 
-export const publicClient = createPublicClient({
-  chain: mainnet,
-  transport: http(),
-});
-
 export const config = {
   runtime: "edge",
 };
 
-async function resolveEnsToAddress(ens: string): Promise<Address | undefined> {
+const publicClient = createPublicClient({
+  chain: mainnet,
+  transport: http(),
+});
+
+async function resolveEnsToAddress(ensName: string): Promise<Address | null> {
   try {
-    const address = await publicClient.getEnsAddress({ name: normalize(ens) });
-    return address || undefined;
+    const address = await publicClient.getEnsAddress({
+      name: normalize(ensName),
+    });
+    return address || null;
   } catch (error) {
     console.error("Error resolving ENS to address:", error);
-    return undefined;
+    return null;
   }
 }
 
-async function getEnsNameForAddress(address: Address | undefined): Promise<string | undefined> {
-  if (!address) return undefined;
+async function resolveAddressToEns(address: Address): Promise<string | null> {
   try {
     const ensName = await publicClient.getEnsName({ address });
-    return ensName || undefined;
+    return ensName || null;
   } catch (error) {
-    console.error("Error fetching ENS name for address:", error);
-    return undefined;
+    console.error("Error resolving address to ENS:", error);
+    return null;
   }
 }
 
-async function getBalance(address: Address | undefined): Promise<bigint> {
-  if (!address) return 0n;
+async function fetchBalance(address: Address): Promise<string | null> {
   try {
     const balance = await publicClient.getBalance({ address });
-    return balance;
+    return formatEther(balance);
   } catch (error) {
-    console.error("Error fetching balance for address:", error);
-    return 0n;
-  }
-}
-
-async function getEnsAvatar(ensName: string) {
-  const url = `https://metadata.ens.domains/mainnet/avatar/${ensName}`;
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Failed to fetch ENS avatar");
-    const contentType = response.headers.get("content-type");
-    if (contentType && contentType.startsWith("image")) {
-      return url;
-    } else {
-      const data = await response.json();
-      if (data.message === "There is no avatar set under given address") {
-        throw new Error("No ENS avatar");
-      }
-      return url;
-    }
-  } catch (error) {
-    console.error("Error fetching ENS avatar:", error);
-    return undefined;
+    console.error(`Error fetching balance for address ${address}:`, error);
+    return null;
   }
 }
 
 export default async function handler(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
+
     if (!searchParams.has("addyOrEns")) {
       return new Response("Missing 'addyOrEns' query parameter", { status: 400 });
     }
+
     const addyOrEns = searchParams.get("addyOrEns")?.slice(0, 100) || "blank";
+    const isAddressValid = isAddress(addyOrEns as string);
+    const isEnsValid = /\.(eth|xyz)$/.test(addyOrEns as string);
 
-    let address: string | undefined = addyOrEns;
-    let ensName: string | undefined;
-    let balance = 0n;
-    let avatarUrl: string | undefined;
-
-    if (/\..+$/.test(addyOrEns)) {
-      address = await resolveEnsToAddress(addyOrEns);
-      if (address) {
-        ensName = await getEnsNameForAddress(address as Address);
-        balance = await getBalance(address as Address);
-        avatarUrl = await getEnsAvatar(ensName as string);
-      }
-    } else if (isAddress(addyOrEns)) {
-      ensName = await getEnsNameForAddress(addyOrEns);
-      balance = await getBalance(addyOrEns);
-      avatarUrl = await getEnsAvatar(ensName || addyOrEns);
+    if (!isAddressValid && !isEnsValid) {
+      return new Response("Invalid address or ENS", { status: 400 });
     }
 
-    if (!avatarUrl) {
-      avatarUrl = blo(address as `0x${string}`);
+    let resolvedAddress: Address | null = null;
+    let resolvedEnsName: string | null = null;
+    let balance: string | null = null;
+
+    const [addressPromise, ensNamePromise, balancePromise] = [
+      isEnsValid ? resolveEnsToAddress(addyOrEns as string) : Promise.resolve(addyOrEns as Address),
+      isAddressValid ? resolveAddressToEns(addyOrEns as Address) : Promise.resolve(null),
+      isAddressValid ? fetchBalance(addyOrEns as Address) : Promise.resolve(null),
+    ];
+
+    [resolvedAddress, resolvedEnsName, balance] = await Promise.all([addressPromise, ensNamePromise, balancePromise]);
+
+    if (!resolvedAddress) {
+      return new Response("ENS name or address not found", { status: 404 });
     }
 
-    const formattedTitle = ensName || (address ? `${address.slice(0, 6)}...${address.slice(-5)}` : "Unknown");
-    const displayAddressSearchBar = addyOrEns?.slice(0, 13) + "..." + addyOrEns?.slice(-12);
+    const avatarUrl = isEnsValid
+      ? (await fetch(`https://ensdata.net/media/avatar/${addyOrEns}`)).ok
+        ? `https://ensdata.net/media/avatar/${addyOrEns}`
+        : blo(resolvedAddress)
+      : blo(resolvedAddress);
+
+    const croppedAddresses = `${resolvedAddress.slice(0, 6)}...${resolvedAddress.slice(-4)}`;
+    const displayName = resolvedEnsName || addyOrEns || croppedAddresses;
 
     return new ImageResponse(
       (
@@ -107,34 +94,30 @@ export default async function handler(request: NextRequest) {
           <div style={{ display: "flex" }} tw="flex-col flex-grow">
             <div style={{ display: "flex" }} tw="max-h-[125px] font-bold bg-white p-4 pt-6 items-center flex-grow">
               <strong tw="text-6xl">👀 address.vision</strong>
-              <div tw="ml-12 text-4xl bg-blue-50 p-4 px-6 rounded-full border border-slate-300 ">
-                {ensName || displayAddressSearchBar}
-              </div>
+              <div tw="ml-12 text-4xl bg-blue-50 p-4 px-6 rounded-full border border-slate-300">{displayName}</div>
             </div>
             <div tw="flex bg-blue-50 flex-grow justify-between pt-6 pl-10">
               <div tw="flex flex-col">
                 <div tw="flex">
-                  <div tw="bg-white text-4xl m-8 p-8 h-[400px] rounded-16 shadow-2xl flex items-center justify-between ">
+                  <div tw="bg-white text-4xl m-8 p-8 h-[400px] rounded-16 shadow-2xl flex items-center justify-between">
                     <img
                       src={avatarUrl}
                       width={200}
                       height={200}
                       tw="rounded-full"
-                      style={{
-                        objectFit: "cover",
-                        height: `200px`,
-                        width: `200px`,
-                      }}
+                      style={{ objectFit: "cover", height: `200px`, width: `200px` }}
                       alt="ENS Avatar"
                     />
                     <div tw="flex flex-col ml-8">
-                      <strong>{ensName || formattedTitle}</strong>
-                      <span tw="mt-2">Balance: {Number(formatEther(balance)).toFixed(4)} ETH</span>
+                      <strong>{displayName}</strong>
+                      <span tw="mt-2">Balance: {Number(balance).toFixed(4)} ETH</span>
                     </div>
                   </div>
-                  <div tw="bg-white text-4xl m-8 ml-0 p-8 h-[400px] rounded-16 shadow-2xl flex items-center justify-between ">
+                  <div tw="bg-white text-4xl m-8 ml-0 p-8 h-[400px] rounded-16 shadow-2xl flex items-center justify-between">
                     <img
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=330x330&data=${address || addyOrEns}`}
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=330x330&data=${
+                        resolvedAddress || addyOrEns
+                      }`}
                       width={330}
                       height={330}
                       alt="QR Code"
@@ -149,12 +132,13 @@ export default async function handler(request: NextRequest) {
       {
         width: 1200,
         height: 630,
+        headers: {
+          "cache-control": "max-age=86400",
+        },
       },
     );
   } catch (e: any) {
     console.log(`${e.message}`);
-    return new Response(`Failed to generate the image`, {
-      status: 500,
-    });
+    return new Response("Failed to generate the image", { status: 500 });
   }
 }
