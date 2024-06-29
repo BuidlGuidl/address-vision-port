@@ -101,6 +101,7 @@ export const AddressCard = () => {
               {addressCopied ? (
                 <CheckCircleIcon className="h-6 w-6 text-green-500" aria-hidden="true" />
               ) : (
+                // @ts-ignore @todo fix this
                 <CopyToClipboard
                   text={address}
                   onCopy={() => {

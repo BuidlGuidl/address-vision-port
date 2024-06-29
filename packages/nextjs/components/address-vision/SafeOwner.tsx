@@ -89,6 +89,7 @@ export const SafeOwner = ({ address }: { address: Address }) => {
         {addressCopied ? (
           <CheckCircleIcon className="h-5 w-5 text-green-500" aria-hidden="true" />
         ) : (
+          // @ts-ignore @todo fix this
           <CopyToClipboard
             text={address}
             onCopy={() => {
