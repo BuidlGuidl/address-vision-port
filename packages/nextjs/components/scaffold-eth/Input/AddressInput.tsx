@@ -2,14 +2,15 @@ import { forwardRef } from "react";
 import { blo } from "blo";
 import { Address } from "viem";
 import { CommonInputProps, InputBase } from "~~/components/scaffold-eth";
-
-// ToDo:  move this function to an utility file
+import { useAddressStore } from "~~/services/store/store";
 
 /**
  * Address input with ENS name resolution
  */
 export const AddressInput = forwardRef<HTMLInputElement, CommonInputProps<Address | string>>(
   ({ value, name, placeholder, onChange }, ref) => {
+    const { resolvedAddress: address } = useAddressStore();
+
     return (
       <InputBase
         autoFocus={true}
@@ -19,9 +20,16 @@ export const AddressInput = forwardRef<HTMLInputElement, CommonInputProps<Addres
         onChange={onChange}
         ref={ref}
         suffix={
-          // Don't want to use nextJS Image here (and adding remote patterns for the URL)
-          // eslint-disable-next-line @next/next/no-img-element
-          value && <img alt="" className="!rounded-full" src={blo(value as `0x${string}`)} width="35" height="35" />
+          address && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              alt=""
+              className="!rounded-full absolute right-0"
+              src={blo(address as `0x${string}`)}
+              width="35"
+              height="35"
+            />
+          )
         }
       />
     );

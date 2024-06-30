@@ -138,15 +138,10 @@ export const Navbar = () => {
               <XMarkIcon className="h-6 w-6 bg-base-200 bg-opacity-60 rounded-full hover:text-red-500" />
             </button>
           )}
-          <button
-            onClick={openScanner}
-            className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-2 py-1 ${
-              inputValue !== "" ? "mr-8" : ""
-            }`}
-          >
+          <button onClick={openScanner} className={`absolute right-10 top-1/2 transform -translate-y-1/2 px-2 py-1`}>
             <div>
               <QrCodeIcon className="h-6 w-6 bg-base-200" />
-              <div className="absolute bottom-0 right-8  left-0 h-8 bg-gradient-to-r from-transparent to-base-200"></div>
+              <div className="absolute bottom-0 right-8 left-0 h-8 bg-gradient-to-r from-transparent to-base-200"></div>
             </div>
           </button>
 
