@@ -1625,23 +1625,23 @@ __metadata:
     blo: ^1.0.1
     daisyui: ^3.5.1
     eslint: ^8.15.0
-    eslint-config-next: latest
+    eslint-config-next: 14.2.4
     eslint-config-prettier: ^8.5.0
     eslint-plugin-prettier: ^4.2.1
-    next: latest
+    next: 14.2.4
     next-themes: ^0.3.0
     postcss: ^8.4.16
     prettier: ^2.8.4
     qrcode.react: ^3.1.0
-    react: latest
+    react: 18.3.1
     react-copy-to-clipboard: ^5.1.0
-    react-dom: latest
+    react-dom: 18.3.1
     react-hot-toast: ^2.4.0
     tailwindcss: ^3.3.3
     typescript: ^5.1.6
     usehooks-ts: ^2.7.2
     vercel: ^28.15.1
-    viem: 2.x
+    viem: 2.16.4
     wagmi: ^2.10.8
     zustand: ^4.1.2
   languageName: unknown
@@ -5079,7 +5079,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-next@npm:latest":
+"eslint-config-next@npm:14.2.4":
   version: 14.2.4
   resolution: "eslint-config-next@npm:14.2.4"
   dependencies:
@@ -7858,7 +7858,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next@npm:latest":
+"next@npm:14.2.4":
   version: 14.2.4
   resolution: "next@npm:14.2.4"
   dependencies:
@@ -8994,7 +8994,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:latest":
+"react-dom@npm:18.3.1":
   version: 18.3.1
   resolution: "react-dom@npm:18.3.1"
   dependencies:
@@ -9038,7 +9038,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:latest":
+"react@npm:18.3.1":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
@@ -10919,7 +10919,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"viem@npm:2.x":
+"viem@npm:2.16.4":
   version: 2.16.4
   resolution: "viem@npm:2.16.4"
   dependencies:
