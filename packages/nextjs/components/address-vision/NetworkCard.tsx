@@ -3,18 +3,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { NftsCarousel } from "./NftsCarousel";
 import { TokensTable } from "./TokensTable";
-import { CovalentClient } from "@covalenthq/client-sdk";
 import { Chain, isAddress } from "viem";
 import { useAddressStore, useNetworkBalancesStore } from "~~/services/store/store";
 import {
   NETWORKS_EXTRA_DATA,
   getBlockExplorerAddressLink,
-  getChainNameForCovalent,
+  getChainNameForMoralis,
   getChainNameForOpensea,
   isValidEnsOrAddress,
 } from "~~/utils/scaffold-eth";
-
-const client = new CovalentClient(process.env.NEXT_PUBLIC_COVALENT_API_KEY as string);
 
 export const NetworkCard = ({ chain }: { chain: Chain }) => {
   const [nfts, setNfts] = useState<any[]>([]);
@@ -58,17 +55,30 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
 
   const getTokens = async () => {
     try {
-      const res = await client.BalanceService.getTokenBalancesForWalletAddress(
-        getChainNameForCovalent(chain.id),
-        address,
-        { nft: false, noSpam: true },
+      const options = {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          "X-API-Key": process.env.NEXT_PUBLIC_MORALIS_API_KEY || "",
+        },
+      };
+
+      const response = await fetch(
+        `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens?chain=${getChainNameForMoralis(
+          chain.id,
+        )}&exclude_spam=true&exclude_unverified_contracts=true&exclude_native=false`,
+        options,
       );
+      const res = await response.json();
 
-      if (res.data && res.data.items) {
-        const filteredTokens = res.data.items.filter(token => token.quote !== 0);
-        setTokenBalances(filteredTokens);
+      const data = res.result;
 
-        const totalBalance = filteredTokens.reduce((acc, { quote }) => acc + quote, 0);
+      console.log("data", data);
+
+      if (data) {
+        setTokenBalances(data);
+
+        const totalBalance = data.reduce((acc: any, token: any) => acc + (parseFloat(token.usd_value) || 0), 0);
         setBalance(chain.name, totalBalance, chain.id);
       }
     } catch (error) {
@@ -142,9 +152,7 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
     );
   }
 
-  const filteredTokens = tokenBalances.slice(0, 10).filter(t => t.quote != null && t.quote.toFixed(0) !== "0");
-
-  if (nfts.length === 0 && filteredTokens.length === 0) return null;
+  if (nfts.length === 0 && tokenBalances.length === 0) return null;
 
   if (address && isValidEnsOrAddress(address)) {
     return (
@@ -168,7 +176,7 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
           <h3 className="font-bold">NFTs</h3>
           <NftsCarousel nfts={nfts} chain={chain} address={address} />
           <h3 className="mt-4 font-bold">Tokens</h3>
-          <TokensTable tokens={filteredTokens} />
+          <TokensTable tokens={tokenBalances} />
         </div>
       </div>
     );
