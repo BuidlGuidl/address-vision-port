@@ -1,160 +1,98 @@
-/* eslint-disable @next/next/no-img-element */
-import { NextRequest } from "next/server";
-import { ImageResponse } from "@vercel/og";
-import { blo } from "blo";
-import { Address, createPublicClient, formatEther, http, isAddress } from "viem";
-import { mainnet } from "viem/chains";
-import { normalize } from "viem/ens";
+/* eslint-disable jsx-a11y/alt-text */
 
-export const publicClient = createPublicClient({
-  chain: mainnet,
-  transport: http(),
-});
+/* eslint-disable @next/next/no-img-element */
+import { ImageResponse } from "next/og";
+import { NextRequest } from "next/server";
+import { blo } from "blo";
+import { Address } from "viem";
 
 export const config = {
   runtime: "edge",
 };
 
-async function resolveEnsToAddress(ens: string): Promise<Address | undefined> {
-  try {
-    const address = await publicClient.getEnsAddress({ name: normalize(ens) });
-    return address || undefined;
-  } catch (error) {
-    console.error("Error resolving ENS to address:", error);
-    return undefined;
-  }
-}
-
-async function getEnsNameForAddress(address: Address | undefined): Promise<string | undefined> {
-  if (!address) return undefined;
-  try {
-    const ensName = await publicClient.getEnsName({ address });
-    return ensName || undefined;
-  } catch (error) {
-    console.error("Error fetching ENS name for address:", error);
-    return undefined;
-  }
-}
-
-async function getBalance(address: Address | undefined): Promise<bigint> {
-  if (!address) return 0n;
-  try {
-    const balance = await publicClient.getBalance({ address });
-    return balance;
-  } catch (error) {
-    console.error("Error fetching balance for address:", error);
-    return 0n;
-  }
-}
-
-async function getEnsAvatar(ensName: string) {
-  const url = `https://metadata.ens.domains/mainnet/avatar/${ensName}`;
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Failed to fetch ENS avatar");
-    const contentType = response.headers.get("content-type");
-    if (contentType && contentType.startsWith("image")) {
-      return url;
-    } else {
-      const data = await response.json();
-      if (data.message === "There is no avatar set under given address") {
-        throw new Error("No ENS avatar");
-      }
-      return url;
-    }
-  } catch (error) {
-    console.error("Error fetching ENS avatar:", error);
-    return undefined;
-  }
-}
+const isAddress = (address: string) => {
+  return /^(0x)?[0-9a-f]{40}$/i.test(address);
+};
 
 export default async function handler(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    if (!searchParams.has("addyOrEns")) {
-      return new Response("Missing 'addyOrEns' query parameter", { status: 400 });
-    }
-    const addyOrEns = searchParams.get("addyOrEns")?.slice(0, 100) || "blank";
+  const { searchParams } = new URL(request.url);
 
-    let address: string | undefined = addyOrEns;
-    let ensName: string | undefined;
-    let balance = 0n;
-    let avatarUrl: string | undefined;
+  const addyOrEns = searchParams.get("addyOrEns")?.slice(0, 100) || "blank";
+  const isAddressValid = isAddress(addyOrEns as string);
+  const isEnsValid = /\.(eth|xyz)$/.test(addyOrEns as string);
 
-    if (/\..+$/.test(addyOrEns)) {
-      address = await resolveEnsToAddress(addyOrEns);
-      if (address) {
-        ensName = await getEnsNameForAddress(address as Address);
-        balance = await getBalance(address as Address);
-        avatarUrl = await getEnsAvatar(ensName as string);
-      }
-    } else if (isAddress(addyOrEns)) {
-      ensName = await getEnsNameForAddress(addyOrEns);
-      balance = await getBalance(addyOrEns);
-      avatarUrl = await getEnsAvatar(ensName || addyOrEns);
-    }
+  if (!isAddressValid && !isEnsValid) {
+    return new Response("Invalid address or ENS", { status: 400 });
+  }
 
-    if (!avatarUrl) {
-      avatarUrl = blo(address as `0x${string}`);
-    }
+  const response = await fetch(`https://api.ensdata.net/${addyOrEns}`);
 
-    const formattedTitle = ensName || (address ? `${address.slice(0, 6)}...${address.slice(-5)}` : "Unknown");
-    const displayAddressSearchBar = addyOrEns?.slice(0, 13) + "..." + addyOrEns?.slice(-12);
+  const data = await response.json();
+  const resolvedEnsName = data.ens;
+  const resolvedAddress = data.address;
+  const avatarUrl = data.avatar_small || blo(resolvedAddress || (addyOrEns as Address));
 
-    return new ImageResponse(
-      (
-        <div style={{ display: "flex" }} tw="w-full h-full">
-          <div style={{ display: "flex" }} tw="flex-col flex-grow">
-            <div style={{ display: "flex" }} tw="max-h-[125px] font-bold bg-white p-4 pt-6 items-center flex-grow">
-              <strong tw="text-6xl">👀 address.vision</strong>
-              <div tw="ml-12 text-4xl bg-blue-50 p-4 px-6 rounded-full border border-slate-300 ">
-                {ensName || displayAddressSearchBar}
-              </div>
-            </div>
-            <div tw="flex bg-blue-50 flex-grow justify-between pt-6 pl-10">
-              <div tw="flex flex-col">
-                <div tw="flex">
-                  <div tw="bg-white text-4xl m-8 p-8 h-[400px] rounded-16 shadow-2xl flex items-center justify-between ">
-                    <img
-                      src={avatarUrl}
-                      width={200}
-                      height={200}
-                      tw="rounded-full"
-                      style={{
-                        objectFit: "cover",
-                        height: `200px`,
-                        width: `200px`,
-                      }}
-                      alt="ENS Avatar"
-                    />
-                    <div tw="flex flex-col ml-8">
-                      <strong>{ensName || formattedTitle}</strong>
-                      <span tw="mt-2">Balance: {Number(formatEther(balance)).toFixed(4)} ETH</span>
-                    </div>
-                  </div>
-                  <div tw="bg-white text-4xl m-8 ml-0 p-8 h-[400px] rounded-16 shadow-2xl flex items-center justify-between ">
-                    <img
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=330x330&data=${address || addyOrEns}`}
-                      width={330}
-                      height={330}
-                      alt="QR Code"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+  const croppedAddresses = `${addyOrEns.slice(0, 6)}...${addyOrEns.slice(-4)}`;
+  const displayName = resolvedEnsName || croppedAddresses || addyOrEns;
+
+  return new ImageResponse(
+    (
+      <div tw="flex w-full h-full bg-white">
+        <div tw="flex flex-col w-2/5 justify-center items-center">
+          <div tw="flex flex-col items-center mb-5">
+            <svg width="128" height="128" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M9.52777 7C4.83335 7 1.02777 10.8056 1.02777 15.5V22.5C1.02777 27.1944 4.83335 31 9.52777 31C12.1363 31 14.4695 29.8246 16.0278 27.9773C17.5861 29.8246 19.9193 31 22.5278 31C27.2222 31 31.0278 27.1944 31.0278 22.5V15.5C31.0278 10.8056 27.2222 7 22.5278 7C19.9193 7 17.5861 8.17537 16.0278 10.0227C14.4695 8.17537 12.1363 7 9.52777 7Z"
+                fill="#9B9B9B"
+              />
+              <path
+                d="M9.52777 8C5.38564 8 2.02777 11.3579 2.02777 15.5V22.5C2.02777 26.6421 5.38564 30 9.52777 30C12.3062 30 14.7318 28.4891 16.0278 26.2442C17.3237 28.4891 19.7493 30 22.5278 30C26.6699 30 30.0278 26.6421 30.0278 22.5V15.5C30.0278 11.3579 26.6699 8 22.5278 8C19.7493 8 17.3237 9.51086 16.0278 11.7558C14.7318 9.51086 12.3062 8 9.52777 8Z"
+                fill="white"
+              />
+              <path
+                d="M15.0278 15.5C15.0278 14.1363 15.3917 12.8577 16.0278 11.7558C15.1755 10.2794 13.8345 9.12044 12.226 8.5H12.059C13.1528 9.15625 13.9965 11.75 13.9965 13V25.125C13.9965 26.4997 13.8403 28.2181 12.06 29.5618C13.7422 28.9585 15.1463 27.7711 16.0278 26.2442C15.3917 25.1423 15.0278 23.8637 15.0278 22.5V15.5Z"
+                fill="#D3D3D3"
+              />
+              <path
+                d="M30.0278 15.5C30.0278 12.309 28.035 9.58346 25.226 8.5H25.059C26.7153 9.59375 27.9653 11.5625 27.9653 13.0312V25C27.9653 26.3747 26.8407 28.2181 25.06 29.5618C27.9561 28.5231 30.0278 25.7535 30.0278 22.5V15.5Z"
+                fill="#D3D3D3"
+              />
+              <path
+                d="M6.59027 13C4.65727 13 3.09027 14.567 3.09027 16.5V21.5C3.09027 23.433 4.65727 25 6.59027 25C8.52327 25 10.0903 23.433 10.0903 21.5V16.5C10.0903 14.567 8.52327 13 6.59027 13Z"
+                fill="#321B41"
+              />
+              <path
+                d="M19.5278 13C17.5948 13 16.0278 14.567 16.0278 16.5V21.5C16.0278 23.433 17.5948 25 19.5278 25C21.4608 25 23.0278 23.433 23.0278 21.5V16.5C23.0278 14.567 21.4608 13 19.5278 13Z"
+                fill="#321B41"
+              />
+              <path
+                d="M8.76628 16.861C9.13773 16.5518 9.12055 15.9188 8.7279 15.4471C8.33525 14.9754 7.71583 14.8437 7.34438 15.1528C6.97294 15.462 6.99012 16.0951 7.38277 16.5668C7.77541 17.0385 8.39483 17.1702 8.76628 16.861Z"
+                fill="#F4F4F4"
+              />
+              <path
+                d="M21.7629 16.861C22.1343 16.5518 22.1171 15.9188 21.7245 15.4471C21.3318 14.9754 20.7124 14.8437 20.341 15.1528C19.9695 15.462 19.9867 16.0951 20.3793 16.5668C20.772 17.0385 21.3914 17.1702 21.7629 16.861Z"
+                fill="#F4F4F4"
+              />
+            </svg>
+            <div tw="text-6xl">address.vision</div>
           </div>
         </div>
-      ),
-      {
-        width: 1200,
-        height: 630,
+        <div tw="flex flex-col py-20 justify-center items-center  w-3/5 bg-blue-100 ">
+          <div tw="flex items-center mb-10 p-3 px-5 rounded-xl text-4xl bg-blue-100">
+            <img src={avatarUrl} width="200" height="200" tw="rounded-full " style={{ objectFit: "cover" }} />
+          </div>
+          <div tw="flex mb-10 p-3 px-5 rounded-xl font-bold text-7xl text-center">
+            <strong tw="text-5xl">{displayName}</strong>
+          </div>
+        </div>
+      </div>
+    ),
+    {
+      width: 1200,
+      height: 630,
+      headers: {
+        "cache-control": "max-age=86400",
       },
-    );
-  } catch (e: any) {
-    console.log(`${e.message}`);
-    return new Response(`Failed to generate the image`, {
-      status: 500,
-    });
-  }
+    },
+  );
 }

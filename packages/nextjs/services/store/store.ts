@@ -10,16 +10,6 @@ import create from "zustand";
  * Think about it as a global useState.
  */
 
-type TGlobalState = {
-  nativeCurrencyPrice: number;
-  setNativeCurrencyPrice: (newNativeCurrencyPriceState: number) => void;
-};
-
-export const useGlobalState = create<TGlobalState>(set => ({
-  nativeCurrencyPrice: 0,
-  setNativeCurrencyPrice: (newValue: number): void => set(() => ({ nativeCurrencyPrice: newValue })),
-}));
-
 type NetworkBalancesState = {
   balances: Record<string, { balance: number; networkId: number }>;
   setBalance: (networkName: string, balance: number, networkId: number) => void;

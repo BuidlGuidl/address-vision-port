@@ -2,8 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { Address } from "viem";
-import { Chain } from "wagmi";
+import { Address, Chain } from "viem";
 import { getChainNameForOpensea } from "~~/utils/scaffold-eth";
 
 export const NftsCarousel = ({ nfts, chain, address }: { nfts: any[]; chain: Chain; address: Address }) => {

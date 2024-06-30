@@ -7,7 +7,6 @@ import * as chains from "wagmi/chains";
 import { MetaHeader } from "~~/components/MetaHeader";
 import { AddressCard, ButtonsCard, Navbar, NetworkCard, QRCodeCard } from "~~/components/address-vision/";
 import { TotalBalanceCard } from "~~/components/address-vision/TotalBalanceCard";
-import { useAccountBalance } from "~~/hooks/scaffold-eth";
 import { useAddressStore } from "~~/services/store/store";
 
 export const publicClient = createPublicClient({
@@ -33,8 +32,6 @@ export const getServerSideProps: GetServerSideProps = async context => {
 const AddressPage: NextPage<Props> = ({ address }) => {
   const { resolvedAddress, setEnsName, setResolvedAddress } = useAddressStore();
 
-  const { balance, isLoading } = useAccountBalance(chains.mainnet, resolvedAddress);
-
   const router = useRouter();
 
   useEffect(() => {
@@ -48,7 +45,7 @@ const AddressPage: NextPage<Props> = ({ address }) => {
   }, [router]);
 
   let cardWidthClass = "lg:w-1/3";
-  if (!isLoading && !balance && resolvedAddress) {
+  if (resolvedAddress) {
     cardWidthClass = "lg:w-1/2";
   }
 
