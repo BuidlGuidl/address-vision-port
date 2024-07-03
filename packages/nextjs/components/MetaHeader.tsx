@@ -45,10 +45,7 @@ export const MetaHeader = ({
         </>
       )}
       {twitterCard && <meta name="twitter:card" content={twitterCard} />}
-      <link
-        rel="icon"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='80'>👀</text></svg>"
-      />
+      <link rel="icon" href="/eyes-emoji.svg" />
       <script defer data-domain="address.vision" src="https://plausible.io/js/script.js"></script> {children}
     </Head>
   );

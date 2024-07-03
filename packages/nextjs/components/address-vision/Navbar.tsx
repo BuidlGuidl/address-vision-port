@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { AddressInput } from "../scaffold-eth";
 import { QrScanner } from "@yudiel/react-qr-scanner";
@@ -121,8 +122,9 @@ export const Navbar = () => {
   return (
     <div className="navbar flex-col md:flex-row justify-center">
       <div className="md:absolute left-6 mb-2">
+        <Image src="/eyes-emoji.svg" width={40} height={40} priority={true} alt="Eyes emoji" />
         <h1 onClick={handleLogoClick} className="ml-2 mb-0 cursor-pointer text-2xl font-bold">
-          👀 address.vision
+          address.vision
         </h1>
       </div>
       <div className="w-11/12 md:w-1/2">
