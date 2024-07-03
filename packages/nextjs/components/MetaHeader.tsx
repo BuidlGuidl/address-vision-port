@@ -45,7 +45,7 @@ export const MetaHeader = ({
         </>
       )}
       {twitterCard && <meta name="twitter:card" content={twitterCard} />}
-      <link rel="icon" href="/eyes-emoji.svg" />
+      <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico" />
       <script defer data-domain="address.vision" src="https://plausible.io/js/script.js"></script> {children}
     </Head>
   );
