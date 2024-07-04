@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import type { NextPage } from "next";
 import { Address } from "viem";
 import { Navbar } from "~~/components/address-vision/";
@@ -34,7 +35,9 @@ const Home: NextPage = () => {
         </div>
       )}
       <div className="flex flex-grow flex-col items-center justify-center">
-        <div className="mb-4 text-9xl">👀</div>
+        <div className="mb-4">
+          <Image src="/eyes-emoji.svg" width={200} height={200} priority={true} alt="Eyes emoji" />
+        </div>
         <h1 className="m-4 text-center text-4xl font-bold">Welcome to address.vision!</h1>
         <p className="m-4 text-center text-xl">
           To get started, enter an Ethereum address or ENS name in the search bar above.
