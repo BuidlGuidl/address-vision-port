@@ -70,6 +70,10 @@ export const NETWORKS_EXTRA_DATA: Record<string, ChainAttributes> = {
     color: "#28a0f0",
     icon: "/arbitrum.svg",
   },
+  [chains.base.id]: {
+    color: "#0052ff",
+    icon: "/base.svg",
+  },
 };
 
 /**
