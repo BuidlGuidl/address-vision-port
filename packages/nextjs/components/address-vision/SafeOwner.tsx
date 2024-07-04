@@ -4,51 +4,18 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import { Address, isAddress } from "viem";
 import { useEnsName } from "wagmi";
 import { ArrowTopRightOnSquareIcon, CheckCircleIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
-import { BlockieAvatar } from "~~/components/scaffold-eth";
+import { Avatar } from "~~/components/scaffold-eth";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
 
 export const SafeOwner = ({ address }: { address: Address }) => {
-  const [ens, setEns] = useState<string | null>();
-  const [ensAvatar, setEnsAvatar] = useState<string | null>();
+  const [ens, setEns] = useState<string | null>(null);
   const [addressCopied, setAddressCopied] = useState(false);
 
   const { data: fetchedEns } = useEnsName({ address, chainId: 1 });
 
   // We need to apply this pattern to avoid Hydration errors.
   useEffect(() => {
-    setEns(fetchedEns);
-  }, [fetchedEns]);
-
-  useEffect(() => {
-    const fetchAvatar = async () => {
-      if (!fetchedEns) {
-        setEnsAvatar(null);
-        return;
-      }
-
-      try {
-        const avatarURL = `https://metadata.ens.domains/mainnet/avatar/${fetchedEns}`;
-        const response = await fetch(avatarURL);
-        const contentType = response.headers.get("Content-Type");
-
-        if (contentType && contentType.includes("application/json")) {
-          const json = await response.json();
-          if (json.message === "There is no avatar set under given address") {
-            setEnsAvatar(null);
-          }
-          return;
-        }
-
-        const imageBlob = await response.blob();
-        const imageURL = URL.createObjectURL(imageBlob);
-        setEnsAvatar(imageURL);
-      } catch (error) {
-        console.error("Error fetching ENS avatar:", error);
-        setEnsAvatar(null);
-      }
-    };
-
-    fetchAvatar();
+    setEns(fetchedEns ?? null); // Ensure that ens is either string or null
   }, [fetchedEns]);
 
   // Skeleton UI
@@ -82,7 +49,7 @@ export const SafeOwner = ({ address }: { address: Address }) => {
         href={ens ? `/${ens}` : `/${address}`}
         rel="noopener noreferrer"
       >
-        <BlockieAvatar address={address} ensImage={ensAvatar} size={40} />
+        <Avatar ensName={ens} address={address} size={40} />
         <span className={`text-lg`}>{displayAddress}</span>
       </Link>
       <div className="ml-2 flex gap-1">
