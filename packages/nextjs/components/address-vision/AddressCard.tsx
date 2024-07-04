@@ -87,7 +87,7 @@ export const AddressCard = () => {
     lg: 40,
     xl: 44,
     "2xl": 48,
-    "3xl": 56,
+    "3xl": 64,
     "4xl": 64,
     "5xl": 80,
   }[size];
@@ -98,7 +98,9 @@ export const AddressCard = () => {
         <div className="card-title">
           <div className="flex items-center  gap-3">
             <BlockieAvatar address={address} ensImage={ensAvatar} size={blockieSize} />
-            <span className={textSizeClass}>{displayAddress}</span>
+            <span className={`${displayAddress.includes("...") && "md:text-4xl"} ${textSizeClass}`}>
+              {displayAddress}
+            </span>
             <div className="ml-2 flex gap-1">
               {addressCopied ? (
                 <CheckCircleIcon className="h-6 w-6 text-green-500" aria-hidden="true" />
