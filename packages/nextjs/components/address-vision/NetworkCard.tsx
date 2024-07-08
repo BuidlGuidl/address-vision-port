@@ -73,8 +73,6 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
 
       const data = res.result;
 
-      console.log("data", data);
-
       if (data) {
         setTokenBalances(data);
 
