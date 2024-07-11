@@ -1,5 +1,5 @@
-export const tokenBalanceFetcher = async (url: string) => {
-  const apiKey = process.env.NEXT_PUBLIC_MORALIS_API_KEY;
+export const nftsFetcher = async (url: string) => {
+  const apiKey = process.env.NEXT_PUBLIC_OPENSEA_API_KEY;
 
   if (!apiKey) {
     throw new Error("Moralis API key is not defined.");
@@ -7,10 +7,7 @@ export const tokenBalanceFetcher = async (url: string) => {
 
   const options = {
     method: "GET",
-    headers: {
-      accept: "application/json",
-      "X-API-Key": apiKey,
-    },
+    headers: { accept: "application/json", "x-api-key": process.env.NEXT_PUBLIC_OPENSEA_API_KEY || "default-key" },
   };
 
   const response = await fetch(url, options);

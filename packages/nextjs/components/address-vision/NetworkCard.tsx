@@ -12,78 +12,64 @@ import {
   getChainNameForMoralis,
   getChainNameForOpensea,
   isValidEnsOrAddress,
+  nftsFetcher,
   tokenBalanceFetcher,
 } from "~~/utils/scaffold-eth";
 
 export const NetworkCard = ({ chain }: { chain: Chain }) => {
   const [nfts, setNfts] = useState<any[]>([]);
   const [tokenBalances, setTokenBalances] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { setBalance, resetBalances } = useNetworkBalancesStore();
+  const { setBalance } = useNetworkBalancesStore();
   const currentNetworkData = NETWORKS_EXTRA_DATA[chain.id];
   const { resolvedAddress: address } = useAddressStore();
+  const [isLoading, setIsLoading] = useState(true);
 
-  const { data } = useSWR(
+  const shouldFetch = address && isAddress(address);
+
+  const { data: tokenBalancesData } = useSWR(
     `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens?chain=${getChainNameForMoralis(
       chain.id,
     )}&exclude_spam=true&exclude_unverified_contracts=true&exclude_native=false`,
     tokenBalanceFetcher,
   );
-  const getNfts = async () => {
-    const options = {
-      method: "GET",
-      headers: { accept: "application/json", "x-api-key": process.env.NEXT_PUBLIC_OPENSEA_API_KEY || "default-key" },
-    };
 
-    try {
-      const response = await fetch(
-        `https://api.opensea.io/api/v2/chain/${getChainNameForOpensea(chain.id)}/account/${address}/nfts`,
-        options,
-      );
-      const data = await response.json();
+  const { data: nftData } = useSWR(
+    `https://api.opensea.io/api/v2/chain/${getChainNameForOpensea(chain.id)}/account/${address}/nfts`,
+    nftsFetcher,
+  );
 
-      if (data.nfts && data.nfts.length > 0) {
-        const nftData = [];
-        for (let i = 0; i < Math.min(10, data.nfts.length); i++) {
-          const nft = data.nfts[i];
-          if (nft.image_url && nft.identifier !== "0") {
-            nftData.push({
-              imageUrl: nft.image_url,
-              contract: nft.contract,
-              identifier: nft.identifier,
-            });
-          }
-        }
-        setNfts(nftData);
-      }
-    } catch (err) {
-      console.error(err);
+  const fetchAndSetTokens = () => {
+    setTokenBalances(tokenBalancesData?.result || []);
+    const balance = tokenBalancesData?.result?.reduce(
+      (acc: any, token: any) => acc + (parseFloat(token.usd_value) || 0),
+      0,
+    );
+    setBalance(chain.name, balance, chain.id);
+  };
+
+  const fetchAndSetNfts = () => {
+    if (nftData?.nfts && nftData.nfts.length > 0) {
+      const nftDataFormatted = nftData.nfts
+        .filter((nft: any) => nft.image_url && nft.identifier !== "0")
+        .map((nft: any) => ({
+          imageUrl: nft.image_url,
+          contract: nft.contract,
+          identifier: nft.identifier,
+        }));
+      setNfts(nftDataFormatted);
     }
   };
 
-  const fetchAndSetTokens = () => {
-    setTokenBalances(data?.result || []);
-    setBalance(
-      chain.name,
-      data?.result?.reduce((acc: number, val: any) => acc + Number(val.balance), 0) || 0,
-      chain.id,
-    );
-  };
-
   useEffect(() => {
-    setLoading(true);
-    setNfts([]);
-    setTokenBalances([]);
-    if (address && isAddress(address)) {
-      resetBalances();
-      getNfts();
+    if (shouldFetch) {
+      fetchAndSetNfts();
       fetchAndSetTokens();
-      setLoading(false); // @todo you may want to use the loading state from the SWR hook
+      setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl flex-grow animate-pulse">
         <div className="card-body">
@@ -134,8 +120,6 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
       </div>
     );
   }
-
-  if (nfts.length === 0 && tokenBalances.length === 0) return null;
 
   if (address && isValidEnsOrAddress(address)) {
     return (
