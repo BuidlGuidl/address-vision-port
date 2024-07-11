@@ -6,6 +6,29 @@ interface Token {
   usd_value: number | null;
 }
 
+export const TokensTableSkeleton = () => {
+  return (
+    <div className="max-h-48 overflow-x-auto ">
+      <table className="table table-zebra">
+        <thead>
+          <tr>
+            <th>Token</th>
+            <th>Balance</th>
+            <th>Balance in USD</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="animate-pulse">
+            <td className="h-2 w-full bg-base-200"></td>
+            <td className="h-2 w-full bg-base-200"></td>
+            <td className="h-2 w-full bg-base-200"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
 export const TokensTable = ({ tokens }: { tokens: Token[] }) => {
   const formatTokenBalance = (balance: string, decimals: number) => {
     const balanceBigInt = BigInt(balance);
@@ -23,32 +46,32 @@ export const TokensTable = ({ tokens }: { tokens: Token[] }) => {
     }
   };
 
+  if (tokens.length === 0) {
+    return <TokensTableSkeleton />;
+  }
+
   return (
     <div>
-      {tokens.length > 0 ? (
-        <div className="max-h-48 overflow-x-auto">
-          <table className="table table-zebra">
-            <thead>
-              <tr>
-                <th>Token</th>
-                <th>Balance</th>
-                <th>Balance in USD</th>
+      <div className="max-h-48 overflow-x-auto">
+        <table className="table table-zebra">
+          <thead>
+            <tr>
+              <th>Token</th>
+              <th>Balance</th>
+              <th>Balance in USD</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tokens.map((token, index) => (
+              <tr key={index}>
+                <td>{`${token.name} (${token.symbol})`}</td>
+                <td>{formatTokenBalance(token.balance, token.decimals)}</td>
+                <td>≈${token.usd_value !== null ? token.usd_value.toFixed(2) : "N/A"}</td>
               </tr>
-            </thead>
-            <tbody>
-              {tokens.map((token, index) => (
-                <tr key={index}>
-                  <td>{`${token.name} (${token.symbol})`}</td>
-                  <td>{formatTokenBalance(token.balance, token.decimals)}</td>
-                  <td>≈${token.usd_value !== null ? token.usd_value.toFixed(2) : "N/A"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <p>No tokens found.</p>
-      )}
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

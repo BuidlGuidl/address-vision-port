@@ -1,5 +1,3 @@
-import { isAddress } from "viem";
-
 export const getChainNameForOpensea = (id: number) => {
   switch (id) {
     case 1:
@@ -33,5 +31,3 @@ export const getChainNameForMoralis = (id: number) => {
       return "eth";
   }
 };
-
-export const isValidEnsOrAddress = (name: string) => isAddress(name) || /^[a-z0-9-]+\.eth$/.test(name);

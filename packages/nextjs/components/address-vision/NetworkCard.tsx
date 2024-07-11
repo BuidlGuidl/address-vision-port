@@ -11,7 +11,6 @@ import {
   getBlockExplorerAddressLink,
   getChainNameForMoralis,
   getChainNameForOpensea,
-  isValidEnsOrAddress,
   nftsFetcher,
   tokenBalanceFetcher,
 } from "~~/utils/scaffold-eth";
@@ -27,14 +26,18 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
   const shouldFetch = address && isAddress(address);
 
   const { data: tokenBalancesData } = useSWR(
-    `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens?chain=${getChainNameForMoralis(
-      chain.id,
-    )}&exclude_spam=true&exclude_unverified_contracts=true&exclude_native=false`,
+    shouldFetch
+      ? `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens?chain=${getChainNameForMoralis(
+          chain.id,
+        )}&exclude_spam=true&exclude_unverified_contracts=true&exclude_native=false`
+      : null,
     tokenBalanceFetcher,
   );
 
   const { data: nftData } = useSWR(
-    `https://api.opensea.io/api/v2/chain/${getChainNameForOpensea(chain.id)}/account/${address}/nfts`,
+    shouldFetch
+      ? `https://api.opensea.io/api/v2/chain/${getChainNameForOpensea(chain.id)}/account/${address}/nfts`
+      : null,
     nftsFetcher,
   );
 
@@ -62,12 +65,12 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
 
   useEffect(() => {
     if (shouldFetch) {
-      fetchAndSetNfts();
       fetchAndSetTokens();
+      fetchAndSetNfts();
       setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address]);
+  }, [address, tokenBalancesData, nftData]);
 
   if (isLoading) {
     return (
@@ -121,7 +124,7 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
     );
   }
 
-  if (address && isValidEnsOrAddress(address)) {
+  if (address && isAddress(address)) {
     return (
       <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl flex-grow">
         <div className="card-body py-6">
