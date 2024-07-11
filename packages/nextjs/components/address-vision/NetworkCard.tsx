@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { NftsCarousel } from "./NftsCarousel";
 import { TokensTable } from "./TokensTable";
+import useSWR from "swr";
 import { Chain, isAddress } from "viem";
 import { useAddressStore, useNetworkBalancesStore } from "~~/services/store/store";
 import {
@@ -11,6 +12,7 @@ import {
   getChainNameForMoralis,
   getChainNameForOpensea,
   isValidEnsOrAddress,
+  tokenBalanceFetcher,
 } from "~~/utils/scaffold-eth";
 
 export const NetworkCard = ({ chain }: { chain: Chain }) => {
@@ -21,6 +23,12 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
   const currentNetworkData = NETWORKS_EXTRA_DATA[chain.id];
   const { resolvedAddress: address } = useAddressStore();
 
+  const { data } = useSWR(
+    `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens?chain=${getChainNameForMoralis(
+      chain.id,
+    )}&exclude_spam=true&exclude_unverified_contracts=true&exclude_native=false`,
+    tokenBalanceFetcher,
+  );
   const getNfts = async () => {
     const options = {
       method: "GET",
@@ -53,37 +61,13 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
     }
   };
 
-  const getTokens = async () => {
-    try {
-      const options = {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          "X-API-Key": process.env.NEXT_PUBLIC_MORALIS_API_KEY || "",
-        },
-      };
-
-      const response = await fetch(
-        `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens?chain=${getChainNameForMoralis(
-          chain.id,
-        )}&exclude_spam=true&exclude_unverified_contracts=true&exclude_native=false`,
-        options,
-      );
-      const res = await response.json();
-
-      const data = res.result;
-
-      if (data) {
-        setTokenBalances(data);
-
-        const totalBalance = data.reduce((acc: any, token: any) => acc + (parseFloat(token.usd_value) || 0), 0);
-        setBalance(chain.name, totalBalance, chain.id);
-      }
-    } catch (error) {
-      console.error(`Failed to fetch token balances for ${chain.name}:`, error);
-    } finally {
-      setLoading(false);
-    }
+  const fetchAndSetTokens = () => {
+    setTokenBalances(data?.result || []);
+    setBalance(
+      chain.name,
+      data?.result?.reduce((acc: number, val: any) => acc + Number(val.balance), 0) || 0,
+      chain.id,
+    );
   };
 
   useEffect(() => {
@@ -93,7 +77,8 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
     if (address && isAddress(address)) {
       resetBalances();
       getNfts();
-      getTokens();
+      fetchAndSetTokens();
+      setLoading(false); // @todo you may want to use the loading state from the SWR hook
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address]);
