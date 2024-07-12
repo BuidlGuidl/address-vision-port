@@ -10,13 +10,10 @@ import {
   NETWORKS_EXTRA_DATA,
   getBlockExplorerAddressLink,
   getChainNameForMoralis,
-  getChainNameForOpensea,
-  nftsFetcher,
-  tokenBalanceFetcher,
+  moralisFetcher,
 } from "~~/utils/scaffold-eth";
 
 export const NetworkCard = ({ chain }: { chain: Chain }) => {
-  const [nfts, setNfts] = useState<any[]>([]);
   const [tokenBalances, setTokenBalances] = useState<any[]>([]);
   const { setBalance } = useNetworkBalancesStore();
   const currentNetworkData = NETWORKS_EXTRA_DATA[chain.id];
@@ -31,14 +28,12 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
           chain.id,
         )}&exclude_spam=true&exclude_unverified_contracts=true&exclude_native=false`
       : null,
-    tokenBalanceFetcher,
-  );
-
-  const { data: nftData } = useSWR(
-    shouldFetch
-      ? `https://api.opensea.io/api/v2/chain/${getChainNameForOpensea(chain.id)}/account/${address}/nfts`
-      : null,
-    nftsFetcher,
+    moralisFetcher,
+    {
+      revalidateOnFocus: false, // Disable revalidation on focus
+      revalidateOnReconnect: false, // Disable revalidation on reconnect
+      dedupingInterval: 60000, // Cache data for 60 seconds
+    },
   );
 
   const fetchAndSetTokens = () => {
@@ -50,27 +45,13 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
     setBalance(chain.name, balance, chain.id);
   };
 
-  const fetchAndSetNfts = () => {
-    if (nftData?.nfts && nftData.nfts.length > 0) {
-      const nftDataFormatted = nftData.nfts
-        .filter((nft: any) => nft.image_url && nft.identifier !== "0")
-        .map((nft: any) => ({
-          imageUrl: nft.image_url,
-          contract: nft.contract,
-          identifier: nft.identifier,
-        }));
-      setNfts(nftDataFormatted);
-    }
-  };
-
   useEffect(() => {
     if (shouldFetch) {
       fetchAndSetTokens();
-      fetchAndSetNfts();
       setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, tokenBalancesData, nftData]);
+  }, [address, tokenBalancesData]);
 
   if (isLoading) {
     return (
@@ -144,7 +125,7 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
             </Link>
           </h2>
           <h3 className="font-bold">NFTs</h3>
-          <NftsCarousel nfts={nfts} chain={chain} address={address} />
+          <NftsCarousel chain={chain} address={address} />
           <h3 className="mt-4 font-bold">Tokens</h3>
           <TokensTable tokens={tokenBalances} />
         </div>
