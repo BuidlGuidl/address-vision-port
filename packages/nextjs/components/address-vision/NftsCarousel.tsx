@@ -53,7 +53,7 @@ export const NftsCarousel = ({ nfts, chain, address }: { nfts: Nft[]; chain: Cha
       identifier: nft.identifier,
     }));
 
-  if (nfts.length === 0) {
+  if (nftDataFormatted.length === 0) {
     return <div>No NFT data.</div>;
   }
 
