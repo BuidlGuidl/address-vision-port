@@ -6,29 +6,6 @@ interface Token {
   usd_value: number | null;
 }
 
-export const TokensTableSkeleton = () => {
-  return (
-    <div className="max-h-48 overflow-x-auto ">
-      <table className="table table-zebra">
-        <thead>
-          <tr>
-            <th>Token</th>
-            <th>Balance</th>
-            <th>Balance in USD</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="animate-pulse">
-            <td className="h-2 w-full bg-base-200"></td>
-            <td className="h-2 w-full bg-base-200"></td>
-            <td className="h-2 w-full bg-base-200"></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  );
-};
-
 export const TokensTable = ({ tokens }: { tokens: Token[] }) => {
   const formatTokenBalance = (balance: string, decimals: number) => {
     const balanceBigInt = BigInt(balance);
@@ -47,7 +24,7 @@ export const TokensTable = ({ tokens }: { tokens: Token[] }) => {
   };
 
   if (tokens.length === 0) {
-    return <TokensTableSkeleton />;
+    return "No token data.";
   }
 
   return (

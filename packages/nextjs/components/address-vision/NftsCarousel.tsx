@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import useSWR from "swr";
 import { Address, Chain } from "viem";
-import { getChainNameForMoralis, getChainNameForOpensea, moralisFetcher } from "~~/utils/scaffold-eth";
+import { getChainNameForOpensea } from "~~/utils/scaffold-eth";
 
 export const NftsCarouselSkeleton = () => {
   const skeletonItems = Array.from({ length: 3 }, (_, index) => (
@@ -20,32 +19,13 @@ export const NftsCarouselSkeleton = () => {
   );
 };
 
-interface Nft {
-  token_id: string;
-  token_address: string;
-  media?: {
-    media_collection?: {
-      medium?: {
-        url: string;
-      };
-    };
-  };
-  collection_logo?: string;
-}
+type Nft = {
+  imageUrl: string;
+  contract: Address;
+  identifier: number;
+};
 
-export const NftsCarousel = ({ chain, address }: { chain: Chain; address: Address }) => {
-  const { data, isLoading } = useSWR(
-    `https://deep-index.moralis.io/api/v2.2/${address}/nft?chain=${getChainNameForMoralis(
-      chain.id,
-    )}&format=decimal&limit=5&exclude_spam=true&normalizeMetadata=false&media_items=true`,
-    moralisFetcher,
-    {
-      revalidateOnFocus: false, // Disable revalidation on focus
-      revalidateOnReconnect: false, // Disable revalidation on reconnect
-      dedupingInterval: 60000, // Cache data for 60 seconds
-    },
-  );
-
+export const NftsCarousel = ({ nfts, chain, address }: { nfts: Nft[]; chain: Chain; address: Address }) => {
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
 
@@ -63,7 +43,7 @@ export const NftsCarousel = ({ chain, address }: { chain: Chain; address: Addres
 
   useEffect(() => {
     updateButtonState();
-  }, [data]);
+  }, [nfts]);
 
   const scrollLeft = () => {
     if (carouselRef.current) {
@@ -79,15 +59,15 @@ export const NftsCarousel = ({ chain, address }: { chain: Chain; address: Addres
     }
   };
 
-  if (isLoading) {
-    return <NftsCarouselSkeleton />;
-  }
+  const nftDataFormatted = nfts
+    .filter((nft: any) => nft.image_url && nft.identifier !== "0")
+    .map((nft: any) => ({
+      imageUrl: nft.image_url,
+      contract: nft.contract,
+      identifier: nft.identifier,
+    }));
 
-  const filteredNfts: Nft[] = data.result.filter(
-    (nft: Nft) => nft.media?.media_collection?.medium?.url || nft.collection_logo,
-  );
-
-  if (filteredNfts.length === 0) {
+  if (nfts.length === 0) {
     return <div>No NFT data.</div>;
   }
 
@@ -112,34 +92,22 @@ export const NftsCarousel = ({ chain, address }: { chain: Chain; address: Addres
           ref={carouselRef}
           className="carousel-center carousel rounded-box max-w-md space-x-4 bg-secondary p-4 z-10"
         >
-          {filteredNfts.map((nft: Nft, index: number) => (
+          {nftDataFormatted.map((nft, index) => (
             <div className="carousel-item" key={index}>
               <a
-                href={`https://opensea.io/assets/${getChainNameForOpensea(chain.id)}/${nft.token_address}/${
-                  nft.token_id
-                }`}
+                href={`https://opensea.io/assets/${getChainNameForOpensea(chain.id)}/${nft.contract}/${nft.identifier}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex h-32 w-32 items-center justify-center"
               >
                 <div className="flex h-full w-full items-center justify-center">
-                  {nft.media?.media_collection?.medium?.url ? (
-                    <Image
-                      src={nft.media.media_collection.medium.url}
-                      className="rounded-box h-full w-full object-contain"
-                      alt={`NFT ${index}`}
-                      width={128}
-                      height={128}
-                    />
-                  ) : nft.collection_logo ? (
-                    <Image
-                      src={nft.collection_logo}
-                      className="rounded-box h-full w-full object-contain"
-                      alt={`Collection Logo ${index}`}
-                      width={128}
-                      height={128}
-                    />
-                  ) : null}
+                  <Image
+                    src={nft.imageUrl}
+                    className="rounded-box h-full w-full object-contain"
+                    alt={`NFT ${index}`}
+                    width={128}
+                    height={128}
+                  />
                 </div>
               </a>
             </div>

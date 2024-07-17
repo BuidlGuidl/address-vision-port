@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { NftsCarousel } from "./NftsCarousel";
@@ -10,15 +10,16 @@ import {
   NETWORKS_EXTRA_DATA,
   getBlockExplorerAddressLink,
   getChainNameForMoralis,
+  getChainNameForOpensea,
   moralisFetcher,
+  openseaNftFetcher,
 } from "~~/utils/scaffold-eth";
 
 export const NetworkCard = ({ chain }: { chain: Chain }) => {
-  const [tokenBalances, setTokenBalances] = useState<any[]>([]);
   const { setBalance } = useNetworkBalancesStore();
-  const currentNetworkData = NETWORKS_EXTRA_DATA[chain.id];
   const { resolvedAddress: address } = useAddressStore();
-  const [isLoading, setIsLoading] = useState(true);
+
+  const currentNetworkData = NETWORKS_EXTRA_DATA[chain.id];
 
   const shouldFetch = address && isAddress(address);
 
@@ -30,15 +31,26 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
       : null,
     moralisFetcher,
     {
-      revalidateOnFocus: false, // Disable revalidation on focus
-      revalidateOnReconnect: false, // Disable revalidation on reconnect
-      dedupingInterval: 60000, // Cache data for 60 seconds
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 60000,
     },
   );
 
-  const fetchAndSetTokens = () => {
+  const { data: nftData } = useSWR(
+    shouldFetch
+      ? `https://api.opensea.io/api/v2/chain/${getChainNameForOpensea(chain.id)}/account/${address}/nfts?limit=5`
+      : null,
+    openseaNftFetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 60000,
+    },
+  );
+
+  const setTokenBalances = () => {
     if (tokenBalancesData?.result?.length > 0) {
-      setTokenBalances(tokenBalancesData.result);
       const balance = tokenBalancesData.result.reduce(
         (acc: any, token: any) => acc + (parseFloat(token.usd_value) || 0),
         0,
@@ -49,13 +61,11 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
 
   useEffect(() => {
     if (shouldFetch) {
-      fetchAndSetTokens();
-      setIsLoading(false);
+      setTokenBalances();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, tokenBalancesData]);
 
-  if (isLoading) {
+  if (nftData === undefined || tokenBalancesData === undefined || !shouldFetch) {
     return (
       <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl flex-grow animate-pulse">
         <div className="card-body">
@@ -107,33 +117,29 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
     );
   }
 
-  if (address && isAddress(address)) {
-    return (
-      <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl flex-grow">
-        <div className="card-body py-6">
-          <h2 className="card-title whitespace-nowrap flex items-center gap-2">
-            <Link
-              href={getBlockExplorerAddressLink(address)}
-              rel="noopener noreferrer"
-              target="_blank"
-              className="flex items-center gap-2"
-            >
-              {currentNetworkData?.icon && (
-                <div className="relative w-6 h-6">
-                  <Image src={currentNetworkData.icon} alt={`${chain.name} icon`} width={24} height={24} />
-                </div>
-              )}
-              <span className="text-sm md:text-base">{chain.name}</span>
-            </Link>
-          </h2>
-          <h3 className="font-bold">NFTs</h3>
-          <NftsCarousel chain={chain} address={address} />
-          <h3 className="mt-4 font-bold">Tokens</h3>
-          <TokensTable tokens={tokenBalances} />
-        </div>
+  return (
+    <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl flex-grow">
+      <div className="card-body py-6">
+        <h2 className="card-title whitespace-nowrap flex items-center gap-2">
+          <Link
+            href={getBlockExplorerAddressLink(address)}
+            rel="noopener noreferrer"
+            target="_blank"
+            className="flex items-center gap-2"
+          >
+            {currentNetworkData?.icon && (
+              <div className="relative w-6 h-6">
+                <Image src={currentNetworkData.icon} alt={`${chain.name} icon`} width={24} height={24} />
+              </div>
+            )}
+            <span className="text-sm md:text-base">{chain.name}</span>
+          </Link>
+        </h2>
+        <h3 className="font-bold">NFTs</h3>
+        <NftsCarousel nfts={nftData.nfts} chain={chain} address={address} />
+        <h3 className="mt-4 font-bold">Tokens</h3>
+        <TokensTable tokens={tokenBalancesData.result} />
       </div>
-    );
-  }
-
-  return null;
+    </div>
+  );
 };
