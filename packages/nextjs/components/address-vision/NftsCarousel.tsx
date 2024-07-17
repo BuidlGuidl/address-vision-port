@@ -5,20 +5,6 @@ import { useTheme } from "next-themes";
 import { Address, Chain } from "viem";
 import { getChainNameForOpensea } from "~~/utils/scaffold-eth";
 
-export const NftsCarouselSkeleton = () => {
-  const skeletonItems = Array.from({ length: 3 }, (_, index) => (
-    <div className="carousel-item" key={index}>
-      <div className="flex h-32 w-32 items-center justify-center">
-        <div className="rounded-box h-full w-full bg-slate-300"></div>
-      </div>
-    </div>
-  ));
-
-  return (
-    <div className="carousel-center carousel rounded-box max-w-md space-x-4 bg-secondary p-4 z-10">{skeletonItems}</div>
-  );
-};
-
 type Nft = {
   imageUrl: string;
   contract: Address;
