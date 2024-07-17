@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import { AddressInput } from "../scaffold-eth";
 import { QrScanner } from "@yudiel/react-qr-scanner";
@@ -120,10 +121,9 @@ export const Navbar = () => {
 
   return (
     <div className="navbar flex-col md:flex-row justify-center">
-      <div className="md:absolute left-6 mb-2">
-        <h1 onClick={handleLogoClick} className="ml-2 mb-0 cursor-pointer text-2xl font-bold">
-          👀 address.vision
-        </h1>
+      <div onClick={handleLogoClick} className="md:absolute cursor-pointer left-6 mb-2">
+        <Image src="/eyes-emoji.svg" width={40} height={40} priority={true} alt="Eyes emoji" />
+        <h1 className="ml-2 mb-0  text-2xl font-bold">address.vision</h1>
       </div>
       <div className="w-11/12 md:w-1/2">
         <div className="flex-grow relative">
@@ -138,15 +138,10 @@ export const Navbar = () => {
               <XMarkIcon className="h-6 w-6 bg-base-200 bg-opacity-60 rounded-full hover:text-red-500" />
             </button>
           )}
-          <button
-            onClick={openScanner}
-            className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-2 py-1 ${
-              inputValue !== "" ? "mr-8" : ""
-            }`}
-          >
+          <button onClick={openScanner} className={`absolute right-10 top-1/2 transform -translate-y-1/2 px-2 py-1`}>
             <div>
               <QrCodeIcon className="h-6 w-6 bg-base-200" />
-              <div className="absolute bottom-0 right-8  left-0 h-8 bg-gradient-to-r from-transparent to-base-200"></div>
+              <div className="absolute bottom-0 right-8 left-0 h-8 bg-gradient-to-r from-transparent to-base-200"></div>
             </div>
           </button>
 
