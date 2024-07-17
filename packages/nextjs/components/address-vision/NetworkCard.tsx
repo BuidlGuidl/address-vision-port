@@ -37,12 +37,14 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
   );
 
   const fetchAndSetTokens = () => {
-    setTokenBalances(tokenBalancesData?.result || []);
-    const balance = tokenBalancesData?.result?.reduce(
-      (acc: any, token: any) => acc + (parseFloat(token.usd_value) || 0),
-      0,
-    );
-    setBalance(chain.name, balance, chain.id);
+    if (tokenBalancesData?.result?.length > 0) {
+      setTokenBalances(tokenBalancesData.result);
+      const balance = tokenBalancesData.result.reduce(
+        (acc: any, token: any) => acc + (parseFloat(token.usd_value) || 0),
+        0,
+      );
+      setBalance(chain.name, balance, chain.id);
+    }
   };
 
   useEffect(() => {
