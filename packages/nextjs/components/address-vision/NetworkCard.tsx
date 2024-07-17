@@ -122,7 +122,7 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
       <div className="card-body py-6">
         <h2 className="card-title whitespace-nowrap flex items-center gap-2">
           <Link
-            href={getBlockExplorerAddressLink(address)}
+            href={getBlockExplorerAddressLink(address, chain)}
             rel="noopener noreferrer"
             target="_blank"
             className="flex items-center gap-2"
