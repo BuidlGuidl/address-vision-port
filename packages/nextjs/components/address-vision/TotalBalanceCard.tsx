@@ -8,12 +8,8 @@ export const TotalBalanceCard = () => {
   const [isDataLoading, setIsDataLoading] = useState(true);
 
   useEffect(() => {
-    const loadingTimeout = setTimeout(() => {
-      setIsDataLoading(false);
-    }, 5000);
-
-    return () => clearTimeout(loadingTimeout);
-  }, []);
+    setIsDataLoading(Object.keys(balances).length <= 4);
+  }, [balances]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(
