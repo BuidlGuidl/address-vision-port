@@ -47,7 +47,7 @@ To use `address.vision`, simply search for an Ethereum address or an ENS name in
 - Built with Next.js for optimal performance.
 - Styled with TailwindCSS and DaisyUI for a modern, responsive design.
 - Utilizes OpenSea API to fetch and display NFTs.
-- Utilizes Covalent API to fetch tokens and their current prices.
+- Utilizes Moralis API to fetch tokens and their current prices.
 
 ## Contributing
 
