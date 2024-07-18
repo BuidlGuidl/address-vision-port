@@ -8,6 +8,7 @@ import { useAddressStore } from "~~/services/store/store";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
 
 const getSize = (name: string) => {
+  if (name.includes("...")) return "3xl";
   if (name.length > 24) return "xl";
   if (name.length > 20) return "2xl";
   if (name.length > 12) return "3xl";
@@ -48,11 +49,12 @@ export const AddressCard = () => {
   const size = getSize(displayAddress);
   const textSizeClass = `text-${size}`;
   const blockieSize = {
+    sm: 28,
     base: 32,
     lg: 40,
     xl: 44,
     "2xl": 48,
-    "3xl": 56,
+    "3xl": 64,
     "4xl": 64,
     "5xl": 80,
   }[size];
@@ -63,7 +65,7 @@ export const AddressCard = () => {
         <div className="card-title">
           <Avatar ensName={ens} address={address} size={blockieSize} />
 
-          <span className={textSizeClass}>{displayAddress}</span>
+          <span className={`${displayAddress.includes("...") && "md:text-4xl"} ${textSizeClass}`}> </span>
           <div className="ml-2 flex gap-1">
             {addressCopied ? (
               <CheckCircleIcon className="h-6 w-6 text-green-500" aria-hidden="true" />

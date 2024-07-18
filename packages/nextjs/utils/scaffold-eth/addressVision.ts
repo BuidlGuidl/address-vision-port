@@ -1,5 +1,3 @@
-import { isAddress } from "viem";
-
 export const getChainNameForOpensea = (id: number) => {
   switch (id) {
     case 1:
@@ -17,21 +15,19 @@ export const getChainNameForOpensea = (id: number) => {
   }
 };
 
-export const getChainNameForCovalent = (id: number) => {
+export const getChainNameForMoralis = (id: number) => {
   switch (id) {
     case 1:
-      return "eth-mainnet";
+      return "eth";
     case 42161:
-      return "arbitrum-mainnet";
+      return "arbitrum";
     case 10:
-      return "optimism-mainnet";
+      return "optimism";
     case 8453:
-      return "base-mainnet";
+      return "base";
     case 137:
-      return "matic-mainnet";
+      return "polygon";
     default:
-      return "eth-mainnet";
+      return "eth";
   }
 };
-
-export const isValidEnsOrAddress = (name: string) => isAddress(name) || /^[a-z0-9-]+\.eth$/.test(name);

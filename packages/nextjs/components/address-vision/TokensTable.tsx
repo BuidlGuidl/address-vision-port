@@ -1,16 +1,17 @@
 interface Token {
-  contract_name: string;
-  contract_ticker_symbol: string;
-  balance: bigint;
-  contract_decimals: number;
-  quote: number;
+  name: string;
+  symbol: string;
+  balance: string;
+  decimals: number;
+  usd_value: number | null;
 }
 
 export const TokensTable = ({ tokens }: { tokens: Token[] }) => {
-  const formatTokenBalance = (balance: bigint, decimals: number) => {
+  const formatTokenBalance = (balance: string, decimals: number) => {
+    const balanceBigInt = BigInt(balance);
     const divisor = BigInt(Math.pow(10, decimals));
-    const integerPart = balance / divisor;
-    const fractionalPart = balance % divisor;
+    const integerPart = balanceBigInt / divisor;
+    const fractionalPart = balanceBigInt % divisor;
     const formattedFractionalPart = fractionalPart.toString().padStart(decimals, "0").slice(0, 2);
 
     const integerPartStr = integerPart.toString();
@@ -22,32 +23,32 @@ export const TokensTable = ({ tokens }: { tokens: Token[] }) => {
     }
   };
 
+  if (tokens.length === 0) {
+    return "No token data.";
+  }
+
   return (
     <div>
-      {tokens.length > 0 ? (
-        <div className="max-h-48 overflow-x-auto">
-          <table className="table table-zebra">
-            <thead>
-              <tr>
-                <th>Token</th>
-                <th>Balance</th>
-                <th>Balance in USD</th>
+      <div className="max-h-48 overflow-x-auto">
+        <table className="table table-zebra">
+          <thead>
+            <tr>
+              <th>Token</th>
+              <th>Balance</th>
+              <th>Balance in USD</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tokens.map((token, index) => (
+              <tr key={index}>
+                <td>{`${token.name} (${token.symbol})`}</td>
+                <td>{formatTokenBalance(token.balance, token.decimals)}</td>
+                <td>≈${token.usd_value !== null ? token.usd_value.toFixed(2) : "N/A"}</td>
               </tr>
-            </thead>
-            <tbody>
-              {tokens.map((token, index) => (
-                <tr key={index}>
-                  <td>{`${token.contract_name} (${token.contract_ticker_symbol})`}</td>
-                  <td>{formatTokenBalance(token.balance, token.contract_decimals)}</td>
-                  <td>≈${token.quote.toFixed(2)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <p>No tokens found.</p>
-      )}
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
