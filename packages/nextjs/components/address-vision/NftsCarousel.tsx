@@ -18,6 +18,7 @@ export const NftsCarousel = ({ nfts, chain, address }: { nfts: Nft[]; chain: Cha
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isAtStart, setIsAtStart] = useState(true);
   const [isAtEnd, setIsAtEnd] = useState(false);
+  const [imageErrors, setImageErrors] = useState<{ [key: number]: boolean }>({});
 
   const updateButtonState = () => {
     if (carouselRef.current) {
@@ -45,12 +46,17 @@ export const NftsCarousel = ({ nfts, chain, address }: { nfts: Nft[]; chain: Cha
     }
   };
 
+  const handleImageError = (index: number) => {
+    setImageErrors(prevErrors => ({ ...prevErrors, [index]: true }));
+  };
+
   const nftDataFormatted = nfts
     .filter((nft: any) => nft.image_url && nft.identifier !== "0")
-    .map((nft: any) => ({
-      imageUrl: nft.image_url,
+    .map((nft: any, index: number) => ({
+      imageUrl: nft.display_image_url || nft.image_url,
       contract: nft.contract,
       identifier: nft.identifier,
+      index,
     }));
 
   if (nftDataFormatted.length === 0) {
@@ -78,8 +84,8 @@ export const NftsCarousel = ({ nfts, chain, address }: { nfts: Nft[]; chain: Cha
           ref={carouselRef}
           className="carousel-center carousel rounded-box max-w-md space-x-4 bg-secondary p-4 z-10"
         >
-          {nftDataFormatted.map((nft, index) => (
-            <div className="carousel-item" key={index}>
+          {nftDataFormatted.map(nft => (
+            <div className="carousel-item" key={nft.index}>
               <a
                 href={`https://opensea.io/assets/${getChainNameForOpensea(chain.id)}/${nft.contract}/${nft.identifier}`}
                 target="_blank"
@@ -88,11 +94,14 @@ export const NftsCarousel = ({ nfts, chain, address }: { nfts: Nft[]; chain: Cha
               >
                 <div className="flex h-full w-full items-center justify-center">
                   <Image
-                    src={nft.imageUrl}
+                    src={imageErrors[nft.index] ? "/base.svg" : nft.imageUrl}
                     className="rounded-box h-full w-full object-contain"
-                    alt={`NFT ${index}`}
+                    alt={`NFT ${nft.index}`}
                     width={128}
                     height={128}
+                    onError={() => {
+                      handleImageError(nft.index);
+                    }}
                   />
                 </div>
               </a>
