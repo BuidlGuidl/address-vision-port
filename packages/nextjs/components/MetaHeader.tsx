@@ -10,7 +10,7 @@ type MetaHeaderProps = {
   children?: React.ReactNode;
 };
 
-const baseUrl = "https://address-vision-port-5rnzsr6v1-buidlguidldao.vercel.app/";
+const baseUrl = "https://address-vision-port.vercel.app";
 
 export const MetaHeader = ({
   address,

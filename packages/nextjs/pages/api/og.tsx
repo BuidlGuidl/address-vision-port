@@ -56,9 +56,7 @@ export default async function handler(request: NextRequest) {
   const displayName = resolvedEnsName || croppedAddresses || addyOrEns;
 
   const balances = await getChainBalances(resolvedAddress || addyOrEns);
-  const chainLogos = balances.map(
-    ({ chain }) => `https://address-vision-port-5rnzsr6v1-buidlguidldao.vercel.app/${chain}.svg`,
-  );
+  const chainLogos = balances.map(({ chain }) => `https://address-vision-port.vercel.app/${chain}.svg`);
 
   return new ImageResponse(
     (
