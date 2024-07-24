@@ -5,6 +5,16 @@ import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 import { blo } from "blo";
 import { Address } from "viem";
+import { createPublicClient, http } from "viem";
+import { arbitrum, base, mainnet, optimism, polygon } from "viem/chains";
+
+const clients = {
+  mainnet: createPublicClient({ chain: mainnet, transport: http() }),
+  arbitrum: createPublicClient({ chain: arbitrum, transport: http() }),
+  base: createPublicClient({ chain: base, transport: http() }),
+  optimism: createPublicClient({ chain: optimism, transport: http() }),
+  polygon: createPublicClient({ chain: polygon, transport: http() }),
+};
 
 export const config = {
   runtime: "edge",
@@ -13,6 +23,16 @@ export const config = {
 const isAddress = (address: string) => {
   return /^(0x)?[0-9a-f]{40}$/i.test(address);
 };
+
+async function getChainBalances(address: Address) {
+  const balances = await Promise.all(
+    Object.entries(clients).map(async ([chain, client]) => {
+      const balance = await client.getBalance({ address: address });
+      return { chain, balance };
+    }),
+  );
+  return balances.filter(({ balance }) => balance > 0n);
+}
 
 export default async function handler(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -35,6 +55,9 @@ export default async function handler(request: NextRequest) {
   const croppedAddresses = `${addyOrEns.slice(0, 6)}...${addyOrEns.slice(-4)}`;
   const displayName = resolvedEnsName || croppedAddresses || addyOrEns;
 
+  const balances = await getChainBalances(resolvedAddress || addyOrEns);
+  const chainLogos = balances.map(({ chain }) => `https://address.vision/${chain}.svg`);
+
   return new ImageResponse(
     (
       <div tw="flex flex-col w-full h-full bg-blue-100">
@@ -43,6 +66,11 @@ export default async function handler(request: NextRequest) {
             <img src={avatarUrl} width="300" height="300" tw="rounded-full mb-8" style={{ objectFit: "cover" }} />
             <div tw="text-8xl font-bold text-center mb-4">{displayName}</div>
           </div>
+        </div>
+        <div tw="flex items-center justify-center">
+          {chainLogos.map((logo, index) => (
+            <img key={index} src={logo} width="36" height="36" tw="ml-2" />
+          ))}
         </div>
         <div tw="flex items-center justify-center pb-2">
           <svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
