@@ -16,30 +16,34 @@ const getSize = (name: string) => {
 };
 
 export const AddressCard = () => {
-  const [ens, setEns] = useState<string | null>();
+  const [ensName, setEnsName] = useState<string | null>();
   const [ensAvatar, setEnsAvatar] = useState<string | null>();
   const [addressCopied, setAddressCopied] = useState(false);
+  const [shortAddress, setShortAddress] = useState<string>("");
 
   const { resolvedAddress: address } = useAddressStore();
 
-  const { data: fetchedEns } = useEnsName({
+  const { data: fetchedEnsName } = useEnsName({
     address: address as AddressType,
     chainId: 1,
   });
 
   useEffect(() => {
-    setEns(fetchedEns);
-  }, [fetchedEns]);
+    setEnsName(fetchedEnsName);
+    if (address) {
+      setShortAddress(address.slice(0, 6) + "..." + address.slice(-4));
+    }
+  }, [fetchedEnsName, address]);
 
   useEffect(() => {
     const fetchAvatar = async () => {
-      if (!fetchedEns) {
+      if (!fetchedEnsName) {
         setEnsAvatar(null);
         return;
       }
 
       try {
-        const avatarURL = `https://metadata.ens.domains/mainnet/avatar/${fetchedEns}`;
+        const avatarURL = `https://metadata.ens.domains/mainnet/avatar/${fetchedEnsName}`;
         const response = await fetch(avatarURL);
         const contentType = response.headers.get("Content-Type");
 
@@ -61,7 +65,7 @@ export const AddressCard = () => {
     };
 
     fetchAvatar();
-  }, [fetchedEns]);
+  }, [fetchedEnsName]);
 
   if (!address) {
     return (
@@ -73,13 +77,13 @@ export const AddressCard = () => {
   }
 
   const blockExplorerLink = getBlockExplorerAddressLink(address);
-  let displayAddress = address?.slice(0, 5) + "..." + address?.slice(-4);
+  let displayName = shortAddress;
 
-  if (ens) {
-    displayAddress = ens;
+  if (ensName) {
+    displayName = ensName;
   }
 
-  const size = getSize(displayAddress);
+  const size = getSize(displayName);
   const textSizeClass = `text-${size}`;
   const blockieSize = {
     sm: 28,
@@ -92,36 +96,54 @@ export const AddressCard = () => {
     "5xl": 80,
   }[size];
 
+  const copyAddressButton = (sizeClass: string) =>
+    addressCopied ? (
+      <CheckCircleIcon className={`${sizeClass} text-green-500`} aria-hidden="true" />
+    ) : (
+      // @ts-ignore @todo fix this
+      <CopyToClipboard
+        text={address}
+        onCopy={() => {
+          setAddressCopied(true);
+          setTimeout(() => {
+            setAddressCopied(false);
+          }, 800);
+        }}
+      >
+        <DocumentDuplicateIcon className={`${sizeClass} hover:text-green-500 link`} aria-hidden="true" />
+      </CopyToClipboard>
+    );
+
+  const explorerLink = (
+    <a href={blockExplorerLink} target="_blank" rel="noopener noreferrer">
+      <ArrowTopRightOnSquareIcon aria-hidden="true" className="h-6 w-6 hover:text-blue-600" />
+    </a>
+  );
+
   return (
     <div className="flex w-[370px] md:w-[425px] h-32 items-center justify-center bg-base-100 shadow-xl card">
       <div className="card-body justify-center p-0 py-8">
         <div className="card-title">
-          <div className="flex items-center  gap-3">
+          <div className="flex items-center gap-3">
             <BlockieAvatar address={address} ensImage={ensAvatar} size={blockieSize} />
-            <span className={`${displayAddress.includes("...") && "md:text-4xl"} ${textSizeClass}`}>
-              {displayAddress}
-            </span>
-            <div className="ml-2 flex gap-1">
-              {addressCopied ? (
-                <CheckCircleIcon className="h-6 w-6 text-green-500" aria-hidden="true" />
-              ) : (
-                // @ts-ignore @todo fix this
-                <CopyToClipboard
-                  text={address}
-                  onCopy={() => {
-                    setAddressCopied(true);
-                    setTimeout(() => {
-                      setAddressCopied(false);
-                    }, 800);
-                  }}
-                >
-                  <DocumentDuplicateIcon className="h-6 w-6 hover:text-green-500 link" aria-hidden="true" />
-                </CopyToClipboard>
+            <div>
+              <span
+                className={`${displayName.includes("...") && "md:text-4xl"} ${textSizeClass} flex gap-1 items-center`}
+              >
+                {displayName} {ensName && explorerLink}
+              </span>
+              {ensName && (
+                <div className="text-sm text-slate-500 flex items-center gap-1">
+                  {shortAddress} {copyAddressButton("w-4 h-4")}
+                </div>
               )}
-              <a href={blockExplorerLink} target="_blank" rel="noopener noreferrer">
-                <ArrowTopRightOnSquareIcon aria-hidden="true" className="h-6 w-6 hover:text-blue-600" />
-              </a>
             </div>
+            {!ensName && (
+              <div className="ml-2 flex gap-1">
+                {copyAddressButton("w-6 h-6")}
+                {explorerLink}
+              </div>
+            )}
           </div>
         </div>
       </div>
