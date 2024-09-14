@@ -217,6 +217,16 @@ export const ButtonsCard = () => {
           >
             Safe
           </button>
+          <button
+            className="btn btn-primary btn-xs rounded-full"
+            title="View on MetaSleuth"
+            tabIndex={6}
+            onClick={() => {
+              window.open("https://metasleuth.io/result/eth/" + address, "_blank");
+            }}
+          >
+            MetaSleuth
+          </button>
         </div>
       </div>
     </div>
