@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import type { NextPage } from "next";
 import { Address } from "viem";
+import { MetaHeader } from "~~/components/MetaHeader";
 import { Navbar } from "~~/components/address-vision/";
 import { SmallAddressComp } from "~~/components/scaffold-eth";
 
@@ -23,6 +24,7 @@ const Home: NextPage = () => {
 
   return (
     <>
+      <MetaHeader />
       <Navbar />
       {previousAddresses.length > 0 && (
         <div className="w-full flex flex-grow flex-col items-center md:mt-10 h-52 md:h-8">
