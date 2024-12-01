@@ -22,7 +22,7 @@ export default async function handler(request: NextRequest) {
   const isEnsValid = /\.(eth|xyz)$/.test(addyOrEns as string);
 
   if (!isAddressValid && !isEnsValid) {
-    return new Response("Invalid address or ENS", { status: 400 });
+    return new Response("Invalid address or ENS!", { status: 400 });
   }
 
   const response = await fetch(`https://api.ensdata.net/${addyOrEns}`);
