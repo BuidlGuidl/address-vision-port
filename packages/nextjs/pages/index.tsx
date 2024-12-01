@@ -28,7 +28,7 @@ const Home: NextPage = () => {
       <Navbar />
       {previousAddresses.length > 0 && (
         <div className="w-full flex flex-grow flex-col items-center md:mt-10 h-52 md:h-8">
-          <h2 className="text-2xl mb-4">Previous Searches</h2>
+          <h2 className="text-2xl mb-4">Previous ERROR</h2>
           <div className="w-full md:w-1/2 flex flex-wrap justify-center items-center gap-4 overflow-y-auto">
             {previousAddresses.map(address => (
               <SmallAddressComp key={address} address={address} removeAddress={() => removeAddress(address)} />
