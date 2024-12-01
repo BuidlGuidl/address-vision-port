@@ -1629,6 +1629,7 @@ __metadata:
     eslint-config-prettier: ^8.5.0
     eslint-plugin-prettier: ^4.2.1
     next: 14.2.4
+    next-nprogress-bar: ^2.3.15
     next-themes: ^0.3.0
     postcss: ^8.4.16
     prettier: ^2.8.4
@@ -7849,6 +7850,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"next-nprogress-bar@npm:^2.3.15":
+  version: 2.3.15
+  resolution: "next-nprogress-bar@npm:2.3.15"
+  dependencies:
+    nprogress: ^0.2.0
+  checksum: 722ec85b4269af510014b4715e8d0131426040dd4b60618ada5cd77aafd0e216e4f1352346934d17d2152e4857259982725d2037e060c577d5d015d324337314
+  languageName: node
+  linkType: hard
+
 "next-themes@npm:^0.3.0":
   version: 0.3.0
   resolution: "next-themes@npm:0.3.0"
@@ -8104,6 +8114,13 @@ __metadata:
     gauge: ^4.0.3
     set-blocking: ^2.0.0
   checksum: ae238cd264a1c3f22091cdd9e2b106f684297d3c184f1146984ecbe18aaa86343953f26b9520dedd1b1372bc0316905b736c1932d778dbeb1fcf5a1001390e2a
+  languageName: node
+  linkType: hard
+
+"nprogress@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "nprogress@npm:0.2.0"
+  checksum: 66b7bec5d563ecf2d1c3d2815e6d5eb74ed815eee8563e0afa63d3f185ab1b9cf2ddd97e1ded263b9995c5019d26d600320e849e50f3747984daa033744619dc
   languageName: node
   linkType: hard
 
