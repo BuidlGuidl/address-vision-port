@@ -1,18 +1,18 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import type { GetServerSideProps, NextPage } from "next";
-import { createPublicClient, http, isAddress } from "viem";
-import { mainnet } from "viem/chains";
+import { isAddress } from "viem";
 import * as chains from "wagmi/chains";
 import { MetaHeader } from "~~/components/MetaHeader";
-import { AddressCard, ButtonsCard, Navbar, NetworkCard, QRCodeCard } from "~~/components/address-vision/";
-import { TotalBalanceCard } from "~~/components/address-vision/TotalBalanceCard";
+import {
+  AddressCard,
+  ButtonsCard,
+  Navbar,
+  NetworkCard,
+  QRCodeCard,
+  TotalBalanceCard,
+} from "~~/components/address-vision/";
 import { useAddressStore } from "~~/services/store/store";
-
-export const publicClient = createPublicClient({
-  chain: mainnet,
-  transport: http(),
-});
 
 type Props = {
   address: string;

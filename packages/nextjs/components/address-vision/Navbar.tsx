@@ -4,23 +4,18 @@ import { useRouter } from "next/router";
 import { AddressInput } from "../scaffold-eth";
 import { QrScanner } from "@yudiel/react-qr-scanner";
 import { Address, isAddress } from "viem";
-import { createPublicClient, http } from "viem";
-import { mainnet } from "viem/chains";
 import { normalize } from "viem/ens";
+import { usePublicClient } from "wagmi";
 import { QrCodeIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useAddressStore, useNetworkBalancesStore } from "~~/services/store/store";
 import { notification } from "~~/utils/scaffold-eth";
-
-const client = createPublicClient({
-  chain: mainnet,
-  transport: http(),
-});
 
 export const Navbar = () => {
   const [inputValue, setInputValue] = useState("");
   const [isScannerVisible, setIsScannerVisible] = useState(false);
   const [inputChanged, setInputChanged] = useState(false);
 
+  const client = usePublicClient();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -61,6 +56,7 @@ export const Navbar = () => {
       router.push(`/${trimmedAddress}`, undefined, { shallow: true });
       setEnsName(trimmedAddress);
       async function getEnsAddress(ensName: string) {
+        if (!client) return;
         const resolvedEnsName = await client.getEnsAddress({ name: normalize(ensName) });
         if (!resolvedEnsName) {
           notification.error("ENS name not found");
@@ -75,6 +71,7 @@ export const Navbar = () => {
     } else if (isAddress(trimmedAddress)) {
       setResolvedAddress(trimmedAddress);
       async function getEnsName(address: Address) {
+        if (!client) return;
         const ensName = await client.getEnsName({ address });
         router.push(`/${ensName || address}`, undefined, { shallow: true });
         setEnsName(ensName || "");
