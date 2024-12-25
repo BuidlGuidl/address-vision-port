@@ -6,3 +6,4 @@ export * from "./NftsCarousel";
 export * from "./QRCodeCard";
 export * from "./SafeOwner";
 export * from "./TokensTable";
+export * from "./TotalBalanceCard";

@@ -3,8 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { SafeOwner } from "./SafeOwner";
 import { useTheme } from "next-themes";
-import { Address, createPublicClient, http, isAddress } from "viem";
-import { mainnet } from "viem/chains";
+import { Address, isAddress } from "viem";
+import { usePublicClient } from "wagmi";
 import { useAddressStore } from "~~/services/store/store";
 
 const GNOSIS_SAFE_BYTECODE_PATTERN = "0x608060405273ffffffffffffffffffffffffffffffffffffffff600054167fa619486e";
@@ -26,11 +26,6 @@ const SAFE_ABI = [
   },
 ];
 
-export const client = createPublicClient({
-  chain: mainnet,
-  transport: http(),
-});
-
 export const ButtonsCard = () => {
   const [isContractAddress, setIsContractAddress] = useState<boolean>(false);
   const [isGnosisSafe, setIsGnosisSafe] = useState<boolean>(false);
@@ -38,7 +33,7 @@ export const ButtonsCard = () => {
   const [safeThreshold, setSafeThreshold] = useState<number>(0);
 
   const { resolvedAddress: address } = useAddressStore();
-
+  const client = usePublicClient();
   const { resolvedTheme } = useTheme();
   const isDarkMode = resolvedTheme === "dark";
 
