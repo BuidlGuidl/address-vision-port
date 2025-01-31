@@ -14,7 +14,6 @@
     "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true"
   },
   "dependencies": {
-    "@covalenthq/client-sdk": "^0.4.2",
     "@ethersproject/providers": "^5.7.2",
     "@heroicons/react": "^2.0.11",
     "@tanstack/react-query": "^5.49.0",
