@@ -10,6 +10,11 @@ import { QrCodeIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useAddressStore, useNetworkBalancesStore } from "~~/services/store/store";
 import { notification } from "~~/utils/scaffold-eth";
 
+interface AddressEntry {
+  address: Address;
+  timestamp: number;
+}
+
 export const Navbar = () => {
   const [inputValue, setInputValue] = useState("");
   const [isScannerVisible, setIsScannerVisible] = useState(false);
@@ -23,13 +28,19 @@ export const Navbar = () => {
   const { resetBalances } = useNetworkBalancesStore();
 
   useEffect(() => {
-    if (resolvedAddress && !inputChanged) {
+    if (resolvedAddress) {
       const savedAddresses = localStorage.getItem("searchedAddresses");
-      const addresses = savedAddresses ? JSON.parse(savedAddresses) : [];
-      if (!addresses.includes(resolvedAddress)) {
-        addresses.unshift(resolvedAddress);
-        localStorage.setItem("searchedAddresses", JSON.stringify(addresses));
-      }
+      const addresses: AddressEntry[] = savedAddresses ? JSON.parse(savedAddresses) : [];
+
+      const filteredAddresses = addresses.filter(entry => entry.address !== resolvedAddress);
+
+      const newEntry = {
+        address: resolvedAddress,
+        timestamp: Date.now(),
+      };
+
+      const updatedAddresses = [newEntry, ...filteredAddresses];
+      localStorage.setItem("searchedAddresses", JSON.stringify(updatedAddresses));
     }
   }, [resolvedAddress]);
 
