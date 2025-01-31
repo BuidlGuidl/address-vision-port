@@ -28,7 +28,7 @@ export const Navbar = () => {
   const { resetBalances } = useNetworkBalancesStore();
 
   useEffect(() => {
-    if (resolvedAddress && !inputChanged) {
+    if (resolvedAddress) {
       const savedAddresses = localStorage.getItem("searchedAddresses");
       const addresses: AddressEntry[] = savedAddresses ? JSON.parse(savedAddresses) : [];
 
