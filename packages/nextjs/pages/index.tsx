@@ -59,7 +59,7 @@ const Home: NextPage = () => {
       <MetaHeader />
       <Navbar />
       {previousAddresses.length > 0 && (
-        <div className="w-full flex flex-grow flex-col items-center md:mt-10 h-52 md:h-8">
+        <div className="w-full flex flex-grow flex-col items-center md:mt-10 h-52">
           <h2 className="text-2xl mb-4">Previous Searches</h2>
           <div className="w-full md:w-1/2 flex flex-wrap justify-center items-center gap-4 overflow-y-auto">
             {previousAddresses.map(entry => (
