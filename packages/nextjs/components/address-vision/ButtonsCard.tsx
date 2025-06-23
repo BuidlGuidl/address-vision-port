@@ -35,6 +35,7 @@ export const ButtonsCard = () => {
   const [validatorInfo, setValidatorInfo] = useState<{
     totalDeposits: number;
     totalETHStaked: string;
+    pubkeys: string[];
   } | null>(null);
 
   const { resolvedAddress: address } = useAddressStore();
@@ -92,31 +93,39 @@ export const ButtonsCard = () => {
         if (response.ok) {
           const data = await response.json();
 
+          console.log(data);
+
           if (data.status === "OK" && data.data && data.data.length > 0) {
             const validatorIndices = data.data.map((validator: any) => validator.validatorindex);
 
-            const balancePromises = validatorIndices.map(async (index: number) => {
+            const validatorPromises = validatorIndices.map(async (index: number) => {
               try {
                 const validatorResponse = await fetch(`https://beaconcha.in/api/v1/validator/${index}`);
                 if (validatorResponse.ok) {
                   const validatorData = await validatorResponse.json();
+                  console.log(validatorData);
                   if (validatorData.status === "OK" && validatorData.data) {
-                    return parseFloat(validatorData.data.balance) / 1e9;
+                    return {
+                      balance: parseFloat(validatorData.data.balance) / 1e9,
+                      pubkey: validatorData.data.pubkey,
+                    };
                   }
                 }
-                return 0;
+                return { balance: 0, pubkey: "" };
               } catch (error) {
-                return 0;
+                return { balance: 0, pubkey: "" };
               }
             });
 
-            const balances = await Promise.all(balancePromises);
-            const totalBalance = balances.reduce((sum, balance) => sum + balance, 0);
+            const validators = await Promise.all(validatorPromises);
+            const totalBalance = validators.reduce((sum, validator) => sum + validator.balance, 0);
+            const pubkeys = validators.map(validator => validator.pubkey).filter(pubkey => pubkey !== "");
 
             setIsValidator(true);
             setValidatorInfo({
               totalDeposits: data.data.length,
               totalETHStaked: totalBalance.toFixed(4),
+              pubkeys: pubkeys,
             });
           }
         }
@@ -164,7 +173,11 @@ export const ButtonsCard = () => {
             </div>
             <div className="mt-4">
               <Link
-                href={`https://beaconcha.in/validator/${address}`}
+                href={
+                  validatorInfo?.pubkeys && validatorInfo.pubkeys.length === 1
+                    ? `https://beaconcha.in/validator/${validatorInfo.pubkeys[0]}`
+                    : `https://beaconcha.in/validators/eth1deposits?q=${address}`
+                }
                 className="btn btn-primary btn-sm rounded-full w-full"
                 target="_blank"
                 rel="noopener noreferrer"
