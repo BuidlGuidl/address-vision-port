@@ -93,8 +93,6 @@ export const ButtonsCard = () => {
         if (response.ok) {
           const data = await response.json();
 
-          console.log(data);
-
           if (data.status === "OK" && data.data && data.data.length > 0) {
             const validatorIndices = data.data.map((validator: any) => validator.validatorindex);
 
@@ -103,7 +101,6 @@ export const ButtonsCard = () => {
                 const validatorResponse = await fetch(`https://beaconcha.in/api/v1/validator/${index}`);
                 if (validatorResponse.ok) {
                   const validatorData = await validatorResponse.json();
-                  console.log(validatorData);
                   if (validatorData.status === "OK" && validatorData.data) {
                     return {
                       balance: parseFloat(validatorData.data.balance) / 1e9,
