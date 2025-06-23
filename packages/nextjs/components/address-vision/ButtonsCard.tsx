@@ -7,7 +7,7 @@ import { Address, isAddress } from "viem";
 import { usePublicClient } from "wagmi";
 import { useAddressStore } from "~~/services/store/store";
 
-const GNOSIS_SAFE_BYTECODE_PATTERN = "0x608060405273ffffffffffffffffffffffffffffffffffffffff600054167fa619486e";
+const GNOSIS_SAFE_BYTECODE_PATTERN = "0x608060405273ffffffffffffffffffffffffffffffffffffffff600054167xa619486e";
 
 const SAFE_ABI = [
   {
@@ -31,6 +31,11 @@ export const ButtonsCard = () => {
   const [isGnosisSafe, setIsGnosisSafe] = useState<boolean>(false);
   const [safeOwners, setSafeOwners] = useState<Address[]>([]);
   const [safeThreshold, setSafeThreshold] = useState<number>(0);
+  const [isValidator, setIsValidator] = useState<boolean>(false);
+  const [validatorInfo, setValidatorInfo] = useState<{
+    totalDeposits: number;
+    totalETHStaked: string;
+  } | null>(null);
 
   const { resolvedAddress: address } = useAddressStore();
   const client = usePublicClient();
@@ -42,6 +47,8 @@ export const ButtonsCard = () => {
     setIsGnosisSafe(false);
     setSafeOwners([]);
     setSafeThreshold(0);
+    setIsValidator(false);
+    setValidatorInfo(null);
   }, [address]);
 
   useEffect(() => {
@@ -77,7 +84,49 @@ export const ButtonsCard = () => {
       }
     };
 
+    const checkValidator = async () => {
+      if (!address) return;
+      try {
+        const response = await fetch(`https://beaconcha.in/api/v1/validator/eth1/${address}`);
+
+        if (response.ok) {
+          const data = await response.json();
+
+          if (data.status === "OK" && data.data && data.data.length > 0) {
+            const validatorIndices = data.data.map((validator: any) => validator.validatorindex);
+
+            const balancePromises = validatorIndices.map(async (index: number) => {
+              try {
+                const validatorResponse = await fetch(`https://beaconcha.in/api/v1/validator/${index}`);
+                if (validatorResponse.ok) {
+                  const validatorData = await validatorResponse.json();
+                  if (validatorData.status === "OK" && validatorData.data) {
+                    return parseFloat(validatorData.data.balance) / 1e9;
+                  }
+                }
+                return 0;
+              } catch (error) {
+                return 0;
+              }
+            });
+
+            const balances = await Promise.all(balancePromises);
+            const totalBalance = balances.reduce((sum, balance) => sum + balance, 0);
+
+            setIsValidator(true);
+            setValidatorInfo({
+              totalDeposits: data.data.length,
+              totalETHStaked: totalBalance.toFixed(4),
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Validator check failed:", error);
+      }
+    };
+
     checkGnosisSafe();
+    checkValidator();
   }, [address, client]);
 
   if (isContractAddress && !isGnosisSafe) {
@@ -90,6 +139,39 @@ export const ButtonsCard = () => {
               <Image src="/abininja-logo.svg" width={50} height={50} alt="abi.ninja logo" />
               abi.ninja
             </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isValidator) {
+    return (
+      <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl">
+        <div className="card-body">
+          <h2 className="card-title">
+            <span className="text-2xl mr-2">🔗</span>
+            Ethereum Validator
+          </h2>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <p className="m-0 font-semibold">Validators:</p>
+              <p className="m-0">{validatorInfo?.totalDeposits || 0}</p>
+            </div>
+            <div className="flex justify-between items-center">
+              <p className="m-0 font-semibold">Total Balance:</p>
+              <p className="m-0">{validatorInfo?.totalETHStaked || "0"} ETH</p>
+            </div>
+            <div className="mt-4">
+              <Link
+                href={`https://beaconcha.in/validator/${address}`}
+                className="btn btn-primary btn-sm rounded-full w-full"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View on Beaconcha.in
+              </Link>
+            </div>
           </div>
         </div>
       </div>
