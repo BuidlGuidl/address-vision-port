@@ -27,8 +27,7 @@ test.describe("Address Page", () => {
     // Handle new page
     const newPage = await pagePromise;
     await newPage.waitForLoadState();
-    const url = newPage.url().toLowerCase();
-    expect(url).toContain("blockscan.com/address/" + testAddress.toLowerCase());
+    await expect(newPage).toHaveURL(new RegExp(`blockscan\\.com/address/${testAddress}`, "i"));
   });
 
   test("theme switcher works", async ({ page }) => {
