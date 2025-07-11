@@ -49,7 +49,7 @@ export const ButtonsCard = () => {
       if (!address || !client) return;
       try {
         const bytecode = await client.getCode({ address });
-        const isContract = bytecode && bytecode.length > 2;
+        const isContract = bytecode && bytecode.length > 2 && !bytecode.startsWith("0xef01");
 
         setIsContractAddress(isContract || false);
 
