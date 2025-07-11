@@ -27,7 +27,8 @@ test.describe("Address Page", () => {
     // Handle new page
     const newPage = await pagePromise;
     await newPage.waitForLoadState();
-    expect(newPage.url()).toContain("blockscan.com/address/" + testAddress);
+    const url = newPage.url().toLowerCase();
+    expect(url).toContain("blockscan.com/address/" + testAddress.toLowerCase());
   });
 
   test("theme switcher works", async ({ page }) => {
