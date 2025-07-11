@@ -8,6 +8,7 @@ import { usePublicClient } from "wagmi";
 import { useAddressStore } from "~~/services/store/store";
 
 const GNOSIS_SAFE_BYTECODE_PATTERN = "0x608060405273ffffffffffffffffffffffffffffffffffffffff600054167fa619486e";
+const EOF_SIGNATURE = "0xef01";
 
 const SAFE_ABI = [
   {
@@ -49,7 +50,7 @@ export const ButtonsCard = () => {
       if (!address || !client) return;
       try {
         const bytecode = await client.getCode({ address });
-        const isContract = bytecode && bytecode.length > 2;
+        const isContract = bytecode && bytecode.length > 2 && !bytecode.startsWith(EOF_SIGNATURE);
 
         setIsContractAddress(isContract || false);
 
