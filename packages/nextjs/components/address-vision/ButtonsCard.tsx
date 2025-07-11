@@ -8,6 +8,7 @@ import { usePublicClient } from "wagmi";
 import { useAddressStore } from "~~/services/store/store";
 
 const GNOSIS_SAFE_BYTECODE_PATTERN = "0x608060405273ffffffffffffffffffffffffffffffffffffffff600054167fa619486e";
+const EOF_SIGNATURE = "0xef01";
 
 const SAFE_ABI = [
   {
