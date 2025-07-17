@@ -12,7 +12,8 @@ export const TokensTable = ({ tokens }: { tokens: Token[] }) => {
     const divisor = BigInt(Math.pow(10, decimals));
     const integerPart = balanceBigInt / divisor;
     const fractionalPart = balanceBigInt % divisor;
-    const formattedFractionalPart = fractionalPart.toString().padStart(decimals, "0").slice(0, 2);
+    const decimalDigits = integerPart === 0n ? 6 : integerPart < 10n ? 4 : 2;
+    const formattedFractionalPart = fractionalPart.toString().padStart(decimals, "0").slice(0, decimalDigits);
 
     const integerPartStr = integerPart.toString();
 
