@@ -19,9 +19,9 @@ export const TokensTable = ({ tokens }: { tokens: Token[] }) => {
 
     if (integerPartStr.length > 10) {
       return `${integerPartStr.slice(0, 10)}...`;
-    } else {
-      return `${integerPartStr}.${formattedFractionalPart}`;
     }
+    const formatted = `${integerPartStr}.${formattedFractionalPart}`;
+    return formatted === "0.000000" ? "0" : formatted;
   };
 
   if (tokens.length === 0) {
