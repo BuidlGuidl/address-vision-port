@@ -63,6 +63,7 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
     if (shouldFetch) {
       setTokenBalances();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, tokenBalancesData]);
 
   if (nftData === undefined || tokenBalancesData === undefined || !shouldFetch) {

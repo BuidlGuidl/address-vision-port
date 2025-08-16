@@ -52,6 +52,7 @@ export const Navbar = () => {
         setInputValue(resolvedAddress);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ensName, resolvedAddress]);
 
   useEffect(() => {

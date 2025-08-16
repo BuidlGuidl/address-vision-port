@@ -42,6 +42,7 @@ const AddressPage: NextPage<Props> = ({ address }) => {
     } else if (isAddress(addyOrEns)) {
       setResolvedAddress(addyOrEns);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   let cardWidthClass = "lg:w-1/3";
