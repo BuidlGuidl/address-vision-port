@@ -10,6 +10,8 @@
     "lint": "next lint",
     "format": "prettier --write . '!(node_modules|.next|contracts)/**/*'",
     "check-types": "tsc --noEmit --incremental",
+    "test": "playwright test",
+    "playwright": "playwright test",
     "vercel": "vercel",
     "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true"
   },
