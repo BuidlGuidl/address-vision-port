@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: npm install -g yarn && yarn
       - name: Install Playwright Browsers
-        run: yarn playwright install --with-deps
+        run: yarn workspace @se-2/nextjs exec playwright install --with-deps
       - name: Build Next.js app
         run: yarn build
       - name: Start Next.js app and run tests
