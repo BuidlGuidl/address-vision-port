@@ -37,7 +37,7 @@ const AddressPage: NextPage<Props> = ({ address }) => {
   useEffect(() => {
     const addyOrEns = router.query.address as string;
 
-    if (addyOrEns.endsWith(".eth") || addyOrEns.endsWith(".xyz")) {
+    if (addyOrEns.endsWith(".eth") || addyOrEns.endsWith(".xyz") || addyOrEns.endsWith(".com")) {
       setEnsName(addyOrEns);
     } else if (isAddress(addyOrEns)) {
       setResolvedAddress(addyOrEns);
