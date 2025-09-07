@@ -19,7 +19,7 @@ export default async function handler(request: NextRequest) {
 
   const addyOrEns = searchParams.get("addyOrEns")?.slice(0, 100) || "blank";
   const isAddressValid = isAddress(addyOrEns as string);
-  const isEnsValid = /\.(eth|xyz)$/.test(addyOrEns as string);
+  const isEnsValid = /\.(eth|xyz|com)$/.test(addyOrEns as string);
 
   if (!isAddressValid && !isEnsValid) {
     return new Response("Invalid address or ENS", { status: 400 });
