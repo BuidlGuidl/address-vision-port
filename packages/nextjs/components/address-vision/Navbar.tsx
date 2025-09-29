@@ -57,10 +57,10 @@ export const Navbar = () => {
   useEffect(() => {
     setEnsName("");
     let trimmedAddress = inputValue.trim();
-    if (trimmedAddress.startsWith("eth:")) {
-      trimmedAddress = trimmedAddress.slice(4);
-    } else if (trimmedAddress.startsWith("oeth:")) {
-      trimmedAddress = trimmedAddress.slice(5);
+    // Remove any prefix with colon (e.g., "xyz:", "abc:", "eth:", etc.)
+    const colonIndex = trimmedAddress.indexOf(":");
+    if (colonIndex !== -1) {
+      trimmedAddress = trimmedAddress.slice(colonIndex + 1);
     }
 
     if (trimmedAddress.endsWith(".eth") || trimmedAddress.endsWith(".xyz") || trimmedAddress.endsWith(".com")) {
