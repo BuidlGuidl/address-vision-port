@@ -23,7 +23,7 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
 
   const shouldFetch = address && isAddress(address);
 
-  const { data: tokenBalancesData } = useSWR(
+  const { data: tokenBalancesData, error: tokenError } = useSWR(
     shouldFetch
       ? `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens?chain=${getChainNameForMoralis(
           chain.id,
@@ -37,7 +37,7 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
     },
   );
 
-  const { data: nftData } = useSWR(
+  const { data: nftData, error: nftError } = useSWR(
     shouldFetch
       ? `https://api.opensea.io/api/v2/chain/${getChainNameForOpensea(chain.id)}/account/${address}/nfts?limit=5`
       : null,
@@ -65,7 +65,11 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
     }
   }, [address, tokenBalancesData]);
 
-  if (nftData === undefined || tokenBalancesData === undefined || !shouldFetch) {
+  // Show loading state only if both APIs are still loading AND no errors
+  const isTokensLoading = tokenBalancesData === undefined && !tokenError;
+  const isNftsLoading = nftData === undefined && !nftError;
+
+  if (!shouldFetch || (isTokensLoading && isNftsLoading)) {
     return (
       <div className="card w-[370px] md:w-[425px] bg-base-100 shadow-xl flex-grow animate-pulse">
         <div className="card-body">
@@ -136,9 +140,53 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
           </Link>
         </h2>
         <h3 className="font-bold">NFTs</h3>
-        <NftsCarousel nfts={nftData.nfts} chain={chain} address={address} />
+        {isNftsLoading ? (
+          <div className="carousel-center carousel rounded-box max-w-md space-x-4 bg-secondary p-4 animate-pulse">
+            <div className="carousel-item">
+              <div className="rounded-md bg-slate-300 h-32 w-32"></div>
+            </div>
+            <div className="carousel-item">
+              <div className="rounded-md bg-slate-300 h-32 w-32"></div>
+            </div>
+            <div className="carousel-item">
+              <div className="rounded-md bg-slate-300 h-32 w-32"></div>
+            </div>
+          </div>
+        ) : nftError ? (
+          <div className="text-sm text-error">Unable to load NFTs</div>
+        ) : (
+          <NftsCarousel nfts={nftData?.nfts || []} chain={chain} address={address} />
+        )}
         <h3 className="mt-4 font-bold">Tokens</h3>
-        <TokensTable tokens={tokenBalancesData.result} />
+        {isTokensLoading ? (
+          <div className="max-h-48 overflow-x-auto animate-pulse">
+            <table className="table table-zebra">
+              <thead>
+                <tr>
+                  <th>Token</th>
+                  <th>Balance</th>
+                  <th>Balance in USD</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="h-2 w-28 bg-slate-300"></td>
+                  <td className="h-2 w-16 bg-slate-300"></td>
+                  <td className="h-2 w-20 bg-slate-300"></td>
+                </tr>
+                <tr>
+                  <td className="h-2 w-28 bg-slate-300"></td>
+                  <td className="h-2 w-16 bg-slate-300"></td>
+                  <td className="h-2 w-20 bg-slate-300"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        ) : tokenError ? (
+          <div className="text-sm text-error">Unable to load tokens</div>
+        ) : (
+          <TokensTable tokens={tokenBalancesData?.result || []} />
+        )}
       </div>
     </div>
   );
