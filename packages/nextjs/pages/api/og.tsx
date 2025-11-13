@@ -30,7 +30,7 @@ export default async function handler(request: NextRequest) {
   const data = await response.json();
   const resolvedEnsName = data.ens;
   const resolvedAddress = data.address;
-  const avatarUrl = data.avatar_small || blo(resolvedAddress || (addyOrEns as Address));
+  const avatarUrl = data.avatar_small || blo(resolvedAddress as Address);
 
   const croppedAddresses = `${addyOrEns.slice(0, 6)}...${addyOrEns.slice(-4)}`;
   const displayName = resolvedEnsName || croppedAddresses || addyOrEns;
