@@ -9,6 +9,7 @@ import {
   ButtonsCard,
   Navbar,
   NetworkCard,
+  POAPCard,
   QRCodeCard,
   TotalBalanceCard,
 } from "~~/components/address-vision/";
@@ -63,6 +64,7 @@ const AddressPage: NextPage<Props> = ({ address }) => {
             </div>
             <ButtonsCard />
             <TotalBalanceCard />
+            <POAPCard />
             <NetworkCard chain={chains.arbitrum} />
             <div className="lg:hidden">
               <NetworkCard chain={chains.polygon} />
