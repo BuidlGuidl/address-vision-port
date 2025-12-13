@@ -8,12 +8,19 @@ import { Chain, isAddress } from "viem";
 import { useAddressStore, useNetworkBalancesStore } from "~~/services/store/store";
 import {
   NETWORKS_EXTRA_DATA,
+  getAlchemyNetwork,
   getBlockExplorerAddressLink,
-  getChainNameForMoralis,
   getChainNameForOpensea,
-  moralisFetcher,
   openseaNftFetcher,
 } from "~~/utils/scaffold-eth";
+
+const tokensFetcher = async (url: string) => {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error("Failed to fetch token data");
+  }
+  return response.json();
+};
 
 export const NetworkCard = ({ chain }: { chain: Chain }) => {
   const { setBalance } = useNetworkBalancesStore();
@@ -24,12 +31,8 @@ export const NetworkCard = ({ chain }: { chain: Chain }) => {
   const shouldFetch = address && isAddress(address);
 
   const { data: tokenBalancesData, error: tokenError } = useSWR(
-    shouldFetch
-      ? `https://deep-index.moralis.io/api/v2.2/wallets/${address}/tokens?chain=${getChainNameForMoralis(
-          chain.id,
-        )}&exclude_spam=true&exclude_unverified_contracts=true&exclude_native=false`
-      : null,
-    moralisFetcher,
+    shouldFetch ? `/api/tokens?address=${address}&network=${getAlchemyNetwork(chain.id)}` : null,
+    tokensFetcher,
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,

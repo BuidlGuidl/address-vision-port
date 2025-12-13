@@ -44,7 +44,7 @@ export const TokensTable = ({ tokens }: { tokens: Token[] }) => {
               <tr key={index}>
                 <td>{`${token.name} (${token.symbol})`}</td>
                 <td>{formatTokenBalance(token.balance, token.decimals)}</td>
-                <td>≈${token.usd_value !== null ? token.usd_value.toFixed(2) : "N/A"}</td>
+                <td>≈${typeof token.usd_value === "number" ? token.usd_value.toFixed(2) : "N/A"}</td>
               </tr>
             ))}
           </tbody>

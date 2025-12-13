@@ -15,19 +15,19 @@ export const getChainNameForOpensea = (id: number) => {
   }
 };
 
-export const getChainNameForMoralis = (id: number) => {
+export const getAlchemyNetwork = (id: number) => {
   switch (id) {
     case 1:
-      return "eth";
+      return "eth-mainnet";
     case 42161:
-      return "arbitrum";
+      return "arb-mainnet";
     case 10:
-      return "optimism";
+      return "opt-mainnet";
     case 8453:
-      return "base";
+      return "base-mainnet";
     case 137:
-      return "polygon";
+      return "polygon-mainnet";
     default:
-      return "eth";
+      return "eth-mainnet";
   }
 };
