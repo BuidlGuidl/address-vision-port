@@ -9,6 +9,14 @@ type Nft = {
   imageUrl: string;
   contract: Address;
   identifier: number;
+  isVideo: boolean;
+};
+
+const isVideoUrl = (url: string): boolean => {
+  if (!url) return false;
+  const videoExtensions = [".mp4", ".webm", ".ogg", ".mov"];
+  const lowerUrl = url.toLowerCase();
+  return videoExtensions.some(ext => lowerUrl.includes(ext));
 };
 
 export const NftsCarousel = ({ nfts, chain, address }: { nfts: Nft[]; chain: Chain; address: Address }) => {
@@ -52,12 +60,16 @@ export const NftsCarousel = ({ nfts, chain, address }: { nfts: Nft[]; chain: Cha
 
   const nftDataFormatted = nfts
     .filter((nft: any) => nft.image_url && nft.identifier !== "0")
-    .map((nft: any, index: number) => ({
-      imageUrl: nft.display_image_url || nft.image_url,
-      contract: nft.contract,
-      identifier: nft.identifier,
-      index,
-    }));
+    .map((nft: any, index: number) => {
+      const imageUrl = nft.display_image_url || nft.image_url;
+      return {
+        imageUrl,
+        contract: nft.contract,
+        identifier: nft.identifier,
+        index,
+        isVideo: isVideoUrl(imageUrl),
+      };
+    });
 
   if (nftDataFormatted.length === 0) {
     return <div>No NFT data.</div>;
@@ -93,16 +105,34 @@ export const NftsCarousel = ({ nfts, chain, address }: { nfts: Nft[]; chain: Cha
                 className="flex h-32 w-32 items-center justify-center"
               >
                 <div className="flex h-full w-full items-center justify-center">
-                  <Image
-                    src={imageErrors[nft.index] ? "/base.svg" : nft.imageUrl}
-                    className="rounded-box h-full w-full object-contain"
-                    alt={`NFT ${nft.index}`}
-                    width={128}
-                    height={128}
-                    onError={() => {
-                      handleImageError(nft.index);
-                    }}
-                  />
+                  {imageErrors[nft.index] ? (
+                    <Image
+                      src="/base.svg"
+                      className="rounded-box h-full w-full object-contain"
+                      alt={`NFT ${nft.index}`}
+                      width={128}
+                      height={128}
+                    />
+                  ) : nft.isVideo ? (
+                    <video
+                      src={nft.imageUrl}
+                      className="rounded-box h-full w-full object-contain"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      onError={() => handleImageError(nft.index)}
+                    />
+                  ) : (
+                    <Image
+                      src={nft.imageUrl}
+                      className="rounded-box h-full w-full object-contain"
+                      alt={`NFT ${nft.index}`}
+                      width={128}
+                      height={128}
+                      onError={() => handleImageError(nft.index)}
+                    />
+                  )}
                 </div>
               </a>
             </div>
